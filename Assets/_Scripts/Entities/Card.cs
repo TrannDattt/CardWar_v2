@@ -9,9 +9,15 @@ namespace CardWar.Entities
 {
     public class Card : IHaveVariant<CardData>
     {
-        public CardData Data { get; private set; }
-        public Dictionary<ETerrain, CardData> _variantDict = new();
+        public ECardType CardType { get; protected set; }
+        public string Name { get; protected set; }
+        public Sprite Image { get; protected set; }
+        public GameObject Model { get; protected set; }
+        // public CardSkill[] Skills;
+        public ETerrain TerrainType { get; protected set; }
+        public ETerrain[] VariantsType { get; protected set; }
         
+        public Dictionary<ETerrain, CardData> _variantDict = new();
         public Dictionary<ETerrain, CardData> VariantDict
         {
             get => _variantDict;
@@ -21,7 +27,14 @@ namespace CardWar.Entities
 
         public Card(CardData data = null)
         {
-            Data = data;
+            if (data == null) return;
+
+            CardType = data.CardType;
+            Name = data.Name;
+            Image = data.Image;
+            Model = data.Model;
+            TerrainType = data.TerrainType;
+            VariantsType = data.VariantsType;
         }
 
         private CardData[] GetVariants(ETerrain[] keys)
@@ -32,7 +45,7 @@ namespace CardWar.Entities
 
         private void UpdateDict()
         {
-            var keys = Data.VariantsType;
+            var keys = VariantsType;
             var values = GetVariants(keys);
 
             _variantDict.Clear();
@@ -46,7 +59,13 @@ namespace CardWar.Entities
         {
             if (!_variantDict.ContainsKey(key)) return;
 
-            Data = _variantDict[key];
+            var newData = _variantDict[key];
+            Name = newData.Name;
+            Image = newData.Image;
+            Model = newData.Model;
+            TerrainType = newData.TerrainType;
+            VariantsType = newData.VariantsType;
+
             UpdateDict();
             //////////////////
 
@@ -56,17 +75,16 @@ namespace CardWar.Entities
 
     public class MonsterCard : Card, IDamagable
     {
-        public MonsterCardData MonsterData => Data as MonsterCardData;
+        public int Atk { get; private set; }
+        public int Hp { get; private set; }
 
         public UnityEvent OnTakenDamaged { get; set; } = new();
 
-        public int Atk;
-        public int Hp;
 
         public MonsterCard(CardData data) : base(data)
         {
-            Atk = MonsterData.Atk;
-            Hp = MonsterData.Hp;
+            Atk = (data as MonsterCardData).Atk;
+            Hp = (data as MonsterCardData).Hp;
         }
 
         public void TakeDamage(int amount)
@@ -80,8 +98,6 @@ namespace CardWar.Entities
 
     public class SpellCard : Card
     {
-        public SpellCardData SpellData => Data as SpellCardData;
-
         public SpellCard(CardData data) : base(data)
         {
         }
@@ -89,8 +105,6 @@ namespace CardWar.Entities
 
     public class TerrainCard : Card
     {
-        public TerrainCardData TerrainData => Data as TerrainCardData;
-
         public TerrainCard(CardData data) : base(data)
         {
         }

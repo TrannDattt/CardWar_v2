@@ -1,0 +1,107 @@
+using System.Collections.Generic;
+using System.Linq;
+using CardWar.Entities;
+using CardWar.Enums;
+using UnityEngine;
+
+namespace CardWar.Views
+{
+    public class BoardView : RegionView
+    {
+        [SerializeField] private List<SlotView> _monsterSlots;
+        [SerializeField] private List<SlotView> _constructSlots;
+        [SerializeField] private SlotView _spellSlot;
+
+        // TODO: Init board
+        public void Initialize()
+        {
+            _monsterSlots.ForEach(slot => slot.PrepareSlot());
+            _constructSlots.ForEach(slot => slot.PrepareSlot());
+            _spellSlot.PrepareSlot();
+        }
+
+        public void ShowAvailableSlots(ECardType cardType, out List<SlotView> availableSlots)
+        {
+            availableSlots = new List<SlotView>();
+            switch (cardType)
+            {
+                case ECardType.Monster:
+                    availableSlots = _monsterSlots.Where(slot => slot.IsEmpty).ToList();
+                    availableSlots.ForEach(slot => slot.ShowSlot());
+                    break;
+                case ECardType.Construct:
+                    availableSlots = _constructSlots.Where(slot => slot.IsEmpty).ToList();
+                    availableSlots.ForEach(slot => slot.ShowSlot());
+                    break;
+                case ECardType.Spell:
+                    // if (_spellSlot.IsEmpty)
+                    // {
+                    //     availableSlots.Add(_spellSlot);
+                    //     _spellSlot.ShowSlot();
+                    // }
+                    availableSlots.Add(_spellSlot);
+                    break;
+                default:
+                    Debug.LogWarning("Unknown card type");
+                    break;
+            }
+        }
+
+        public void HideAllSlots()
+        {
+            _monsterSlots.ForEach(slot => slot.HideSlot());
+            _constructSlots.ForEach(slot => slot.HideSlot());
+            _spellSlot.HideSlot();
+        }
+
+        public void AddCardToSlot(Card card, SlotView slot)
+        {
+            if (card == null || slot == null) return;
+            slot.PlaceCard(card);
+            slot.HideSlot();
+        }
+
+        protected override List<Card> GetCardsInRegion()
+        {
+            var cards = new List<Card>();
+            cards.AddRange(_monsterSlots.Where(slot => !slot.IsEmpty).Select(slot => slot.CardInSlot));
+            cards.AddRange(_constructSlots.Where(slot => !slot.IsEmpty).Select(slot => slot.CardInSlot));
+            if (!_spellSlot.IsEmpty) cards.Add(_spellSlot.CardInSlot);
+            return cards;
+        }
+
+        // public override void AddCard(Card card)
+        // {
+        //     throw new System.NotImplementedException();
+        // }
+
+        public override void RemoveCard(Card card)
+        {
+            // throw new System.NotImplementedException();
+        }
+
+        void Start()
+        {
+            Initialize();
+        }
+    }
+
+    public class GraveView : RegionView
+    {
+        // public override void AddCard(Card card)
+        // {
+        //     throw new System.NotImplementedException();
+        // }
+
+        public override void RemoveCard(Card card)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected override List<Card> GetCardsInRegion()
+        {
+            return new List<Card>();
+        }
+    }
+}
+
