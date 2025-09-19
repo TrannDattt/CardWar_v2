@@ -1,13 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using CardWar.Entities;
+using CardWar.Enums;
 using CardWar.Factories;
 using CardWar.Untils;
 using CardWar.Views;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
+using static UnityEngine.EventSystems.PointerEventData;
 
 namespace CardWar.GameViews
 {
@@ -25,8 +29,16 @@ namespace CardWar.GameViews
         [SerializeField] private PlayerDeckView _playerDeckView;
         [SerializeField] private BoardView _boardView;
         [SerializeField] private CardDetailView _cardDetailView;
+        [SerializeField] private CardSelectorView _cardSelectorView;
 
         private UnityEvent DoCardAnimation = new();
+
+        void Start()
+        {
+            _cardDetailView.HideCardDetail();
+            _cardSelectorView.HideCardSelector();
+            _boardView.Initialize();
+        }
 
         #region Draw Card Logic
         public void DrawCard()
@@ -34,26 +46,63 @@ namespace CardWar.GameViews
             // TODO: Check in turn
             // TODO: Check deck empty
             _playerDeckView.DrawCard(out var drawnCard);
-            _playerHandView.AddCardToHand(drawnCard);
+            _playerHandView.AddCardToHand(drawnCard, out var cardView);
+            cardView?.OnCardClicked.AddListener((e) =>
+            {
+                if (e.button == InputButton.Right)
+                {
+                    _cardDetailView.ShowCardDetail(cardView.BaseCard);
+                }
+            });
+        }
+        #endregion
+
+        #region Summon Condition Logic
+        public async Task<List<Card>> CheckSummonConditions(MonsterCard mCard)
+        {
+            var requiredSacrificesCount = mCard.SummonCondiction.Sacrifces.Sum(s => s.Amount);
+
+            var selectedCards = await _cardSelectorView.ShowCardToSelect(_boardView.CardsInRegion, requiredSacrificesCount);
+            if (selectedCards == null)
+            {
+                //TODO: Show warning
+                Debug.LogWarning("Cancel selection");
+                return null;
+            }
+
+            return selectedCards;
         }
         #endregion
 
         #region Play Card Logic
-        private void PlayCard(Card card, RegionView fromRegion)
+        private async void PlayCard(Card card, RegionView fromRegion)
         {
             // TODO: Check in turn
-            // TODO: Check summon conditions
-            List<SlotView> availableSlots = new();
-            _boardView.ShowAvailableSlots(card.CardType, out availableSlots);
-            if (card.CardType == Enums.ECardType.Spell)
+            if (card.CardType == ECardType.Spell)
             {
                 // _boardView.AddCardToSlot(card, availableSlots[0]);
                 // fromRegion.RemoveCard(card);
                 return;
             }
 
+            // TODO: Check summon conditions
+            if (card is MonsterCard mCard && mCard.SummonCondiction.Sacrifces.Length > 0)
+            {
+                var sacrificedCards = await CheckSummonConditions(mCard);
+                if (sacrificedCards == null)
+                {
+                    Debug.Log("Summon failed or canceled");
+                    return;
+                }
+            }
+
+            List<SlotView> availableSlots = new();
+            _boardView.ShowAvailableSlots(card.CardType, out availableSlots);
+
             IEnumerator onClick(SlotView slot)
             {
+                // TODO: Consume sacrifice (if needed)
+
                 fromRegion.RemoveCard(card);
                 _boardView.AddCardToSlot(card, slot);
                 _boardView.HideAllSlots();
@@ -70,7 +119,7 @@ namespace CardWar.GameViews
                 //Spawn model, may be optimize later
                 yield return StartCoroutine(SpawnModelAnimation(card, slot));
 
-                Debug.Log($"Card {card.Name} placed in slot at position {slot.transform.position}");
+                // Debug.Log($"Card {card.Name} placed in slot at position {slot.transform.position}");
             }
             ;
 
@@ -79,7 +128,7 @@ namespace CardWar.GameViews
 
         public IEnumerator PlayCardAnimation(Card card, RegionView fromRegion, SlotView toSlot)
         {
-            var animLength = 0.5f;
+            var animLength = 0.3f;
 
             var canvasTransform = _mainCanvas.gameObject.GetComponent<RectTransform>();
             var curPosition = fromRegion.gameObject.GetComponent<RectTransform>().position;
@@ -88,11 +137,15 @@ namespace CardWar.GameViews
 
             var slotWorldPosition = toSlot.transform.position;
             var slotScreenPosition = Camera.main.WorldToScreenPoint(slotWorldPosition);
-            var slotRotation = toSlot.transform.rotation;
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                canvasTransform,
+                slotScreenPosition,
+                null,
+                out var slotCanvasPosition
+            );
 
             var sequence = DOTween.Sequence();
-            sequence.Append(cardRectTransform.DOMove(slotScreenPosition, animLength).SetEase(Ease.InOutQuad));
-            sequence.Join(cardRectTransform.DORotateQuaternion(slotRotation, animLength).SetEase(Ease.InOutQuad));
+            sequence.Append(cardRectTransform.DOMove(slotCanvasPosition, animLength).SetEase(Ease.InOutQuad));
             sequence.AppendInterval(.2f);
             sequence.OnComplete(() =>
             {
@@ -106,10 +159,10 @@ namespace CardWar.GameViews
             var animLength = 0.5f;
             var sequence = DOTween.Sequence();
 
-            var model = Instantiate(card.Model, slot.transform);
-            // var model = Instantiate(card.Model, slot.transform.position, _boardView.transform.rotation);
+            var model = CardFactory.Instance.CreateCardModel(card, parent: slot.transform).Model;
+            // var model = Instantiate(card.Model, slot.transform);
 
-            if (card.CardType == Enums.ECardType.Monster)
+            if (card.CardType == ECardType.Monster)
             {
                 sequence.Append(model.transform.DORotate(new Vector3(0, 360, 0), animLength, RotateMode.FastBeyond360).SetEase(Ease.InOutQuad));
                 sequence.AppendInterval(.2f);

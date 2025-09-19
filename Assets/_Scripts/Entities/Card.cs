@@ -1,27 +1,30 @@
 using System.Collections.Generic;
+using System.Linq;
 using CardWar.Datas;
 using CardWar.Enums;
 using CardWar.Interfaces;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace CardWar.Entities
 {
-    public class Card : IHaveVariant<CardData>
+    public abstract class Card
     {
-        public ECardType CardType { get; protected set; }
-        public string Name { get; protected set; }
-        public Sprite Image { get; protected set; }
-        public GameObject Model { get; protected set; }
+        protected CardData _data;
+        public ECardType CardType => _data.CardType;
+        public string Name => _data.Name;
+        public Sprite Image => _data.Image;
+        public Mesh Mesh => _data.Mesh;
+        public AnimatorController AnimController => _data.AnimController;
+        public List<CardVariant> Variants => _data.Variants;
+        private CardVariant _curVariant;
+        public ETerrain TerrainType => _curVariant.TerrainType;
+        public Material Material => _curVariant.Material;
         // public CardSkill[] Skills;
-        public ETerrain TerrainType { get; protected set; }
-        public ETerrain[] VariantsType { get; protected set; }
-        
-        public Dictionary<ETerrain, CardData> _variantDict = new();
-        public Dictionary<ETerrain, CardData> VariantDict
-        {
-            get => _variantDict;
-        }
+        public ETerrain[] RelativeTerrains => _curVariant.RelativeTerrains;
+
+        private Dictionary<ETerrain, CardVariant> _variantDict = new();
 
         public UnityEvent OnCardUpdated = new();
 
@@ -29,84 +32,78 @@ namespace CardWar.Entities
         {
             if (data == null) return;
 
-            CardType = data.CardType;
-            Name = data.Name;
-            Image = data.Image;
-            Model = data.Model;
-            TerrainType = data.TerrainType;
-            VariantsType = data.VariantsType;
-        }
-
-        private CardData[] GetVariants(ETerrain[] keys)
-        {
-            // TODO: Get all variant in card dict from keys
-            return null;
-        }
-
-        private void UpdateDict()
-        {
-            var keys = VariantsType;
-            var values = GetVariants(keys);
-
-            _variantDict.Clear();
-            for (int i = 0; i < keys.Length; i++)
-            {
-                _variantDict.Add(keys[i], values[i]);
-            }
+            _data = data;
+            Variants.ForEach(v => _variantDict.Add(v.TerrainType, v));
+            _curVariant = _variantDict[_data.DefaultTerrain];
         }
 
         public void ChangeVariant(ETerrain key)
         {
-            if (!_variantDict.ContainsKey(key)) return;
+            var nextVariant = _variantDict.ContainsKey(key) ? _variantDict[key] : _variantDict[_data.DefaultTerrain];
 
-            var newData = _variantDict[key];
-            Name = newData.Name;
-            Image = newData.Image;
-            Model = newData.Model;
-            TerrainType = newData.TerrainType;
-            VariantsType = newData.VariantsType;
-
-            UpdateDict();
-            //////////////////
-
+            _curVariant = nextVariant;
             OnCardUpdated?.Invoke();
         }
     }
 
     public class MonsterCard : Card, IDamagable
     {
-        public int Atk { get; private set; }
-        public int Hp { get; private set; }
+        private MonsterCardData _mData => _data as MonsterCardData;
+        public int Atk => _mData.Atk + _bonusAtk;
+        public int Hp => _mData.Hp + _bonusHp;
+        public EMonsterTier Tier => _mData.Tier;
+        public SummonCondiction SummonCondiction => _mData.SummonCondiction;
 
-        public UnityEvent OnTakenDamaged { get; set; } = new();
+        private int _bonusAtk;
+        private int _bonusHp;
+
+        public UnityEvent OnTakenDamage { get; set; } = new();
 
 
         public MonsterCard(CardData data) : base(data)
         {
-            Atk = (data as MonsterCardData).Atk;
-            Hp = (data as MonsterCardData).Hp;
+            _bonusAtk = 0;
+            _bonusHp = 0;
         }
 
         public void TakeDamage(int amount)
         {
-            Hp = Mathf.Clamp(Hp - amount, 0, int.MaxValue);
+            _bonusHp = Mathf.Clamp(_bonusHp - amount, -_mData.Hp, int.MaxValue);
             //TODO: Do thing if Hp falls to 0
 
-            OnTakenDamaged?.Invoke();
+            OnTakenDamage?.Invoke();
         }
     }
 
     public class SpellCard : Card
     {
+        private SpellCardData _sData => _data as SpellCardData;
+
         public SpellCard(CardData data) : base(data)
         {
         }
     }
 
-    public class TerrainCard : Card
+    public class ConstructCard : Card, IDamagable
     {
-        public TerrainCard(CardData data) : base(data)
+        private ConstructCardData _cData => _data as ConstructCardData;
+        public int Hp => _cData.Hp + _bonusHp;
+
+        private int _bonusHp;
+
+        public UnityEvent OnTakenDamage { get; set; } = new();
+
+        public ConstructCard(CardData data) : base(data)
         {
+            _bonusHp = 0;
+        }
+
+        public void TakeDamage(int amount)
+        {
+            _bonusHp = Mathf.Clamp(_bonusHp - amount, -_cData.Hp, int.MaxValue);
+            //TODO: Do thing if Hp falls to 0
+
+            OnTakenDamage?.Invoke();
         }
     }
 }

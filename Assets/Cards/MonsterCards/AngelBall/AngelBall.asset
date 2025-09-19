@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd226bdf0646fd44ca54862c7738a78e, type: 3}
   m_Name: AngelBall
   m_EditorClassIdentifier: 
+  CardType: 0
   Name: M1
   Image: {fileID: 21300000, guid: f8fa59e223881a94780fb88b525a3d0c, type: 3}
-  Model: {fileID: 8607762650435447719, guid: 3233c084fe4c3444186e018c753838ef, type: 3}
+  Model: {fileID: 2517867966620824975, guid: 84e2cf7613690e145af99931bd999163, type: 3}
   TerrainType: 0
   VariantsType: 0400000001000000
   Hp: 5

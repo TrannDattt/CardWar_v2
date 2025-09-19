@@ -1,5 +1,6 @@
 namespace CardWar.Factories
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using CardWar.Datas;
@@ -11,10 +12,13 @@ namespace CardWar.Factories
     public class CardFactory : Singleton<CardFactory>
     {
         [SerializeField] private CardView _cardViewPrefab;
+        [SerializeField] private CardModelView _cardModelViewPrefab;
 
         private Queue<CardView> _cardViewPool = new();
+        private Queue<CardModelView> _cardModelPool = new();
 
-        public CardView CreateCardView(Card card, Vector3 position = default, Quaternion rotation = default, Vector3 scale = default, RectTransform parent = null)
+        #region Spawn Card View
+        public CardView CreateCardView(Card card, Vector3 position = default, Quaternion rotation = default, RectTransform parent = null)
         {
             if (card == null)
             {
@@ -24,7 +28,7 @@ namespace CardWar.Factories
 
             if (_cardViewPool.Count == 0)
             {
-                var cardView = Instantiate(_cardViewPrefab);
+                var cardView = Instantiate(_cardViewPrefab, parent, true);
                 _cardViewPool.Enqueue(cardView);
             }
 
@@ -32,10 +36,18 @@ namespace CardWar.Factories
             pooledCardView.SetBaseCard(card);
 
             var rectTransform = pooledCardView.GetComponent<RectTransform>();
-            rectTransform.SetParent(parent);
-            rectTransform.position = position;
-            rectTransform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
-            rectTransform.localScale = scale == default ? Vector3.one : scale;
+            rectTransform.SetParent(parent, true);
+            if (parent)
+            {
+                rectTransform.position = position == default ? transform.position : position;
+                rectTransform.rotation = rotation == default ? transform.rotation : rotation;
+            }
+            else
+            {
+                rectTransform.position = position;
+                rectTransform.rotation = rotation == default ? Quaternion.identity : rotation;
+            }
+            rectTransform.localScale = Vector3.one;
 
             pooledCardView.gameObject.SetActive(true);
             return pooledCardView;
@@ -46,9 +58,59 @@ namespace CardWar.Factories
             if (cardView == null) return;
 
             // cardView.SetBaseCard(null);
-            cardView.GetComponent<RectTransform>().SetParent(transform);
+            // Debug.Log($"Recycling card {cardView.BaseCard?.Name}");
+            cardView.GetComponent<RectTransform>().SetParent(transform, true);
             _cardViewPool.Enqueue(cardView);
             cardView.gameObject.SetActive(false);
         }
+        #endregion
+
+        #region Spawn Card Model
+        public CardModelView CreateCardModel(Card card, Vector3 position = default, Quaternion rotation = default, Transform parent = null)
+        {
+            if (card == null)
+            {
+                Debug.LogWarning("Cannot create CardModel: card is null");
+                return null;
+            }
+
+            if (_cardModelPool.Count == 0)
+            {
+                var cardModel = Instantiate(_cardModelViewPrefab, parent, true);
+                _cardModelPool.Enqueue(cardModel);
+            }
+
+            var pooledCardModel = _cardModelPool.Dequeue();
+            pooledCardModel.SetBaseCard(card);
+
+            pooledCardModel.transform.SetParent(parent, true);
+            if (parent)
+            {
+                pooledCardModel.transform.SetPositionAndRotation(position == default ? parent.position : position,
+                                                                rotation == default ? parent.rotation : rotation);
+            }
+            else
+            {
+                pooledCardModel.transform.SetPositionAndRotation(position, rotation == default ? Quaternion.identity : rotation);
+            }
+            pooledCardModel.transform.localScale = Vector3.one;
+
+            pooledCardModel.gameObject.SetActive(true);
+            return pooledCardModel;
+        }
+
+        
+
+        public void RecycleCardModel(CardModelView cardModel)
+        {
+            if (cardModel == null) return;
+
+            // cardView.SetBaseCard(null);
+            // Debug.Log($"Recycling card {cardView.BaseCard?.Name}");
+            cardModel.transform.SetParent(null, true);
+            _cardModelPool.Enqueue(cardModel);
+            cardModel.gameObject.SetActive(false);
+        }
+        #endregion
     }
 }

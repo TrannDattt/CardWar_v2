@@ -1,14 +1,43 @@
-using CardWar.Pointer;
+// using CardWar.Pointer;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace CardWar.Interfaces
 {
-    public interface IInteractable
+    public interface ISelectable
     {
-        public void OnClicked(PointerInteract pointer);
-        public void OnHoverEnter(PointerInteract pointer);
-        public void OnHoverExit(PointerInteract pointer);
-        public void OnPressed(PointerInteract pointer);
+        public void OnClicked();
+        public void OnHoverEnter();
+        public void OnHoverExit();
+        public void OnPressed();
+    }
+
+    public abstract class SelectableObject : MonoBehaviour, ISelectable
+    {
+        protected virtual void Awake()
+        {
+            gameObject.tag = "Selectable";
+        }
+
+        void OnMouseDown()
+        {
+            OnClicked();
+        }
+
+        void OnMouseEnter()
+        {
+            OnHoverEnter();
+        }
+
+        void OnMouseExit()
+        {
+            OnHoverExit();
+        }
+
+        public abstract void OnClicked();
+        public abstract void OnHoverEnter();
+        public abstract void OnHoverExit();
+        public abstract void OnPressed();
     }
 }

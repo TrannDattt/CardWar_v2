@@ -3,7 +3,12 @@ guid: a90dc58e74d5d5a4ca37504a72cd17e2
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: AngelBall
+    second: {fileID: 2100000, guid: 63289ec28731cee43810d5fccbc50b01, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

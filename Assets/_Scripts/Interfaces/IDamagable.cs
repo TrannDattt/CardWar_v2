@@ -4,7 +4,7 @@ namespace CardWar.Interfaces
 {
     public interface IDamagable
     {
-        public UnityEvent OnTakenDamaged { get; set; }
+        public UnityEvent OnTakenDamage { get; set; }
         public void TakeDamage(int amount);
     }
 }

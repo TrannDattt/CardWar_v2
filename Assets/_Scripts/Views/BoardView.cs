@@ -70,19 +70,9 @@ namespace CardWar.Views
             return cards;
         }
 
-        // public override void AddCard(Card card)
-        // {
-        //     throw new System.NotImplementedException();
-        // }
-
         public override void RemoveCard(Card card)
         {
             // throw new System.NotImplementedException();
-        }
-
-        void Start()
-        {
-            Initialize();
         }
     }
 

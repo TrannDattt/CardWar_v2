@@ -21,7 +21,18 @@ namespace CardWar.Views
 
             foreach (var data in cardDatas)
             {
-                _cardsInDeck.Add(new Card(data));
+                switch (data)
+                {
+                    case MonsterCardData:
+                        _cardsInDeck.Add(new MonsterCard(data));
+                        break;
+                    case SpellCardData:
+                        _cardsInDeck.Add(new SpellCard(data));
+                        break;
+                    case ConstructCardData:
+                        _cardsInDeck.Add(new ConstructCard(data));
+                        break;
+                }
             }
         }
 

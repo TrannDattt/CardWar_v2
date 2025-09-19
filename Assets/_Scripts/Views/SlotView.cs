@@ -57,7 +57,7 @@ namespace CardWar.Views
             {
                 OnSlotClicked?.Invoke();
 
-                Debug.Log($"Slot at position {transform.position} clicked.");
+                // Debug.Log($"Slot at position {transform.position} clicked.");
                 // HideSlot();
             }
         }

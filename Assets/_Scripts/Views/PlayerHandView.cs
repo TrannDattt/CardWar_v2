@@ -17,12 +17,17 @@ namespace CardWar.Views
 
         public CardView SelectedCardView { get; private set; }
 
-        public void AddCardToHand(Card card)
+        public void AddCardToHand(Card card, out CardView cardView)
         {
-            if (card == null) return;
+            if (card == null)
+            {
+                cardView = null;
+                return;
+            }
 
-            var cardView = CardFactory.Instance.CreateCardView(card, parent: _handContent);
-            cardView.OnCardLeftClicked.AddListener(() => TrackSelectedCard(cardView));
+            cardView = CardFactory.Instance.CreateCardView(card, parent: _handContent);
+            var localCardView = cardView;
+            localCardView.OnCardClicked.AddListener((_) => TrackSelectedCard(localCardView));
 
             // Adjust layout if needed
             // LayoutRebuilder.ForceRebuildLayoutImmediate(_handContent);
@@ -31,12 +36,13 @@ namespace CardWar.Views
         public override void RemoveCard(Card card)
         {
             if (card == null) return;
+            // Debug.Log($"Removing card {card.Name} from hand");
 
             var cardView = _handContent.GetComponentsInChildren<CardView>().ToList()
                 .FirstOrDefault(cv => cv.BaseCard == card);
             if (cardView != null)
             {
-                cardView.OnCardLeftClicked.RemoveListener(() => TrackSelectedCard(cardView));
+                cardView.OnCardClicked.RemoveListener((_) => TrackSelectedCard(cardView));
                 CardFactory.Instance.RecycleCardView(cardView);
                 // Adjust layout if needed
                 // LayoutRebuilder.ForceRebuildLayoutImmediate(_handContent);

@@ -1,9 +1,4 @@
-using CardWar.Datas;
 using CardWar.Entities;
-using CardWar.GameControl;
-using CardWar.GameViews;
-using CardWar.Interfaces;
-using CardWar.Pointer;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -12,9 +7,9 @@ using UnityEngine.UI;
 
 namespace CardWar.Views
 {
-    public class CardView : MonoBehaviour, IInteractable, IPointerClickHandler
+    public class CardView : MonoBehaviour, IPointerClickHandler
     {
-        public Card BaseCard { get; private set; } = new();
+        public Card BaseCard { get; private set; } = null;
 
         [SerializeField] private TextMeshProUGUI _name;
         [SerializeField] private TextMeshProUGUI _skillDetail;
@@ -22,8 +17,7 @@ namespace CardWar.Views
         [SerializeField] private TextMeshProUGUI _atk;
         [SerializeField] private TextMeshProUGUI _hp;
 
-        public UnityEvent OnCardLeftClicked;
-        public UnityEvent OnCardRightClicked;
+        public UnityEvent<PointerEventData> OnCardClicked;
 
         public void SetBaseCard(Card card)
         {
@@ -31,7 +25,8 @@ namespace CardWar.Views
 
             BaseCard = card;
             card.OnCardUpdated.AddListener(UpdateCardDetail);
-            if (card is MonsterCard monsterCard) monsterCard.OnTakenDamaged.AddListener(UpdateCardDetail);
+            if (card is MonsterCard mCard) mCard.OnTakenDamage.AddListener(UpdateCardDetail);
+            if (card is ConstructCard cCard) cCard.OnTakenDamage.AddListener(UpdateCardDetail);
 
             UpdateCardDetail();
         }
@@ -43,10 +38,22 @@ namespace CardWar.Views
             // _skillDetail.text = data.Skills;
             _image.sprite = BaseCard.Image;
 
-            if (BaseCard is MonsterCard monsterCard)
+            switch (BaseCard)
             {
-                _atk.text = $"ATK: {monsterCard.Atk}";
-                _hp.text = $"HP: {monsterCard.Hp}";
+                case MonsterCard mCard:
+                    _atk.text = $"ATK: {mCard.Atk}";
+                    _hp.text = $"HP: {mCard.Hp}";
+                    break;
+
+                case ConstructCard cCard:
+                    _hp.text = $"HP: {cCard.Hp}";
+                    _atk.gameObject.SetActive(false);
+                    break;
+
+                case SpellCard sCard:
+                    _atk.gameObject.SetActive(false);
+                    _hp.gameObject.SetActive(false);
+                    break;
             }
         }
 
@@ -55,46 +62,20 @@ namespace CardWar.Views
             //TODO: Add event to show detail in CardDetailView
         }
 
+        void OnDestroy()
+        {
+            OnCardClicked.RemoveAllListeners();
+        }
+
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (eventData.button == PointerEventData.InputButton.Left)
-            {
-                OnCardLeftClicked?.Invoke();
-            }
-            else if (eventData.button == PointerEventData.InputButton.Right)
-            {
-                OnCardRightClicked?.Invoke();
-            }
-        }
-
-        public void OnClicked(PointerInteract pointer)
-        {
-            // Debug.Log($"Clicked on card: {BaseCard.Name}");
-        }
-
-        public void OnHoverEnter(PointerInteract pointer)
-        {
-            // Debug.Log($"Hover entered card: {BaseCard.Name}");
-        }
-
-        public void OnHoverExit(PointerInteract pointer)
-        {
-            // Debug.Log($"Hover exited on card: {BaseCard.Name}");
-        }
-
-        public void OnPressed(PointerInteract pointer)
-        {
-            // switch (GameManager.Instance.CurrentMenu)
+            // if (eventData.button == PointerEventData.InputButton.Left)
             // {
-            //     case GameManager.EGameMenu.MainMenu:
-            //         return;
-
-            //     case GameManager.EGameMenu.Ingame:
-            //         IngameSceneView.Instance.CardDetailView.ShowCardDetail(BaseCard);
-            //         return;
-
-            //     default:
-            //         return;
+                OnCardClicked?.Invoke(eventData);
+            // }
+            // else if (eventData.button == PointerEventData.InputButton.Right)
+            // {
+                // OnCardRightClicked?.Invoke();
             // }
         }
     }
