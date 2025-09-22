@@ -28,30 +28,71 @@ namespace CardWar.GameViews
         [SerializeField] private PlayerHandView _playerHandView;
         [SerializeField] private PlayerDeckView _playerDeckView;
         [SerializeField] private BoardView _boardView;
+        [SerializeField] private GraveView _graveView;
         [SerializeField] private CardDetailView _cardDetailView;
         [SerializeField] private CardSelectorView _cardSelectorView;
 
-        private UnityEvent DoCardAnimation = new();
-
         void Start()
         {
+
             _cardDetailView.HideCardDetail();
             _cardSelectorView.HideCardSelector();
             _boardView.Initialize();
         }
 
         #region Draw Card Logic
+        private IEnumerator DrawCardAnimation(CardView cardView, RegionView fromRegion, Action callback = null)
+        {
+            // var animLength = 0.5f;
+            var handOffset = new Vector3(0, 20);
+            var canvasTransform = _mainCanvas.GetComponent<RectTransform>();
+            Vector2 startPos;
+            if (fromRegion is BoardView)
+            {
+                var slotWorlPos = _boardView.GetSlotByCard(cardView.BaseCard).transform.position;
+                var slotScreenPos = Camera.main.WorldToScreenPoint(slotWorlPos);
+                RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                    canvasTransform,
+                    slotScreenPos,
+                    null,
+                    out var canvasPos
+                );
+                startPos = canvasPos;
+            }
+
+            startPos = fromRegion.GetComponent<RectTransform>().position;
+            var endPos = _playerHandView.GetComponent<RectTransform>().position + handOffset;
+            var cardRectTransform = cardView.GetComponent<RectTransform>();
+
+            var sequence = DOTween.Sequence();
+            sequence.Append(cardRectTransform.DOMove(endPos, 0.3f).SetEase(Ease.InOutQuad));
+            sequence.Append(cardRectTransform.DORotateQuaternion(Quaternion.identity, .2f).SetEase(Ease.InOutQuad));
+            sequence.AppendInterval(.2f);
+            sequence.OnComplete(() =>
+            {
+                cardView.transform.rotation = Quaternion.identity;
+                callback?.Invoke();
+            });
+
+            yield return sequence.WaitForCompletion();
+        }
+
         public void DrawCard()
         {
-            // TODO: Check in turn
-            // TODO: Check deck empty
+            // TODO: Check in turn and auto draw
             _playerDeckView.DrawCard(out var drawnCard);
-            _playerHandView.AddCardToHand(drawnCard, out var cardView);
-            cardView?.OnCardClicked.AddListener((e) =>
+            if (drawnCard == null) return;
+
+            StartCoroutine(DrawCardAnimation(drawnCard, _playerDeckView, () =>
+            {
+                _playerHandView.AddCardToHand(drawnCard);
+            }));
+
+            drawnCard.OnCardClicked.AddListener((e) =>
             {
                 if (e.button == InputButton.Right)
                 {
-                    _cardDetailView.ShowCardDetail(cardView.BaseCard);
+                    _cardDetailView.ShowCardDetail(drawnCard.BaseCard);
                 }
             });
         }
@@ -62,15 +103,38 @@ namespace CardWar.GameViews
         {
             var requiredSacrificesCount = mCard.SummonCondiction.Sacrifces.Sum(s => s.Amount);
 
-            var selectedCards = await _cardSelectorView.ShowCardToSelect(_boardView.CardsInRegion, requiredSacrificesCount);
+            var selectedCards = await _cardSelectorView.ShowCardToSelect(_boardView.CardsInRegion,
+                                                                        cards => CheckSacrificeMetRequired(mCard, cards));
             if (selectedCards == null)
             {
-                //TODO: Show warning
-                Debug.LogWarning("Cancel selection");
                 return null;
             }
 
             return selectedCards;
+        }
+
+        private bool CheckSacrificeMetRequired(MonsterCard mCard, List<Card> selectedCards) {
+            if (!selectedCards.All(c => c.GetType() == typeof(MonsterCard))) return false;
+
+            var requiredSac = mCard.SummonCondiction.Sacrifces;
+            var selectedMCards = selectedCards.OfType<MonsterCard>().ToList();
+            foreach (var sac in requiredSac)
+            {
+                var selectedSac = selectedMCards.Where(s => s.Tier == sac.Tier);
+                if (selectedSac.Count() != sac.Amount) return false;
+            }
+
+            return true;
+        }
+        
+        private IEnumerator PlaySacrificeAnimation(List<Card> sacrifices, SlotView selectedSlot)
+        {
+            // var animLength = 0.5f;
+            var sequence = DOTween.Sequence();
+
+            //TODO: Make card move to slot and then be absorbed
+
+            yield return sequence.WaitForCompletion();
         }
         #endregion
 
@@ -80,15 +144,29 @@ namespace CardWar.GameViews
             // TODO: Check in turn
             if (card.CardType == ECardType.Spell)
             {
-                // _boardView.AddCardToSlot(card, availableSlots[0]);
-                // fromRegion.RemoveCard(card);
+                var spellSlot = _boardView.GetSlotsByCardType(ECardType.Spell)[0];
+
+                IEnumerator PlaySpellCard()
+                {
+                    fromRegion.RemoveCard(card);
+                    _boardView.AddCardToSlot(card, spellSlot);
+                    _boardView.HideAllSlots();
+
+                    yield return StartCoroutine(PlayCardAnimation(card, fromRegion, spellSlot));
+                    
+                    // TODO: Add spell to spell queue and remove card from slot. 
+                    // Wait until queue is resolved, play summon model anim, apply effects and then move to grave
+                }
+
+                StartCoroutine(PlaySpellCard());
+
                 return;
             }
 
-            // TODO: Check summon conditions
+            List<Card> sacrificedCards = new();
             if (card is MonsterCard mCard && mCard.SummonCondiction.Sacrifces.Length > 0)
             {
-                var sacrificedCards = await CheckSummonConditions(mCard);
+                sacrificedCards = await CheckSummonConditions(mCard);
                 if (sacrificedCards == null)
                 {
                     Debug.Log("Summon failed or canceled");
@@ -99,10 +177,8 @@ namespace CardWar.GameViews
             List<SlotView> availableSlots = new();
             _boardView.ShowAvailableSlots(card.CardType, out availableSlots);
 
-            IEnumerator onClick(SlotView slot)
+            IEnumerator PlayCardToSlot(SlotView slot)
             {
-                // TODO: Consume sacrifice (if needed)
-
                 fromRegion.RemoveCard(card);
                 _boardView.AddCardToSlot(card, slot);
                 _boardView.HideAllSlots();
@@ -112,26 +188,33 @@ namespace CardWar.GameViews
                 }
 
                 //Do animation
-                // DoCardAnimation?.Invoke();
-                // DoCardAnimation.RemoveAllListeners();
                 yield return StartCoroutine(PlayCardAnimation(card, fromRegion, slot));
 
-                //Spawn model, may be optimize later
-                yield return StartCoroutine(SpawnModelAnimation(card, slot));
+                if (card is MonsterCard mCard && mCard.SummonCondiction.Sacrifces.Length > 0)
+                {
+                    // TODO: Consume sacrifice and do anim
+                    yield return StartCoroutine(PlaySacrificeAnimation(sacrificedCards, slot));
 
-                // Debug.Log($"Card {card.Name} placed in slot at position {slot.transform.position}");
+                    sacrificedCards.ForEach(c =>
+                    {
+                        _boardView.RemoveCard(c);
+                        // _graveView.AddCard(c);
+                    });
+                }
+
+                yield return StartCoroutine(SpawnModelAnimation(card, slot));
             }
             ;
 
-            availableSlots.ForEach(slot => slot.OnSlotClicked.AddListener(() => StartCoroutine(onClick(slot))));
+            availableSlots.ForEach(slot => slot.OnSlotClicked.AddListener(() => StartCoroutine(PlayCardToSlot(slot))));
         }
 
-        public IEnumerator PlayCardAnimation(Card card, RegionView fromRegion, SlotView toSlot)
+        private IEnumerator PlayCardAnimation(Card card, RegionView fromRegion, SlotView toSlot)
         {
             var animLength = 0.3f;
 
-            var canvasTransform = _mainCanvas.gameObject.GetComponent<RectTransform>();
-            var curPosition = fromRegion.gameObject.GetComponent<RectTransform>().position;
+            var canvasTransform = _mainCanvas.GetComponent<RectTransform>();
+            var curPosition = fromRegion.GetComponent<RectTransform>().position;
             var cardView = CardFactory.Instance.CreateCardView(card, curPosition, parent: canvasTransform);
             var cardRectTransform = cardView.GetComponent<RectTransform>();
 
@@ -154,12 +237,13 @@ namespace CardWar.GameViews
             yield return sequence.WaitForCompletion();
         }
 
-        public IEnumerator SpawnModelAnimation(Card card, SlotView slot)
+        private IEnumerator SpawnModelAnimation(Card card, SlotView slot, Action callback = null)
         {
             var animLength = 0.5f;
             var sequence = DOTween.Sequence();
 
-            var model = CardFactory.Instance.CreateCardModel(card, parent: slot.transform).Model;
+            var cardModel = CardFactory.Instance.CreateCardModel(card, parent: slot.transform);
+            var model = cardModel.Model;
             // var model = Instantiate(card.Model, slot.transform);
 
             if (card.CardType == ECardType.Monster)
@@ -169,6 +253,18 @@ namespace CardWar.GameViews
                 sequence.OnComplete(() =>
                 {
                     model.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    cardModel.OnModelClicked.AddListener((e) =>
+                    {
+                        if (e.button == InputButton.Right)
+                        {
+                            _cardDetailView.ShowCardDetail(cardModel.BaseCard);
+                        }
+                        else if (e.button == InputButton.Left)
+                        {
+                            //TODO: Toggle model selection for next action
+                        }
+                    });
+                    callback?.Invoke();
                 });
             }
 

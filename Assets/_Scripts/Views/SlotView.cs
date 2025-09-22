@@ -38,7 +38,6 @@ namespace CardWar.Views
             _spriteRenderer.color = _transparentColor;
         }
 
-        // TODO: TEST
         public void PlaceCard(Card card)
         {
             if (card != null && !IsEmpty) return;

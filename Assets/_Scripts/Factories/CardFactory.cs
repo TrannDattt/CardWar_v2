@@ -38,9 +38,9 @@ namespace CardWar.Factories
             var rectTransform = pooledCardView.GetComponent<RectTransform>();
             rectTransform.SetParent(parent, true);
             if (parent)
-            {
-                rectTransform.position = position == default ? transform.position : position;
-                rectTransform.rotation = rotation == default ? transform.rotation : rotation;
+            { 
+                rectTransform.position = position == default ? parent.position : position;
+                rectTransform.rotation = rotation == default ? parent.rotation : rotation;
             }
             else
             {

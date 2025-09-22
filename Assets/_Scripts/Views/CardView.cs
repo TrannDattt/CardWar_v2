@@ -57,11 +57,6 @@ namespace CardWar.Views
             }
         }
 
-        void Start()
-        {
-            //TODO: Add event to show detail in CardDetailView
-        }
-
         void OnDestroy()
         {
             OnCardClicked.RemoveAllListeners();
@@ -69,14 +64,7 @@ namespace CardWar.Views
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            // if (eventData.button == PointerEventData.InputButton.Left)
-            // {
-                OnCardClicked?.Invoke(eventData);
-            // }
-            // else if (eventData.button == PointerEventData.InputButton.Right)
-            // {
-                // OnCardRightClicked?.Invoke();
-            // }
+            OnCardClicked?.Invoke(eventData);
         }
     }
 }

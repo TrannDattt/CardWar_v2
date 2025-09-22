@@ -1,6 +1,8 @@
 using CardWar.Entities;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 namespace CardWar.Views
 {
@@ -15,6 +17,8 @@ namespace CardWar.Views
         [SerializeField] private Animator _animator;
         [SerializeField] private TextMeshProUGUI _atk;
         [SerializeField] private TextMeshProUGUI _hp;
+        
+        public UnityEvent<PointerEventData> OnModelClicked;
 
          public void SetBaseCard(Card card)
         {
@@ -27,7 +31,7 @@ namespace CardWar.Views
             _meshColl.sharedMesh = null;
             _meshColl.sharedMesh = _meshFilter.mesh;
             _animator.runtimeAnimatorController = card.AnimController;
-            
+
             card.OnCardUpdated.AddListener(UpdateCardDetail);
             if (card is MonsterCard mCard) mCard.OnTakenDamage.AddListener(UpdateCardDetail);
             if (card is ConstructCard cCard) cCard.OnTakenDamage.AddListener(UpdateCardDetail);
@@ -56,6 +60,16 @@ namespace CardWar.Views
                     _hp.gameObject.SetActive(false);
                     break;
             }
+        }
+
+        void OnDestroy()
+        {
+            OnModelClicked.RemoveAllListeners();
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            OnModelClicked?.Invoke(eventData);
         }
     }
 }

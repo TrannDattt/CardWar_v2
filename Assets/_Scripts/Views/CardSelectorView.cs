@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using CardWar.Entities;
 using CardWar.Factories;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace CardWar.Views
 {
@@ -11,32 +14,57 @@ namespace CardWar.Views
     {
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private RectTransform _selectorContent;
+        [SerializeField] private Button _confirmBtn;
 
-        private int _selectableAmount = 1;
         private List<Card> _selectedCards = new();
+        private Func<List<Card>, bool> _checkFunc;
+
         private TaskCompletionSource<List<Card>> _tcs;
 
-        public Task<List<Card>> ShowCardToSelect(List<Card> cards, int requiredAmount)
+        private readonly Dictionary<CardView, UnityAction<PointerEventData>> _cardClickListeners = new();
+
+        public Task<List<Card>> ShowCardToSelect(List<Card> cards, Func<List<Card>, bool> checkFunc = null)
         {
-            _selectableAmount = requiredAmount;
+            _checkFunc = checkFunc;
             _selectedCards.Clear();
             _tcs = new();
+            ToggleConfirmBtn();
 
             foreach (var c in cards)
             {
                 var cardView = CardFactory.Instance.CreateCardView(c, parent: _selectorContent);
-                cardView.OnCardClicked.AddListener((_) => HandleCardViewSelected(cardView));
+                void listener(PointerEventData _)
+                {
+                    HandleCardViewSelected(cardView);
+                    ToggleConfirmBtn();
+                }
+
+                _cardClickListeners[cardView] = listener;
+                cardView.OnCardClicked.AddListener(listener);
             }
 
-            _canvasGroup.alpha = 1;
+            gameObject.SetActive(true);
 
             return _tcs.Task;
         }
 
+        private void ToggleConfirmBtn()
+        {
+            // Debug.Log($"1 Checking selection: {_selectedCards.Count} cards selected");
+            if (_checkFunc == null) return;
+            Debug.Log($"2 Checking selection: {_selectedCards.Count} cards selected");
+
+            if (!_checkFunc(_selectedCards))
+            {
+                _confirmBtn.interactable = false;
+                return;
+            }    
+            _confirmBtn.interactable = true;
+        }
+
         public void OnConfirmSelection()
         {
-            //TODO: Check tier and amount
-            if (_selectedCards.Count != _selectableAmount)
+            if (_checkFunc != null && !_checkFunc(_selectedCards))
             {
                 Debug.LogWarning("Selection not met the requirement");
                 return;
@@ -55,13 +83,17 @@ namespace CardWar.Views
         public void HideCardSelector()
         {
             _selectedCards.Clear();
-            _canvasGroup.alpha = 0;
+            gameObject.SetActive(false);
 
             foreach (Transform child in _selectorContent)
             {
                 if (child.TryGetComponent<CardView>(out var cardView))
                 {
-                    cardView.OnCardClicked.RemoveListener((_) => HandleCardViewSelected(cardView));
+                    if (_cardClickListeners.TryGetValue(cardView, out var listener))
+                    {
+                        cardView.OnCardClicked.RemoveListener(listener);
+                        _cardClickListeners.Remove(cardView);
+                    }
                     CardFactory.Instance.RecycleCardView(cardView);
                 }
             }

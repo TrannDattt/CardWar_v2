@@ -12,7 +12,6 @@ namespace CardWar.Views
         [SerializeField] private List<SlotView> _constructSlots;
         [SerializeField] private SlotView _spellSlot;
 
-        // TODO: Init board
         public void Initialize()
         {
             _monsterSlots.ForEach(slot => slot.PrepareSlot());
@@ -61,6 +60,24 @@ namespace CardWar.Views
             slot.HideSlot();
         }
 
+        public SlotView GetSlotByCard(Card card)
+        {
+            if (card == null) return null;
+            return _monsterSlots.Concat(_constructSlots).Concat(new[] { _spellSlot })
+                .FirstOrDefault(slot => !slot.IsEmpty && slot.CardInSlot == card);
+        }
+
+        public List<SlotView> GetSlotsByCardType(ECardType cardType)
+        {
+            return cardType switch
+            {
+                ECardType.Monster => _monsterSlots,
+                ECardType.Construct => _constructSlots,
+                ECardType.Spell => new List<SlotView> { _spellSlot },
+                _ => new List<SlotView>()
+            };
+        }
+
         protected override List<Card> GetCardsInRegion()
         {
             var cards = new List<Card>();
@@ -73,24 +90,6 @@ namespace CardWar.Views
         public override void RemoveCard(Card card)
         {
             // throw new System.NotImplementedException();
-        }
-    }
-
-    public class GraveView : RegionView
-    {
-        // public override void AddCard(Card card)
-        // {
-        //     throw new System.NotImplementedException();
-        // }
-
-        public override void RemoveCard(Card card)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        protected override List<Card> GetCardsInRegion()
-        {
-            return new List<Card>();
         }
     }
 }

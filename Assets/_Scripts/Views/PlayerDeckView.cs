@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using CardWar.Datas;
 using CardWar.Entities;
+using CardWar.Factories;
 using UnityEngine;
 
 namespace CardWar.Views
@@ -13,6 +14,7 @@ namespace CardWar.Views
         ////////////////////////
 
         private List<Card> _cardsInDeck = new();
+        private List<Card> _cardsInDeckArchived; // Refer to the original deck
 
         public void CreateNewDeck(CardData[] cardDatas)
         {
@@ -34,9 +36,11 @@ namespace CardWar.Views
                         break;
                 }
             }
+
+            _cardsInDeckArchived = new(_cardsInDeck);
         }
 
-        public void DrawCard(out Card drawnCard)
+        public void DrawCard(out CardView drawnCard, bool drawOnTop = true)
         {
             if (_cardsInDeck.Count == 0)
             {
@@ -44,8 +48,9 @@ namespace CardWar.Views
                 return;
             }
 
-            drawnCard = _cardsInDeck[0];
-            _cardsInDeck.RemoveAt(0);
+            var cardIndex = drawOnTop ? 0 : Random.Range(0, _cardsInDeck.Count);
+            drawnCard = CardFactory.Instance.CreateCardView(_cardsInDeck[cardIndex], rotation: Quaternion.Euler(0, 180, 0), parent: GetComponent<RectTransform>());
+            RemoveCard(_cardsInDeck[cardIndex]);
         }
 
         public void ShuffleDeck()
@@ -73,7 +78,12 @@ namespace CardWar.Views
 
         public override void RemoveCard(Card card)
         {
-            // throw new System.NotImplementedException();
+            if (!_cardsInDeck.Contains(card))
+            {
+                return;
+            }
+
+            _cardsInDeck.Remove(card);
         }
     }
 }

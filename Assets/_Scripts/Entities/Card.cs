@@ -69,7 +69,7 @@ namespace CardWar.Entities
         public void TakeDamage(int amount)
         {
             _bonusHp = Mathf.Clamp(_bonusHp - amount, -_mData.Hp, int.MaxValue);
-            //TODO: Do thing if Hp falls to 0
+            //TODO: Move card to gave if Hp falls to 0
 
             OnTakenDamage?.Invoke();
         }
@@ -101,7 +101,7 @@ namespace CardWar.Entities
         public void TakeDamage(int amount)
         {
             _bonusHp = Mathf.Clamp(_bonusHp - amount, -_cData.Hp, int.MaxValue);
-            //TODO: Do thing if Hp falls to 0
+            //TODO: Banish card if Hp falls to 0
 
             OnTakenDamage?.Invoke();
         }

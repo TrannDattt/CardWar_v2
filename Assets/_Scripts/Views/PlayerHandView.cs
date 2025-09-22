@@ -17,17 +17,17 @@ namespace CardWar.Views
 
         public CardView SelectedCardView { get; private set; }
 
-        public void AddCardToHand(Card card, out CardView cardView)
+        public void AddCardToHand(CardView cardView)
         {
-            if (card == null)
+            if (cardView == null)
             {
-                cardView = null;
                 return;
             }
 
-            cardView = CardFactory.Instance.CreateCardView(card, parent: _handContent);
-            var localCardView = cardView;
-            localCardView.OnCardClicked.AddListener((_) => TrackSelectedCard(localCardView));
+            // cardView = CardFactory.Instance.CreateCardView(card, parent: _handContent);
+            cardView.transform.SetParent(_handContent, false);
+            // var localCardView = cardView;
+            cardView.OnCardClicked.AddListener((_) => TrackSelectedCard(cardView));
 
             // Adjust layout if needed
             // LayoutRebuilder.ForceRebuildLayoutImmediate(_handContent);
