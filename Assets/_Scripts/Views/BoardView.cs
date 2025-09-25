@@ -89,7 +89,9 @@ namespace CardWar.Views
 
         public override void RemoveCard(Card card)
         {
-            // throw new System.NotImplementedException();
+            if (card == null) return;
+            var slot = GetSlotByCard(card);
+            slot.RemoveCard();
         }
     }
 }

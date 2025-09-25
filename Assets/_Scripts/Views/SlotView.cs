@@ -45,6 +45,16 @@ namespace CardWar.Views
             // HideSlot();
         }
 
+        public void RemoveCard()
+        {
+            CardInSlot = null;
+            var model = GetComponentInChildren<CardModelView>();
+            if (model != null)
+            {
+                CardFactory.Instance.RecycleCardModel(model);
+            }
+        }
+
         void Awake()
         {
             _spriteRenderer = GetComponent<SpriteRenderer>();

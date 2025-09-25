@@ -50,9 +50,7 @@ namespace CardWar.Views
 
         private void ToggleConfirmBtn()
         {
-            // Debug.Log($"1 Checking selection: {_selectedCards.Count} cards selected");
             if (_checkFunc == null) return;
-            Debug.Log($"2 Checking selection: {_selectedCards.Count} cards selected");
 
             if (!_checkFunc(_selectedCards))
             {

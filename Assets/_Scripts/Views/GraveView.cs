@@ -5,19 +5,30 @@ namespace CardWar.Views
 {
     public class GraveView : RegionView
     {
-        // public override void AddCard(Card card)
-        // {
-        //     throw new System.NotImplementedException();
-        // }
+        private List<Card> _cardsInGrave = new();
+        private List<Card> _banishedCards = new();
+
+        public void AddCardToGrave(Card card)
+        {
+            if (card == null) return;
+            _cardsInGrave.Add(card);
+        }
+
+        public void BanishCard(Card card)
+        {
+            if (card == null) return;
+            _banishedCards.Add(card);
+        }
 
         public override void RemoveCard(Card card)
         {
-            throw new System.NotImplementedException();
+            if (card == null || !_cardsInGrave.Contains(card)) return;
+            _cardsInGrave.Remove(card);
         }
 
         protected override List<Card> GetCardsInRegion()
         {
-            return new List<Card>();
+            return _cardsInGrave;
         }
     }
 }

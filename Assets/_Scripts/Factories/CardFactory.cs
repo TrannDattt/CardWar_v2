@@ -11,6 +11,8 @@ namespace CardWar.Factories
 
     public class CardFactory : Singleton<CardFactory>
     {
+        [SerializeField] private Canvas _mainCanvas;
+
         [SerializeField] private CardView _cardViewPrefab;
         [SerializeField] private CardModelView _cardModelViewPrefab;
 
@@ -18,7 +20,7 @@ namespace CardWar.Factories
         private Queue<CardModelView> _cardModelPool = new();
 
         #region Spawn Card View
-        public CardView CreateCardView(Card card, Vector3 position = default, Quaternion rotation = default, RectTransform parent = null)
+        public CardView CreateCardView(Card card, Vector3 position = default, Quaternion rotation = default, RectTransform parent = default)
         {
             if (card == null)
             {
@@ -26,9 +28,10 @@ namespace CardWar.Factories
                 return null;
             }
 
+            var realParent = parent == default ? _mainCanvas.GetComponent<RectTransform>() : parent;
             if (_cardViewPool.Count == 0)
             {
-                var cardView = Instantiate(_cardViewPrefab, parent, true);
+                var cardView = Instantiate(_cardViewPrefab, realParent, true);
                 _cardViewPool.Enqueue(cardView);
             }
 
@@ -36,17 +39,9 @@ namespace CardWar.Factories
             pooledCardView.SetBaseCard(card);
 
             var rectTransform = pooledCardView.GetComponent<RectTransform>();
-            rectTransform.SetParent(parent, true);
-            if (parent)
-            { 
-                rectTransform.position = position == default ? parent.position : position;
-                rectTransform.rotation = rotation == default ? parent.rotation : rotation;
-            }
-            else
-            {
-                rectTransform.position = position;
-                rectTransform.rotation = rotation == default ? Quaternion.identity : rotation;
-            }
+            rectTransform.SetParent(realParent, true);
+            rectTransform.position = position == default ? realParent.position : position;
+            rectTransform.rotation = rotation == default ? realParent.rotation : rotation;
             rectTransform.localScale = Vector3.one;
 
             pooledCardView.gameObject.SetActive(true);
