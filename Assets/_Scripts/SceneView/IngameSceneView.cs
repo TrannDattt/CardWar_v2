@@ -129,7 +129,8 @@ namespace CardWar.GameViews
             return selectedCards;
         }
 
-        private bool CheckSacrificeMetRequired(MonsterCard mCard, List<Card> selectedCards) {
+        private bool CheckSacrificeMetRequired(MonsterCard mCard, List<Card> selectedCards)
+        {
             if (!selectedCards.All(c => c.GetType() == typeof(MonsterCard))) return false;
 
             var requiredSac = mCard.SummonCondiction.Sacrifces;
@@ -151,19 +152,12 @@ namespace CardWar.GameViews
                 _graveView.AddCardToGrave(c);
             });
         }
-        
-        private IEnumerator PlaySacrificeAnimation(List<Card> sacrifices, SlotView selectedSlot, Action callback = null)
+
+        private IEnumerator PlaySacrificeAnimation(List<Card> sacrifices, Action callback = null)
         {
             // var animLength = 0.5f;
             var canvasTransform = _mainCanvas.GetComponent<RectTransform>();
-            var toSlotWorldPosition = selectedSlot.transform.position;
-            var toSlotScreenPosition = Camera.main.WorldToScreenPoint(toSlotWorldPosition);
-            RectTransformUtility.ScreenPointToWorldPointInRectangle(
-                canvasTransform,
-                toSlotScreenPosition,
-                null,
-                out var toSlotCanvasPosition
-            );
+            var toPos = _graveView.GetComponent<RectTransform>().position;
 
             var sequence = DOTween.Sequence();
             sacrifices.ForEach(s =>
@@ -179,9 +173,10 @@ namespace CardWar.GameViews
                 );
                 var cardView = CardFactory.Instance.CreateCardView(s, fromSlotCanvasPosition);
                 var cardRectTransform = cardView.GetComponent<RectTransform>();
-                sequence.Append(cardRectTransform.DOMove(toSlotScreenPosition, .3f).SetEase(Ease.InOutQuad));
-                sequence.Join(cardRectTransform.DOScale(.1f * Vector3.one, .15f).SetEase(Ease.InOutQuad).SetDelay(.15f));
-                sequence.AppendInterval(.1f);
+                sequence.Append(cardRectTransform.DOMove(toPos, .3f).SetEase(Ease.InOutQuad));
+                // sequence.Join(cardRectTransform.DOScale(.1f * Vector3.one, .15f).SetEase(Ease.InOutQuad).SetDelay(.15f));
+                sequence.AppendInterval(.5f);
+                //TODO: Add anim for grave effect
                 sequence.AppendCallback(() =>
                 {
                     CardFactory.Instance.RecycleCardView(cardView);
@@ -212,7 +207,7 @@ namespace CardWar.GameViews
                     _boardView.HideAllSlots();
 
                     yield return StartCoroutine(PlayCardAnimation(card, fromRegion, spellSlot));
-                    
+
                     // TODO: Add spell to spell queue and remove card from slot. 
                     // Wait until queue is resolved, play summon model anim, apply effects and then move to grave
                 }
@@ -247,18 +242,15 @@ namespace CardWar.GameViews
                 }
 
                 //Do animation
-                yield return StartCoroutine(PlayCardAnimation(card, fromRegion, slot, () =>
+                if (card is MonsterCard mCard && mCard.SummonCondiction.Sacrifces.Length > 0)
                 {
-                    if (card is MonsterCard mCard && mCard.SummonCondiction.Sacrifces.Length > 0)
+                    yield return StartCoroutine(PlaySacrificeAnimation(sacrificeCopy, () =>
                     {
-                        StartCoroutine(PlaySacrificeAnimation(sacrificeCopy, slot, () =>
-                        {
-                            DoSacrifice(sacrificeCopy);
-                        }));
-                    }
-                }));
+                        DoSacrifice(sacrificeCopy);
+                    }));
+                }
 
-
+                yield return StartCoroutine(PlayCardAnimation(card, fromRegion, slot));
                 yield return StartCoroutine(SpawnModelAnimation(card, slot));
             }
             ;
@@ -290,6 +282,8 @@ namespace CardWar.GameViews
             sequence.OnComplete(() =>
             {
                 callback?.Invoke();
+                //TODO: Wait until finish sacrifice animation then recycle
+                // yield return new WaitForSeconds(.1f);
                 CardFactory.Instance.RecycleCardView(cardView);
             });
             yield return sequence.WaitForCompletion();
@@ -337,6 +331,10 @@ namespace CardWar.GameViews
             if (_playerHandView.SelectedCardView == null) return;
             PlayCard(_playerHandView.SelectedCardView.BaseCard, _playerHandView);
         }
+        #endregion
+
+        #region Card Attack Logic
+
         #endregion
     }
 }

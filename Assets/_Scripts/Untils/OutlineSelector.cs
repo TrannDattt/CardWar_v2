@@ -1,75 +1,89 @@
+using System.Collections.Generic;
+using CardWar.Interfaces;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace CardWar.Untils
 {
     public class OutlineSelector : MonoBehaviour
     {
+        [SerializeField] private Canvas _mainCanvas;
+        private GraphicRaycaster _raycaster;
+        private EventSystem _eventSystem;
+        private Camera _mainCam;
+
         private Transform _highlight;
-        private Outline HighlightOutline => _highlight.gameObject.GetComponent<Outline>();
+        private QuickOutline HighlightOutline => _highlight.gameObject.GetComponent<QuickOutline>();
         private Transform _selection;
-        private Outline SelectionOutline => _selection.gameObject.GetComponent<Outline>();
-        private RaycastHit _raycastHit;
+        private QuickOutline SelectionOutline => _selection.gameObject.GetComponent<QuickOutline>();
 
-        // void Start()
-        // {
-        //     if (!_highlight.gameObject.TryGetComponent(out _highlightOutline))
-        //     {
-        //         _highlightOutline = _highlight.gameObject.AddComponent<Outline>();
-        //     }
-        // }
+        private Transform _uiHighlight;
+        private QuickOutline UIHighlightOutline => _uiHighlight.gameObject.GetComponent<QuickOutline>();
+        private Transform _uiSelection;
+        private QuickOutline UISelectionOutline => _uiSelection.gameObject.GetComponent<QuickOutline>();
 
-        void Update()
+        private void CheckHighlightObject()
         {
-            if (_highlight)
+            var ray = _mainCam.ScreenPointToRay(Input.mousePosition);
+            Debug.DrawRay(ray.origin, ray.direction * 2000, Color.red);
+            if (Physics.Raycast(ray, out var raycastHit, Mathf.Infinity, LayerMask.GetMask("Selector Target")))
+            // if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out _raycastHit))
             {
-                // if (HighlightOutline == null)
-                // {
-                //     _highlight.gameObject.AddComponent<Outline>();
-                // }
-                HighlightOutline.enabled = false;
-                _highlight = null;
-            }
-
-            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out _raycastHit))
-            {
-                _highlight = _raycastHit.transform;
-                Debug.Log($"Highlight: {_highlight.gameObject.name}");
-                if (_highlight.CompareTag("Selectable") && _highlight != _selection)
+                if (_highlight != raycastHit.transform && _selection != raycastHit.transform)
                 {
+                    _highlight = raycastHit.transform;
+                    Debug.Log($"Highlight: {_highlight.gameObject.name}");
                     if (HighlightOutline == null)
                     {
-                        _highlight.gameObject.AddComponent<Outline>();
+                        _highlight.gameObject.AddComponent<QuickOutline>();
                     }
                     HighlightOutline.enabled = true;
                     HighlightOutline.OutlineColor = new(.5f, .9f, .2f);
                     HighlightOutline.OutlineWidth = 7;
                 }
-                else
-                {
-                    _highlight = null;
-                }
             }
+            else if (_highlight)
+            {
+                HighlightOutline.enabled = false;
+                _highlight = null;
+            }
+        }
+
+        private void CheckSelectObject()
+        {
+            if (_highlight && _selection != _highlight)
+            {
+                if (_selection)
+                {
+                    SelectionOutline.enabled = false;
+                }
+                _selection = _highlight;
+                Debug.Log($"Select: {_selection.gameObject.name}");
+                SelectionOutline.enabled = true;
+                _highlight = null;
+            }
+            else if (!_highlight && _selection)
+            {
+                SelectionOutline.enabled = false;
+                _selection = null;
+            }
+        }
+
+        void Start()
+        {
+            _mainCam = Camera.main;
+            _raycaster = _mainCanvas.GetComponent<GraphicRaycaster>();
+            _eventSystem = EventSystem.current;
+        }
+
+        void Update()
+        {
+            CheckHighlightObject();
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                if (_highlight)
-                {
-                    if (_selection)
-                    {
-                        SelectionOutline.enabled = false;
-                    }
-                    _selection = _raycastHit.transform;
-                Debug.Log($"Select: {_selection.gameObject.name}");
-                    SelectionOutline.enabled = true;
-                    _highlight = null;
-                }
-                else if (_selection)
-                {
-                    SelectionOutline.enabled = false;
-                    _selection = null;
-                }
+                CheckSelectObject();
             }
         }
     }

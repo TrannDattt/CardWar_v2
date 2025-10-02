@@ -57,8 +57,12 @@ namespace CardWar.Views
 
         private void TrackSelectedCard(CardView cardView)
         {
-            _selectFrame.gameObject.SetActive(true);
-            _selectFrame.position = cardView.GetComponent<RectTransform>().position;
+            // _selectFrame.gameObject.SetActive(true);
+            // _selectFrame.position = cardView.GetComponent<RectTransform>().position;
+            if (SelectedCardView && SelectedCardView != cardView)
+            {
+                SelectedCardView.DeselectCard();
+            }
             SelectedCardView = cardView;
         }
 

@@ -1,4 +1,5 @@
 using CardWar.Entities;
+using CardWar.Interfaces;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,7 +8,7 @@ using UnityEngine.UI;
 
 namespace CardWar.Views
 {
-    public class CardView : MonoBehaviour, IPointerClickHandler
+    public class CardView : MonoBehaviour, ISelectorTarget, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         public Card BaseCard { get; private set; } = null;
 
@@ -16,11 +17,16 @@ namespace CardWar.Views
         [SerializeField] private Image _image;
         [SerializeField] private TextMeshProUGUI _atk;
         [SerializeField] private TextMeshProUGUI _hp;
+        [SerializeField] private Outline _outline;
+
+        private bool _isSelected;
 
         public UnityEvent<PointerEventData> OnCardClicked;
 
         public void SetBaseCard(Card card)
         {
+            _isSelected = false;
+            _outline.enabled = false;
             if (card == null) Debug.LogWarning("No card was set");
 
             BaseCard = card;
@@ -57,6 +63,18 @@ namespace CardWar.Views
             }
         }
 
+        public void SelectCard()
+        {
+            _outline.enabled = true;
+            _isSelected = true;
+        }
+
+        public void DeselectCard()
+        {
+            _outline.enabled = false;
+            _isSelected = false;
+        }
+
         void OnDestroy()
         {
             OnCardClicked.RemoveAllListeners();
@@ -64,7 +82,26 @@ namespace CardWar.Views
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            if (!_isSelected)
+            {
+                SelectCard();
+            }
+            else
+            {
+                DeselectCard();
+            }
             OnCardClicked?.Invoke(eventData);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (_isSelected) return;
+            _outline.enabled = false;
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            _outline.enabled = true;
         }
     }
 }

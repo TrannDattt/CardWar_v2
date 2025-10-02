@@ -112,7 +112,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4630316205804646617}
   - component: {fileID: -3379633128835421830}
-  m_Layer: 0
+  - component: {fileID: 2763688927182131093}
+  m_Layer: 10
   m_Name: CardModel
   m_TagString: Selectable
   m_Icon: {fileID: 0}
@@ -151,10 +152,34 @@ MonoBehaviour:
   <Model>k__BackingField: {fileID: 9127574728019660762}
   _meshFilter: {fileID: 4179792109971200961}
   _meshRend: {fileID: 5960453588925166486}
-  _meshColl: {fileID: 8539872761242194474}
+  _meshColl: {fileID: 0}
   _animator: {fileID: 2932947141180174263}
   _atk: {fileID: 7704251196493814188}
   _hp: {fileID: 4016214048055174777}
+  OnModelClicked:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!65 &2763688927182131093
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6150830793503936147}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5, y: 5, z: 1}
+  m_Center: {x: 0, y: 2.5, z: 0}
 --- !u!1 &7900171553546856009
 GameObject:
   m_ObjectHideFlags: 0
@@ -502,7 +527,6 @@ GameObject:
   - component: {fileID: 4822675201126724747}
   - component: {fileID: 4179792109971200961}
   - component: {fileID: 5960453588925166486}
-  - component: {fileID: 8539872761242194474}
   - component: {fileID: 2932947141180174263}
   m_Layer: 0
   m_Name: Model
@@ -579,28 +603,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8539872761242194474
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9127574728019660762}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!95 &2932947141180174263
 Animator:
   serializedVersion: 7

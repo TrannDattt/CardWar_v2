@@ -1,4 +1,5 @@
 using CardWar.Entities;
+using CardWar.Interfaces;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,14 +7,13 @@ using UnityEngine.EventSystems;
 
 namespace CardWar.Views
 {
-    public class CardModelView : MonoBehaviour
+    public class CardModelView : MonoBehaviour, ISelectorTarget
     {
         public Card BaseCard { get; private set; }
 
         [field: SerializeField] public GameObject Model { get; private set; }
         [SerializeField] private MeshFilter _meshFilter;
         [SerializeField] private MeshRenderer _meshRend;
-        [SerializeField] private MeshCollider _meshColl;
         [SerializeField] private Animator _animator;
         [SerializeField] private TextMeshProUGUI _atk;
         [SerializeField] private TextMeshProUGUI _hp;
@@ -28,8 +28,6 @@ namespace CardWar.Views
 
             _meshFilter.mesh = card.Mesh;
             _meshFilter.mesh.RecalculateBounds();
-            _meshColl.sharedMesh = null;
-            _meshColl.sharedMesh = _meshFilter.mesh;
             _animator.runtimeAnimatorController = card.AnimController;
 
             card.OnCardUpdated.AddListener(UpdateCardDetail);

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4304695692107045151}
   - component: {fileID: 9218036180186223321}
   - component: {fileID: 6850424574234614534}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7707482226218297212}
   - component: {fileID: 3964518436920048345}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Stat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 3976812361641694162}
   - component: {fileID: 5901965055801137043}
   - component: {fileID: 8611199691897715423}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Detail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -288,7 +288,7 @@ GameObject:
   - component: {fileID: 1397923712321212786}
   - component: {fileID: 4605920164477766393}
   - component: {fileID: 2568839009821722559}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: ATK
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -423,7 +423,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4894658630813965965}
   - component: {fileID: 5663582123975142133}
+  - component: {fileID: 3623108409573461798}
+  - component: {fileID: 382007969258180932}
   - component: {fileID: 9176990349054576381}
+  - component: {fileID: 4390253066692997298}
   m_Layer: 10
   m_Name: CardView
   m_TagString: Selectable
@@ -469,6 +472,44 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!222 &3623108409573461798
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7614901537292031306}
+  m_CullTransparentMesh: 1
+--- !u!114 &382007969258180932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7614901537292031306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &9176990349054576381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -486,9 +527,25 @@ MonoBehaviour:
   _image: {fileID: 3636698726872313929}
   _atk: {fileID: 2568839009821722559}
   _hp: {fileID: 5589014998490104897}
+  _outline: {fileID: 4390253066692997298}
   OnCardClicked:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4390253066692997298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7614901537292031306}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.4541929, g: 0.97735846, b: 0.44810957, a: 0.5176471}
+  m_EffectDistance: {x: 5, y: 5}
+  m_UseGraphicAlpha: 1
 --- !u!1 &8017121824645132673
 GameObject:
   m_ObjectHideFlags: 0
@@ -500,7 +557,7 @@ GameObject:
   - component: {fileID: 665494292624245180}
   - component: {fileID: 332170754767957921}
   - component: {fileID: 5268354427850193422}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Front
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -575,8 +632,8 @@ GameObject:
   - component: {fileID: 3068730067746477089}
   - component: {fileID: 866499222978867980}
   - component: {fileID: 6290685320699830764}
-  - component: {fileID: 2988791248019259100}
-  m_Layer: 10
+  - component: {fileID: 8625025039047745501}
+  m_Layer: 0
   m_Name: SelectFrame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -600,7 +657,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0.19999999, y: 0.20000005}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &866499222978867980
 CanvasRenderer:
@@ -623,7 +680,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: aee6b84ec9777ad4c8ff122295bb9155, type: 2}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.003921569}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -640,19 +697,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2988791248019259100
+--- !u!114 &8625025039047745501
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8702468234712356282}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ShowMaskGraphic: 1
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 39.1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &8791188182262155497
 GameObject:
   m_ObjectHideFlags: 0
@@ -664,7 +723,7 @@ GameObject:
   - component: {fileID: 7252451967974161271}
   - component: {fileID: 4271726727705358611}
   - component: {fileID: 5589014998490104897}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: HP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -800,7 +859,7 @@ GameObject:
   - component: {fileID: 7593870386718301865}
   - component: {fileID: 7387299924576197308}
   - component: {fileID: 3636698726872313929}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -875,7 +934,7 @@ GameObject:
   - component: {fileID: 4019113751781030716}
   - component: {fileID: 3548235085444828495}
   - component: {fileID: 5104281094596283681}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
