@@ -58,7 +58,7 @@ namespace CardWar.Entities
         private int _bonusHp;
 
         public UnityEvent OnTakenDamage { get; set; } = new();
-
+        public UnityEvent OnDeath { get; set; } = new();
 
         public MonsterCard(CardData data) : base(data)
         {
@@ -66,12 +66,26 @@ namespace CardWar.Entities
             _bonusHp = 0;
         }
 
+        public void DoAttack(IDamagable target)
+        {
+            if (target == null) return;
+
+            target.TakeDamage(Atk);
+        }
+
         public void TakeDamage(int amount)
         {
             _bonusHp = Mathf.Clamp(_bonusHp - amount, -_mData.Hp, int.MaxValue);
-            //TODO: Move card to gave if Hp falls to 0
 
             OnTakenDamage?.Invoke();
+        }
+
+        public void Die()
+        {
+            OnDeath?.Invoke();
+
+            OnTakenDamage.RemoveAllListeners();
+            OnCardUpdated.RemoveAllListeners();
         }
     }
 
@@ -92,6 +106,7 @@ namespace CardWar.Entities
         private int _bonusHp;
 
         public UnityEvent OnTakenDamage { get; set; } = new();
+        public UnityEvent OnDeath { get; set; } = new();
 
         public ConstructCard(CardData data) : base(data)
         {
@@ -101,9 +116,13 @@ namespace CardWar.Entities
         public void TakeDamage(int amount)
         {
             _bonusHp = Mathf.Clamp(_bonusHp - amount, -_cData.Hp, int.MaxValue);
-            //TODO: Banish card if Hp falls to 0
 
             OnTakenDamage?.Invoke();
+        }
+
+        public void Die()
+        {
+            OnDeath?.Invoke();
         }
     }
 }

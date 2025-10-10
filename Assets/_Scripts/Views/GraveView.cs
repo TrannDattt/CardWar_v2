@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using CardWar.Entities;
+using CardWar.Enums;
 
 namespace CardWar.Views
 {
@@ -8,7 +9,7 @@ namespace CardWar.Views
         private List<Card> _cardsInGrave = new();
         private List<Card> _banishedCards = new();
 
-        public void AddCardToGrave(Card card)
+        public void AddCardToGrave(Card card, EPlayerTarget owner)
         {
             if (card == null) return;
             _cardsInGrave.Add(card);

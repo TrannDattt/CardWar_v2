@@ -10,6 +10,7 @@ namespace CardWar.Views
 {
     public class CardView : MonoBehaviour, ISelectorTarget, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
+        //TODO: Make card a 3D object with wworld space canvas
         public Card BaseCard { get; private set; } = null;
 
         [SerializeField] private TextMeshProUGUI _name;
@@ -31,8 +32,11 @@ namespace CardWar.Views
 
             BaseCard = card;
             card.OnCardUpdated.AddListener(UpdateCardDetail);
-            if (card is MonsterCard mCard) mCard.OnTakenDamage.AddListener(UpdateCardDetail);
-            if (card is ConstructCard cCard) cCard.OnTakenDamage.AddListener(UpdateCardDetail);
+            if (card is IDamagable damagable)
+            {
+                damagable.OnTakenDamage.AddListener(UpdateCardDetail);
+                // mCard.OnDeath.AddListener(() => Destroy(gameObject));
+            }
 
             UpdateCardDetail();
         }

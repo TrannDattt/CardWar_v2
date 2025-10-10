@@ -45,6 +45,7 @@ namespace CardWar.Views
             if (_cardsInDeck.Count == 0)
             {
                 drawnCard = null;
+                Debug.Log($"No card in {name}");
                 return;
             }
 
@@ -65,7 +66,7 @@ namespace CardWar.Views
         }
 
         // TODO: TEST//////////////////
-        private void Start()
+        private void Awake()
         {
             CreateNewDeck(_testDatas);
         }

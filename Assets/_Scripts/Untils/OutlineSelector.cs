@@ -33,7 +33,7 @@ namespace CardWar.Untils
                 if (_highlight != raycastHit.transform && _selection != raycastHit.transform)
                 {
                     _highlight = raycastHit.transform;
-                    Debug.Log($"Highlight: {_highlight.gameObject.name}");
+                    // Debug.Log($"Highlight: {_highlight.gameObject.name}");
                     if (HighlightOutline == null)
                     {
                         _highlight.gameObject.AddComponent<QuickOutline>();
@@ -59,7 +59,7 @@ namespace CardWar.Untils
                     SelectionOutline.enabled = false;
                 }
                 _selection = _highlight;
-                Debug.Log($"Select: {_selection.gameObject.name}");
+                // Debug.Log($"Select: {_selection.gameObject.name}");
                 SelectionOutline.enabled = true;
                 _highlight = null;
             }

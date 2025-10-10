@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CardWar.Entities;
 using CardWar.Factories;
@@ -23,9 +24,9 @@ namespace CardWar.Views
 
         private readonly Dictionary<CardView, UnityAction<PointerEventData>> _cardClickListeners = new();
 
-        public Task<List<Card>> ShowCardToSelect(List<Card> cards, Func<List<Card>, bool> checkFunc = null)
+        public Task<List<Card>> ShowCardToSelect(List<Card> cards, int amountRequired = 1, Func<List<Card>, bool> checkFunc = null)
         {
-            _checkFunc = checkFunc;
+            _checkFunc = checkFunc ?? (cardsList => DefaultCheckFunc(amountRequired));
             _selectedCards.Clear();
             _tcs = new();
             ToggleConfirmBtn();
@@ -47,6 +48,8 @@ namespace CardWar.Views
 
             return _tcs.Task;
         }
+        
+        private bool DefaultCheckFunc(int amountRequired) => _selectedCards.Count == amountRequired;
 
         private void ToggleConfirmBtn()
         {
@@ -56,7 +59,7 @@ namespace CardWar.Views
             {
                 _confirmBtn.interactable = false;
                 return;
-            }    
+            }
             _confirmBtn.interactable = true;
         }
 
@@ -80,10 +83,9 @@ namespace CardWar.Views
 
         public void HideCardSelector()
         {
-            _selectedCards.Clear();
-            gameObject.SetActive(false);
+            var children = _selectorContent.Cast<Transform>().ToList();
 
-            foreach (Transform child in _selectorContent)
+            foreach (Transform child in children)
             {
                 if (child.TryGetComponent<CardView>(out var cardView))
                 {
@@ -95,6 +97,9 @@ namespace CardWar.Views
                     CardFactory.Instance.RecycleCardView(cardView);
                 }
             }
+
+            _selectedCards.Clear();
+            gameObject.SetActive(false);
         }
 
         private void HandleCardViewSelected(CardView cardView)

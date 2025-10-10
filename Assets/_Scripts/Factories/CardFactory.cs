@@ -55,6 +55,7 @@ namespace CardWar.Factories
             // cardView.SetBaseCard(null);
             // Debug.Log($"Recycling card {cardView.BaseCard?.Name}");
             cardView.GetComponent<RectTransform>().SetParent(transform, true);
+            cardView.OnCardClicked.RemoveAllListeners();
             _cardViewPool.Enqueue(cardView);
             cardView.gameObject.SetActive(false);
         }
@@ -94,15 +95,15 @@ namespace CardWar.Factories
             return pooledCardModel;
         }
 
-        
-
+        //TODO: Recycle working fine when attack but not when sacrifice ???
         public void RecycleCardModel(CardModelView cardModel)
         {
             if (cardModel == null) return;
 
             // cardView.SetBaseCard(null);
             // Debug.Log($"Recycling card {cardView.BaseCard?.Name}");
-            cardModel.transform.SetParent(null, true);
+            cardModel.transform.SetParent(transform, true);
+            cardModel.OnModelClicked.RemoveAllListeners();
             _cardModelPool.Enqueue(cardModel);
             cardModel.gameObject.SetActive(false);
         }

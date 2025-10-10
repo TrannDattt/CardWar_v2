@@ -1,4 +1,5 @@
 using CardWar.Entities;
+using CardWar.Factories;
 using CardWar.Interfaces;
 using TMPro;
 using UnityEngine;
@@ -20,7 +21,7 @@ namespace CardWar.Views
         
         public UnityEvent<PointerEventData> OnModelClicked;
 
-         public void SetBaseCard(Card card)
+        public void SetBaseCard(Card card)
         {
             if (card == null) Debug.LogWarning("No card was set");
 
@@ -31,8 +32,11 @@ namespace CardWar.Views
             _animator.runtimeAnimatorController = card.AnimController;
 
             card.OnCardUpdated.AddListener(UpdateCardDetail);
-            if (card is MonsterCard mCard) mCard.OnTakenDamage.AddListener(UpdateCardDetail);
-            if (card is ConstructCard cCard) cCard.OnTakenDamage.AddListener(UpdateCardDetail);
+            if (card is IDamagable damagable)
+            {
+                damagable.OnTakenDamage.AddListener(UpdateCardDetail);
+                // damagable.OnDeath.AddListener(DestroyModel);
+            }
 
             UpdateCardDetail();
         }

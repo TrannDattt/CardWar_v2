@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using CardWar.Entities;
 using CardWar.Enums;
 using CardWar.Factories;
+using CardWar.GameControl;
+using CardWar.Interfaces;
 using CardWar.Untils;
 using CardWar.Views;
 using DG.Tweening;
@@ -28,29 +30,22 @@ namespace CardWar.GameViews
         // TODO: Should make curve for animation
 
         [SerializeField] private Canvas _mainCanvas;
-        [SerializeField] private PlayerHandView _playerHandView;
-        [SerializeField] private PlayerDeckView _playerDeckView;
+        [SerializeField] private PlayerHandView _selfHandView;
+        [SerializeField] private PlayerDeckView _selfDeckView;
         [SerializeField] private BoardView _boardView;
         [SerializeField] private GraveView _graveView;
         [SerializeField] private CardDetailView _cardDetailView;
         [SerializeField] private CardSelectorView _cardSelectorView;
 
-        void Start()
-        {
-            _cardDetailView.HideCardDetail();
-            _cardSelectorView.HideCardSelector();
-            _boardView.Initialize();
-        }
+        [SerializeField] private PlayerDeckView _enemyDeckView;
+        [SerializeField] private PlayerHandView _enemyHandView;
+
+        private EPlayerTarget _curTurn => GameplayManager.Instance.CurTurn;
+        private EPlayerTarget _playerMiniTurn => GameplayManager.Instance.PlayerMiniTurn;
+        private EPhase _curPhase => GameplayManager.Instance.CurPhase.Type;
 
         #region Draw Card Logic
-        public static Vector2 ConvertAnchoredPosition(RectTransform from, RectTransform to, Vector2 anchoredPos)
-        {
-            Vector3 worldPos = from.TransformPoint(anchoredPos);
-            Vector3 localPos = to.InverseTransformPoint(worldPos);
-            return localPos;
-        }
-
-        private IEnumerator DrawCardAnimation(CardView cardView, RegionView fromRegion, Action callback = null)
+        private async Task DrawCardAnimation(CardView cardView, RegionView fromRegion, PlayerHandView toHand, Action callback = null)
         {
             // var animLength = 0.5f;
             var handOffset = new Vector3(0, 20);
@@ -75,7 +70,7 @@ namespace CardWar.GameViews
                 startPos = fromRect.TransformPoint(fromRect.rect.center);
             }
 
-            var toRect = _playerHandView.GetComponent<RectTransform>();
+            var toRect = toHand.GetComponent<RectTransform>();
             var endPos = toRect.TransformPoint(toRect.rect.center);
             var cardRectTransform = cardView.GetComponent<RectTransform>();
             cardRectTransform.position = startPos;
@@ -90,27 +85,37 @@ namespace CardWar.GameViews
                 callback?.Invoke();
             });
 
-            yield return sequence.WaitForCompletion();
+            await sequence.AsyncWaitForCompletion();
         }
 
-        public void DrawCard()
+        public async Task DrawCard(EPlayerTarget targetPlayer, int amount = 1)
         {
-            // TODO: Check in turn and auto draw
-            _playerDeckView.DrawCard(out var drawnCard);
-            if (drawnCard == null) return;
+            // Debug.Log($"Drawn {amount} cards from {targetPlayer}'s deck to {targetPlayer}'s hand");
+            var fromDeck = targetPlayer == EPlayerTarget.Self ? _selfDeckView : _enemyDeckView;
+            var toHand = targetPlayer == EPlayerTarget.Self ? _selfHandView : _enemyHandView;
 
-            StartCoroutine(DrawCardAnimation(drawnCard, _playerDeckView, () =>
+            for (int a = 0; a < amount; a++)
             {
-                _playerHandView.AddCardToHand(drawnCard);
-            }));
-
-            drawnCard.OnCardClicked.AddListener((e) =>
-            {
-                if (e.button == InputButton.Right)
+                fromDeck.DrawCard(out var drawnCard);
+                if (drawnCard == null)
                 {
-                    _cardDetailView.ShowCardDetail(drawnCard.BaseCard);
+                    Debug.Log($"Failed to draw from {targetPlayer}'s deck");
+                    break;
                 }
-            });
+
+                await DrawCardAnimation(drawnCard, fromDeck, toHand, () =>
+                {
+                    toHand.AddCardToHand(drawnCard);
+                });
+
+                drawnCard.OnCardClicked.AddListener((e) =>
+                {
+                    if (e.button == InputButton.Right)
+                    {
+                        _cardDetailView.ShowCardDetail(drawnCard.BaseCard);
+                    }
+                });
+            }
         }
         #endregion
 
@@ -119,8 +124,8 @@ namespace CardWar.GameViews
         {
             var requiredSacrificesCount = mCard.SummonCondiction.Sacrifces.Sum(s => s.Amount);
 
-            var selectedCards = await _cardSelectorView.ShowCardToSelect(_boardView.CardsInRegion,
-                                                                        cards => CheckSacrificeMetRequired(mCard, cards));
+            var selectedCards = await _cardSelectorView.ShowCardToSelect(_boardView.GetCardsInPlayerRegion(EPlayerTarget.Self),
+                                                                        checkFunc: cards => CheckSacrificeMetRequired(mCard, cards));
             if (selectedCards == null)
             {
                 return null;
@@ -143,95 +148,133 @@ namespace CardWar.GameViews
 
             return true;
         }
+        #endregion
 
-        private void DoSacrifice(List<Card> sacrifices)
+        #region Destroy Card Logic
+        private void DestroyCard(Card card, EPlayerTarget owner)
         {
-            sacrifices.ForEach(c =>
-            {
-                _boardView.RemoveCard(c);
-                _graveView.AddCardToGrave(c);
-            });
+            _boardView.RemoveCard(card, owner);
+            _graveView.AddCardToGrave(card, owner);
         }
 
-        private IEnumerator PlaySacrificeAnimation(List<Card> sacrifices, Action callback = null)
+        private async Task DestroyCardAnimation(Card card, EPlayerTarget owner, Action callback = null)
         {
             // var animLength = 0.5f;
             var canvasTransform = _mainCanvas.GetComponent<RectTransform>();
             var toPos = _graveView.GetComponent<RectTransform>().position;
 
-            var sequence = DOTween.Sequence();
-            sacrifices.ForEach(s =>
-            {
-                var fromSlot = _boardView.GetSlotByCard(s);
-                var fromSlotWorldPosition = fromSlot.transform.position;
-                var fromSlotScreenPosition = Camera.main.WorldToScreenPoint(fromSlotWorldPosition);
-                RectTransformUtility.ScreenPointToWorldPointInRectangle(
-                    canvasTransform,
-                    fromSlotScreenPosition,
-                    null,
-                    out var fromSlotCanvasPosition
-                );
-                var cardView = CardFactory.Instance.CreateCardView(s, fromSlotCanvasPosition);
-                var cardRectTransform = cardView.GetComponent<RectTransform>();
-                sequence.Append(cardRectTransform.DOMove(toPos, .3f).SetEase(Ease.InOutQuad));
-                // sequence.Join(cardRectTransform.DOScale(.1f * Vector3.one, .15f).SetEase(Ease.InOutQuad).SetDelay(.15f));
-                sequence.AppendInterval(.5f);
-                //TODO: Add anim for grave effect
-                sequence.AppendCallback(() =>
-                {
-                    CardFactory.Instance.RecycleCardView(cardView);
-                });
-            });
+            var fromSlot = _boardView.GetSlotByCard(card, owner);
+            var fromSlotWorldPosition = fromSlot.transform.position;
+            var fromSlotScreenPosition = Camera.main.WorldToScreenPoint(fromSlotWorldPosition);
+            RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                canvasTransform,
+                fromSlotScreenPosition,
+                null,
+                out var fromSlotCanvasPosition
+            );
 
-            sequence.AppendCallback(() =>
+            var cardModel = fromSlot.GetComponentInChildren<CardModelView>();
+            cardModel.gameObject.SetActive(false);
+
+            var cardView = CardFactory.Instance.CreateCardView(card, fromSlotCanvasPosition);
+            var cardRectTransform = cardView.GetComponent<RectTransform>();
+
+            var sequence = DOTween.Sequence();
+            sequence.Append(cardRectTransform.DOMove(toPos, .5f).SetEase(Ease.InOutQuad));
+            sequence.Join(cardRectTransform.DOScale(.5f * Vector3.one, .5f).SetEase(Ease.InOutQuad));
+            sequence.AppendInterval(.2f);
+            //TODO: Add anim for grave effect
+            sequence.OnComplete(() =>
             {
+                CardFactory.Instance.RecycleCardView(cardView);
+                DOTween.Kill(cardModel.transform);
                 callback?.Invoke();
             });
 
-            yield return sequence.WaitForCompletion();
+            await sequence.AsyncWaitForCompletion();
         }
         #endregion
 
         #region Play Card Logic
-        private async void PlayCard(Card card, RegionView fromRegion)
+        private async void PlayCard(Card card, EPlayerTarget owner, RegionView fromRegion)
         {
-            // TODO: Check in turn
+            var fromHand = owner == EPlayerTarget.Self ? _selfHandView : _enemyHandView;
+
             if (card.CardType == ECardType.Spell)
             {
-                var spellSlot = _boardView.GetSlotsByCardType(ECardType.Spell)[0];
+                var spellSlot = _boardView.GetPlayerSlots(ECardType.Spell, EPlayerTarget.Self)[0];
 
-                IEnumerator PlaySpellCard()
+                async Task PlaySpellCard()
                 {
                     fromRegion.RemoveCard(card);
                     _boardView.AddCardToSlot(card, spellSlot);
                     _boardView.HideAllSlots();
 
-                    yield return StartCoroutine(PlayCardAnimation(card, fromRegion, spellSlot));
+                    await PlayCardAnimation(card, fromRegion, spellSlot);
 
                     // TODO: Add spell to spell queue and remove card from slot. 
                     // Wait until queue is resolved, play summon model anim, apply effects and then move to grave
                 }
 
-                StartCoroutine(PlaySpellCard());
+                await PlaySpellCard();
 
                 return;
             }
 
             List<Card> sacrificedCards = new();
-            if (card is MonsterCard mCard && mCard.SummonCondiction.Sacrifces.Length > 0)
+            List<SlotView> availableSlots = new();
+            List<Card> sacrificeCopy = new();
+
+            // --------TEST--------
+            //TODO: Auto select target if in enemy's turn
+            if (owner == EPlayerTarget.Enemy)
             {
-                sacrificedCards = await CheckSummonConditions(mCard);
-                if (sacrificedCards == null)
+                if (card is MonsterCard mCard && mCard.SummonCondiction.Sacrifces.Length > 0)
                 {
-                    Debug.Log("Summon failed or canceled");
+                    var availableSacrifices = _boardView.GetCardsInPlayerRegion(EPlayerTarget.Enemy).OfType<MonsterCard>().ToList();
+                    foreach (var sac in mCard.SummonCondiction.Sacrifces)
+                    {
+                        var selectedSac = availableSacrifices.Where(s => s.Tier == sac.Tier).Take(sac.Amount);
+                        // if (selectedSac.Count() != sac.Amount)
+                        // {
+                        //     Debug.Log("Not enough sacrifices for enemy to summon");
+                        //     return;
+                        // }
+                        sacrificedCards.AddRange(selectedSac);
+                        availableSacrifices = availableSacrifices.Except(selectedSac).ToList();
+                    }
+                    sacrificeCopy = new List<Card>(sacrificedCards);
+                }
+
+                var toSlot = _boardView.GetPlayerSlots(ECardType.Monster, EPlayerTarget.Enemy, false).FirstOrDefault();
+                if (toSlot == null)
+                {
+                    Debug.Log("No available slot for enemy to summon");
                     return;
                 }
+                await PlayCardToSlot(toSlot, EPlayerTarget.Enemy);
             }
-            List<SlotView> availableSlots = new();
-            _boardView.ShowAvailableSlots(card.CardType, out availableSlots);
+            else
+            {
 
-            var sacrificeCopy = new List<Card>(sacrificedCards);
-            IEnumerator PlayCardToSlot(SlotView slot)
+                // --------------------
+                if (card is MonsterCard mCard && mCard.SummonCondiction.Sacrifces.Length > 0)
+                {
+                    sacrificedCards = await CheckSummonConditions(mCard);
+                    if (sacrificedCards == null)
+                    {
+                        Debug.Log("Summon failed or canceled");
+                        return;
+                    }
+                }
+
+                _boardView.ShowAvailableSlots(card.CardType, out availableSlots);
+
+                sacrificeCopy = new List<Card>(sacrificedCards);
+                availableSlots.ForEach(slot => slot.OnSlotClicked.AddListener(async () => await PlayCardToSlot(slot, EPlayerTarget.Self)));
+            }
+
+            async Task PlayCardToSlot(SlotView slot, EPlayerTarget owner)
             {
                 fromRegion.RemoveCard(card);
                 _boardView.AddCardToSlot(card, slot);
@@ -244,21 +287,29 @@ namespace CardWar.GameViews
                 //Do animation
                 if (card is MonsterCard mCard && mCard.SummonCondiction.Sacrifces.Length > 0)
                 {
-                    yield return StartCoroutine(PlaySacrificeAnimation(sacrificeCopy, () =>
+                    foreach (var s in sacrificeCopy)
                     {
-                        DoSacrifice(sacrificeCopy);
-                    }));
+                        await DestroyCardAnimation(s, owner, () =>
+                        {
+                            DestroyCard(s, owner);
+                        });
+                    }
                 }
 
-                yield return StartCoroutine(PlayCardAnimation(card, fromRegion, slot));
-                yield return StartCoroutine(SpawnModelAnimation(card, slot));
+                await PlayCardAnimation(card, fromRegion, slot);
+                await SpawnModelAnimation(card, slot);
+
+                //TODO: Make an Unity Event ???
+                // ChangeMiniTurn();
+                if(owner == EPlayerTarget.Self)
+                {
+                    GameplayManager.Instance.ChangeToNextMiniTurn();
+                }
             }
             ;
-
-            availableSlots.ForEach(slot => slot.OnSlotClicked.AddListener(() => StartCoroutine(PlayCardToSlot(slot))));
         }
 
-        private IEnumerator PlayCardAnimation(Card card, RegionView fromRegion, SlotView toSlot, Action callback = null)
+        private async Task PlayCardAnimation(Card card, RegionView fromRegion, SlotView toSlot, Action callback = null)
         {
             var animLength = 0.3f;
 
@@ -282,32 +333,32 @@ namespace CardWar.GameViews
             sequence.OnComplete(() =>
             {
                 callback?.Invoke();
-                //TODO: Wait until finish sacrifice animation then recycle
-                // yield return new WaitForSeconds(.1f);
                 CardFactory.Instance.RecycleCardView(cardView);
             });
-            yield return sequence.WaitForCompletion();
+            await sequence.AsyncWaitForCompletion();
         }
 
-        private IEnumerator SpawnModelAnimation(Card card, SlotView slot, Action callback = null)
+        private async Task SpawnModelAnimation(Card card, SlotView slot, Action callback = null)
         {
             // var animLength = 0.5f;
             var sequence = DOTween.Sequence();
 
-            var cardModel = CardFactory.Instance.CreateCardModel(card, parent: slot.transform);
+            var cardModel = CardFactory.Instance.CreateCardModel(card, slot.transform.position, Quaternion.identity, slot.transform);
             var model = cardModel.Model;
+            model.transform.rotation = slot.transform.rotation;
+
             var baseScale = model.transform.localScale;
-            model.transform.localScale = .1f * Vector3.one;
-            // var model = Instantiate(card.Model, slot.transform);
+            var baseRotation = model.transform.rotation;
 
             if (card.CardType == ECardType.Monster)
             {
+                model.transform.localScale = .1f * Vector3.one;
                 sequence.Append(model.transform.DORotate(new Vector3(0, 360, 0), .5f, RotateMode.FastBeyond360).SetEase(Ease.InOutQuad));
                 sequence.Join(model.transform.DOScale(baseScale, .5f).SetEase(Ease.OutBack, overshoot: 2f));
                 sequence.AppendInterval(.2f);
                 sequence.OnComplete(() =>
                 {
-                    model.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    model.transform.rotation = baseRotation;
                     cardModel.OnModelClicked.AddListener((e) =>
                     {
                         if (e.button == InputButton.Right)
@@ -316,25 +367,216 @@ namespace CardWar.GameViews
                         }
                         else if (e.button == InputButton.Left)
                         {
-                            //TODO: Toggle model selection for next action
+                            //TODO: Toggle model selection for next action ????
                         }
                     });
                     callback?.Invoke();
                 });
             }
 
-            yield return sequence.WaitForCompletion();
+            await sequence.AsyncWaitForCompletion();
         }
 
         public void PlaySelectedCardInHand()
         {
-            if (_playerHandView.SelectedCardView == null) return;
-            PlayCard(_playerHandView.SelectedCardView.BaseCard, _playerHandView);
+            if (_playerMiniTurn == EPlayerTarget.Enemy)
+            {
+                Debug.LogWarning("It's not your turn!");
+                return;
+            }
+
+            if (_selfHandView.SelectedCardView == null) return;
+            PlayCard(_selfHandView.SelectedCardView.BaseCard, EPlayerTarget.Self, _selfHandView);
         }
+
+        // ---------TEST--------
+        // TODO: Enemy auto play a card that can be summoned
+        private bool CheckCanSummonCard(Card card)
+        {
+            if (_boardView.GetPlayerSlots(card.CardType, EPlayerTarget.Enemy, false).Count == 0)
+            {
+                return false;
+            }
+
+            if (card is MonsterCard mCard && mCard.SummonCondiction.Sacrifces.Length > 0)
+            {
+                var availableSacrifices = _boardView.GetCardsInPlayerRegion(EPlayerTarget.Enemy).OfType<MonsterCard>().ToList();
+                foreach (var sac in mCard.SummonCondiction.Sacrifces)
+                {
+                    var selectedSac = availableSacrifices.Where(s => s.Tier == sac.Tier).Take(sac.Amount);
+                    if (selectedSac.Count() != sac.Amount)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public void EnemyAutoPlayCard()
+        {
+            // if (_playerMiniTurn == EPlayerTarget.Self)
+            // {
+            //     Debug.LogWarning("It's not your turn!");
+            //     return;
+            // }
+
+            var cardToSummon = _enemyHandView.CardsInRegion.FirstOrDefault(c => CheckCanSummonCard(c));
+            if (cardToSummon == null)
+            {
+                Debug.Log("Enemy has no valid card to play");
+                return;
+            }
+            PlayCard(cardToSummon, EPlayerTarget.Enemy, _enemyHandView);
+        }
+        // --------------------
+        #endregion
+
+        #region Monster Skill Logic
+        //TODO: Monster use skill and add to skill queue
         #endregion
 
         #region Card Attack Logic
+        public async void DoCardsAttack()
+        {
+            var attackerPlayer = _curTurn;
+            var targetPlayer = attackerPlayer == EPlayerTarget.Self ? EPlayerTarget.Enemy : EPlayerTarget.Self;
+            var attackerCards = _boardView.GetCardsInPlayerRegion(attackerPlayer).OfType<MonsterCard>().ToList();
 
+            foreach (var attacker in attackerCards)
+            {
+                //TODO: MC will attack player if no target on board
+                var targets = _boardView.GetCardsInPlayerRegion(targetPlayer).ToList();
+                Card target = null;
+
+                // // --------TEST--------
+                // //TODO: Auto select target if in enemy's turn
+                if (attackerPlayer == EPlayerTarget.Enemy)
+                {
+                    //     target = targets.OrderBy(t => (t as IDamagable).Hp).FirstOrDefault();
+                    //     await PlayAttackAniamtion(attackerPlayer, targetPlayer, attacker, target, () =>
+                    //     {
+                    //         //TODO: Do damage to player if attacker's ATK > target's HP
+                    //         if ((target as IDamagable).Hp <= 0)
+                    //         {
+                    //             DestroyCard(target, targetPlayer);
+                    //         }
+                    //         else if(target is MonsterCard targetMonster)
+                    //         {
+                    //             attacker.TakeDamage(targetMonster.Atk);
+                    //             // Debug.Log($"1_Attacker {attacker}'s HP after attack: {attacker.Hp}");
+                    //         }
+                    //     });
+                    continue;
+                }
+                // --------------------
+
+                Debug.Log($"[Attack Phase] {attacker.Name} is going to attack...");
+
+                var selectedTarget = await _cardSelectorView.ShowCardToSelect(targets);
+
+                if (selectedTarget == null || selectedTarget.Count == 0)
+                {
+                    Debug.LogWarning($"Bỏ qua lượt tấn công của {attacker.Name} (không có mục tiêu).");
+                    continue;
+                }
+
+                target = selectedTarget.First();
+                await PlayAttackAniamtion(attackerPlayer, targetPlayer, attacker, target, () =>
+                {
+                    //TODO: Do damage to player if attacker's ATK > target's HP
+                    if ((target as IDamagable).Hp <= 0)
+                    {
+                        DestroyCard(target, targetPlayer);
+                    }
+                    else if (target is MonsterCard targetMonster)
+                    {
+                        attacker.TakeDamage(targetMonster.Atk);
+                        // Debug.Log($"1_Attacker {attacker}'s HP after attack: {attacker.Hp}");
+                    }
+                });
+            }
+
+            // ChangeToNextTurn();
+        }
+
+        private async Task PlayAttackAniamtion(EPlayerTarget attacker, EPlayerTarget target, MonsterCard attackerCard, Card targetCard, Action callback = null)
+        {
+            var attackerModel = _boardView.GetSlotByCard(attackerCard, attacker).GetComponentInChildren<CardModelView>();
+            var targetModel = _boardView.GetSlotByCard(targetCard, target).GetComponentInChildren<CardModelView>();
+
+            Vector3 offset = new(0, 0, 2);
+            var startPos = attackerModel.transform.position;
+            var moveDir = targetModel.transform.position - startPos;
+            var finalPos = startPos + (moveDir - Mathf.Sign(moveDir.z) * offset);
+            var rotateAngle = Quaternion.LookRotation(moveDir);
+
+            var sequence = DOTween.Sequence();
+            sequence.Append(attackerModel.Model.transform.DORotateQuaternion(rotateAngle, .1f).SetEase(Ease.InOutQuad));
+            sequence.Append(attackerModel.transform.DOMove(finalPos, .5f).SetEase(Ease.InOutQuad));
+            sequence.AppendCallback(() =>
+            {
+                (attackerModel.BaseCard as MonsterCard).DoAttack(targetCard as IDamagable);
+            });
+            // sequence.AppendInterval(2f);
+            sequence.Append(attackerModel.Model.transform.DORotateQuaternion(Quaternion.Euler(0, 180, 0), .1f).SetEase(Ease.InOutQuad));
+            sequence.Append(attackerModel.transform.DOMove(startPos, .5f).SetEase(Ease.InOutQuad));
+            sequence.Append(attackerModel.Model.transform.DORotateQuaternion(Quaternion.Euler(0, 180, 0) * Quaternion.Inverse(rotateAngle), .1f).SetEase(Ease.InOutQuad));
+            sequence.OnComplete(() =>
+            {
+                attackerModel.Model.transform.rotation = Quaternion.Euler(0, 0, 0);
+                // Debug.Log($"3_Attacker {attackerCard}'s HP after attack: {attackerCard.Hp}");
+                callback?.Invoke();
+            });
+
+            await sequence.AsyncWaitForCompletion();
+        }
+
+        // --------TEST-------
+        //TODO: Enemy auto choose target to attack
+        public async void AutoDoCardAttack()
+        {
+            if (_curTurn != EPlayerTarget.Enemy) return;
+
+            var attackerPlayer = _curTurn;
+            var targetPlayer = attackerPlayer == EPlayerTarget.Self ? EPlayerTarget.Enemy : EPlayerTarget.Self;
+            var attackerCards = _boardView.GetCardsInPlayerRegion(attackerPlayer).OfType<MonsterCard>().ToList();
+
+            foreach (var attacker in attackerCards)
+            {
+                //TODO: MC will attack player if no target on board
+                var targets = _boardView.GetCardsInPlayerRegion(targetPlayer).ToList();
+                Card target = null;
+
+                target = targets.OrderBy(t => (t as IDamagable).Hp).FirstOrDefault();
+                await PlayAttackAniamtion(attackerPlayer, targetPlayer, attacker, target, () =>
+                {
+                    //TODO: Do damage to player if attacker's ATK > target's HP
+                    if ((target as IDamagable).Hp <= 0)
+                    {
+                        DestroyCard(target, targetPlayer);
+                    }
+                    else if (target is MonsterCard targetMonster)
+                    {
+                        attacker.TakeDamage(targetMonster.Atk);
+                        // Debug.Log($"1_Attacker {attacker}'s HP after attack: {attacker.Hp}");
+                    }
+                });
+            }
+
+            // ChangeToNextTurn();
+        }
+        // -------------------
+        #endregion
+
+        #region Init For Testing
+        public void InitScene()
+        {
+            _cardDetailView.HideCardDetail();
+            _cardSelectorView.HideCardSelector();
+            _boardView.Initialize();
+        }
         #endregion
     }
 }
