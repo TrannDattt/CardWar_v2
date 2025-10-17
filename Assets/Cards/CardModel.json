@@ -1,0 +1,146 @@
+{
+    "nodeDatas": [
+        {
+            "location": [
+                909.0367431640625,
+                178.93312072753906
+            ],
+            "name": "NULL.ShaderNodeOutputMaterial.Material Output"
+        },
+        {
+            "location": [
+                30.34796142578125,
+                -39.659027099609375
+            ],
+            "name": "NULL.ShaderNodeBsdfDiffuse.Diffuse BSDF"
+        },
+        {
+            "location": [
+                263.195068359375,
+                -48.62506103515625
+            ],
+            "name": "NULL.ShaderNodeShaderToRGB.Shader to RGB"
+        },
+        {
+            "location": [
+                458.9400634765625,
+                -51.186737060546875
+            ],
+            "name": "NULL.ShaderNodeSeparateColor.Separate Color"
+        },
+        {
+            "connections0Name": [
+                "Color"
+            ],
+            "connections0NodeName": [
+                "ShaderNodeSeparateColor.Separate Color.001"
+            ],
+            "location": [
+                633.21044921875,
+                -84.69235229492188
+            ],
+            "name": "ShaderNodeValToRGB.Color Ramp",
+            "properties": [
+                "0.1378178745508194-0.1378193497657776-0.1378193497657776-1.0-0.0|1.0-1.0-1.0-1.0-0.28363701701164246|",
+                "RGB",
+                "CONSTANT",
+                "NEAR",
+                "0.5"
+            ]
+        },
+        {
+            "location": [
+                916.6635131835938,
+                -140.8922882080078
+            ],
+            "name": "NULL.ShaderNodeSeparateColor.Separate Color.001"
+        },
+        {
+            "location": [
+                1135.1025390625,
+                -87.05061340332031
+            ],
+            "name": "NULL.ShaderNodeCombineColor.Combine Color"
+        },
+        {
+            "location": [
+                -916.4000244140625,
+                324.79998779296875
+            ],
+            "name": "NULL.NodeFrame.Frame"
+        },
+        {
+            "connections0Name": [
+                "Normal"
+            ],
+            "connections0NodeName": [
+                "ShaderNodeBsdfAnisotropic.Glossy BSDF"
+            ],
+            "location": [
+                29.65069580078125,
+                -39.67234420776367
+            ],
+            "name": "ShaderNodeBump.Bump",
+            "properties": [
+                "False",
+                "1.0",
+                "1.0"
+            ]
+        },
+        {
+            "location": [
+                273.0791015625,
+                -67.36653137207031
+            ],
+            "name": "NULL.ShaderNodeBsdfAnisotropic.Glossy BSDF"
+        },
+        {
+            "location": [
+                497.1438903808594,
+                -93.67597961425781
+            ],
+            "name": "NULL.ShaderNodeShaderToRGB.Shader to RGB.001"
+        },
+        {
+            "connections0Name": [
+                "B_Color"
+            ],
+            "connections0NodeName": [
+                "ShaderNodeMix.Mix"
+            ],
+            "location": [
+                721.2086791992188,
+                -85.36778259277344
+            ],
+            "name": "ShaderNodeValToRGB.Color Ramp.001",
+            "properties": [
+                "0.0-0.0-0.0-1.0-0.0|1.0-1.0-1.0-1.0-0.9309091567993164|",
+                "RGB",
+                "CONSTANT",
+                "NEAR",
+                "0.5"
+            ]
+        },
+        {
+            "location": [
+                -610.0,
+                -44.79999923706055
+            ],
+            "name": "NULL.NodeFrame.Frame.001"
+        },
+        {
+            "location": [
+                639.4447631835938,
+                173.535400390625
+            ],
+            "name": "NULL.ShaderNodeMix.Mix"
+        },
+        {
+            "name": "EXTRA",
+            "properties": [
+                "True",
+                "True"
+            ]
+        }
+    ]
+}

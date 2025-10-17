@@ -1,124 +1,105 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CardWar.Entities;
 using CardWar.Enums;
+using CardWar_v2.Entities;
+using CardWar_v2.Enums;
+using CardWar_v2.Views;
 using UnityEngine;
 
-namespace CardWar.Views
+namespace CardWar_v2.Views
 {
-    public class BoardView : RegionView
+    public class BoardView : MonoBehaviour
     {
         [SerializeField] private PlayerRegion _selfRegion;
         [SerializeField] private PlayerRegion _enemyRegion;
-        [SerializeField] private SlotView _spellSlot;
-        private List<SlotView> MonsterSlots => GetPlayerSlots(ECardType.Monster, EPlayerTarget.Both);
-        private List<SlotView> ConstructSlots => GetPlayerSlots(ECardType.Construct, EPlayerTarget.Both);
 
         public void Initialize()
         {
             _selfRegion.Initialize();
             _enemyRegion.Initialize();
-            _spellSlot.PrepareSlot();
         }
 
-        public List<SlotView> GetPlayerSlots(ECardType cardType, EPlayerTarget regionTarget, bool includeOccupied = true)
+        public CharacterSlotView GetPlayerSlots(EPlayerTarget playerTarget, EPositionTarget posTarget)
         {
-            var (selfSlots, enemySlots) = cardType switch
-            {
-                ECardType.Monster => (_selfRegion.MonsterSlots, _enemyRegion.MonsterSlots),
-                ECardType.Construct => (_selfRegion.ConstructSlots, _enemyRegion.ConstructSlots),
-                _ => (new List<SlotView> { _spellSlot }, new List<SlotView> { _spellSlot })
-            };
-
-            return regionTarget switch
-            {
-                EPlayerTarget.Self => selfSlots.Where(slot => includeOccupied || slot.IsEmpty).ToList(),
-                EPlayerTarget.Enemy => enemySlots.Where(slot => includeOccupied || slot.IsEmpty).ToList(),
-                EPlayerTarget.Both => selfSlots.Concat(enemySlots).Where(slot => includeOccupied || slot.IsEmpty).ToList(),
-                _ => new List<SlotView>()
-            };
+            var region = playerTarget == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            return region.GetSlotByPosition(posTarget);
         }
 
-        public void ShowAvailableSlots(ECardType cardType, out List<SlotView> availableSlots, EPlayerTarget target = EPlayerTarget.Self)
+        public void AddCardToSlot(CharacterCard card, EPlayerTarget playerTarget, EPositionTarget posTarget)
         {
-            availableSlots = GetPlayerSlots(cardType, target, false);
-            availableSlots.ForEach(slot => slot.ShowSlot());
-        }
+            if (card == null) return;
 
-        public void HideAllSlots()
-        {
-            MonsterSlots.ForEach(slot => slot.HideSlot());
-            ConstructSlots.ForEach(slot => slot.HideSlot());
-            _spellSlot.HideSlot();
-        }
-
-        public void AddCardToSlot(Card card, SlotView slot)
-        {
-            if (card == null || slot == null) return;
+            var region = playerTarget == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            var slot = region.GetSlotByPosition(posTarget);
             slot.PlaceCard(card);
-            slot.HideSlot();
         }
 
-        public SlotView GetSlotByCard(Card card, EPlayerTarget target = EPlayerTarget.Self)
-        {
-            if (card == null) return null;
-            return GetPlayerSlots(ECardType.Monster, target)
-                .Concat(GetPlayerSlots(ECardType.Construct, target))
-                .Concat(new[] { _spellSlot })
-                .FirstOrDefault(slot => !slot.IsEmpty && slot.CardInSlot == card);
-        }
-
-        public List<Card> GetCardsInPlayerRegion(EPlayerTarget target)
-        {
-            return target switch
-            {
-                EPlayerTarget.Self => _selfRegion.CardsInRegion,
-                EPlayerTarget.Enemy => _enemyRegion.CardsInRegion,
-                EPlayerTarget.Both => _selfRegion.CardsInRegion.Concat(_enemyRegion.CardsInRegion).ToList(),
-                _ => new List<Card>()
-            };
-        }
-
-        protected override List<Card> GetCardsInRegion()
-        {
-            var cards = new List<Card>();
-            cards.AddRange(MonsterSlots.Where(slot => !slot.IsEmpty).Select(slot => slot.CardInSlot));
-            cards.AddRange(ConstructSlots.Where(slot => !slot.IsEmpty).Select(slot => slot.CardInSlot));
-            if (!_spellSlot.IsEmpty) cards.Add(_spellSlot.CardInSlot);
-            return cards;
-        }
-
-        public void RemoveCard(Card card, EPlayerTarget target = EPlayerTarget.Self)
+        public void RemoveCard(CharacterCard card, EPlayerTarget target)
         {
             if (card == null)
             {
                 Debug.LogWarning("Card not found");
                 return;
             }
-            var slot = GetSlotByCard(card, target);
-            slot.RemoveCard();
+            var region = target == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            var slot = region.GetSlotByCard(card);
+            slot.RemoveCard(true);
         }
 
-        public override void RemoveCard(Card card)
+        public CharacterModelView GetCharacterByCard(EPlayerTarget region, CharacterCard cardBase)
         {
-            // throw new NotImplementedException();
+            var pr = region == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            return pr.GetCharByCard(cardBase);
+        }
+
+        public CharacterModelView GetCharacterByPos(EPlayerTarget region, EPositionTarget pos)
+        {
+            var pr = region == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            return pr.GetCharByPos(pos);
+        }
+
+        public async Task DestroyDeadChar(CharacterCard charCard, EPlayerTarget targetSide)
+        {
+            var region = targetSide == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            var slot = region.GetSlotByCard(charCard);
+            var cardView = slot.CharInSlot;
+
+            slot.RemoveCard(false);
+            await cardView.DestroyChar(1);
         }
     }
 
     [Serializable]
     public class PlayerRegion
     {
-        public List<SlotView> MonsterSlots;
-        public List<SlotView> ConstructSlots;
-
-        public List<Card> CardsInRegion => MonsterSlots.Where(s => !s.IsEmpty).Select(s => s.CardInSlot).ToList()
-            .Concat(ConstructSlots.Where(s => !s.IsEmpty).Select(s => s.CardInSlot).ToList()).ToList();
+        public List<CharacterSlotView> Slots;
 
         public void Initialize()
         {
-            MonsterSlots.ForEach(slot => slot.PrepareSlot());
-            ConstructSlots.ForEach(slot => slot.PrepareSlot());
+            Slots.ForEach(slot => slot.PrepareSlot());
+        }
+
+        public CharacterSlotView GetSlotByCard(CharacterCard card)
+        {
+            return Slots.FirstOrDefault(s => s.CharInSlot != null && s.CharInSlot.BaseCard == card);
+        }
+
+        public CharacterSlotView GetSlotByPosition(EPositionTarget pos)
+        {
+            return Slots.FirstOrDefault(s => s.SlotPos == pos);
+        }
+
+        public CharacterModelView GetCharByCard(CharacterCard card)
+        {
+            return Slots.Select(s => s.CharInSlot).FirstOrDefault(cm => cm != null && cm.BaseCard == card);
+        }
+
+        public CharacterModelView GetCharByPos(EPositionTarget pos)
+        {
+            return Slots.FirstOrDefault(s => s.SlotPos == pos).CharInSlot;
         }
     }
 }

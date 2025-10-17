@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CardWar.Enums;
-using CardWar.GameViews;
 using CardWar.Untils;
+using CardWar_v2.Enums;
+using CardWar_v2.GameViews;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace CardWar.GameControl
+namespace CardWar_v2.GameControl
 {
     public class GameplayManager : Singleton<GameplayManager>
     {
@@ -15,11 +16,9 @@ namespace CardWar.GameControl
 
         #region Turn Logic
         public EPlayerTarget CurTurn { get; private set; } = EPlayerTarget.Self;
-        public EPlayerTarget PlayerMiniTurn { get; private set; } // Use for summoning cards and using skill in order
 
         private void ChangeTurn(EPlayerTarget nextTurn) {
             CurTurn = nextTurn;
-            PlayerMiniTurn = CurTurn;
             Debug.Log($"It's {CurTurn}'s turn now.");
 
             ChangePhase(EPhase.Opening);
@@ -29,15 +28,6 @@ namespace CardWar.GameControl
         {
             var nextTurn = CurTurn == EPlayerTarget.Self ? EPlayerTarget.Enemy : EPlayerTarget.Self;
             ChangeTurn(nextTurn);
-        }
-
-        private void ChangeMiniTurn(EPlayerTarget nextTurn) {
-            PlayerMiniTurn = nextTurn;
-        }
-
-        public void ChangeToNextMiniTurn()
-        {
-            PlayerMiniTurn = PlayerMiniTurn == EPlayerTarget.Self ? EPlayerTarget.Enemy : EPlayerTarget.Self;
         }
         #endregion
 
@@ -78,47 +68,25 @@ namespace CardWar.GameControl
 
             public override void Do()
             {
-                if (_isFinished) Instance.ChangeToNextPhase();
+                if (IngameScene.CheckQueueFull()) Instance.ChangeToNextPhase();
             }
 
             public override async void Enter()
             {
-                _isFinished = false;
-                await IngameScene.DrawCard(CurTurn);
-                _isFinished = true;
-
+                // _isFinished = false;
                 //TODO: Use skill that active at opening phase
-            }
 
-            public override void Exit()
-            {
-            }
-        }
-
-        private class PreSetUpPhase : APhase
-        {
-            public PreSetUpPhase(EPhase phaseType) : base(phaseType)
-            {
-            }
-
-            public override void Do()
-            {
-                if(Instance.PlayerMiniTurn == EPlayerTarget.Enemy)
+                if(CurTurn == EPlayerTarget.Enemy)
                 {
-                    Instance.ChangeToNextMiniTurn();
-                    Debug.Log($"Changed to: {Instance.PlayerMiniTurn}");
-                    IngameScene.EnemyAutoPlayCard();
+                    await IngameScene.AutoSelectCard(3);
+                    return;
                 }
-            }
 
-            public override void Enter()
-            {
-                Instance.ChangeMiniTurn(CurTurn);
+                await IngameScene.DrawCard(3);
             }
 
             public override void Exit()
             {
-                Instance.ChangeMiniTurn(CurTurn);
             }
         }
 
@@ -130,48 +98,15 @@ namespace CardWar.GameControl
 
             public override void Do()
             {
-                if(CurTurn == EPlayerTarget.Enemy)
-                {
-                    IngameScene.AutoDoCardAttack();
-                }
             }
 
-            public override void Enter()
+            public override async void Enter()
             {
-                if(CurTurn == EPlayerTarget.Self)
-                {
-                    IngameScene.DoCardsAttack();
-                }
+                IngameScene.ExercuteSkillQueue();
             }
 
             public override void Exit()
             {
-            }
-        }
-
-        private class PostSetUpPhase : APhase
-        {
-            public PostSetUpPhase(EPhase phaseType) : base(phaseType)
-            {
-            }
-
-            public override void Do()
-            {
-                if(Instance.PlayerMiniTurn == EPlayerTarget.Enemy)
-                {
-                    Instance.ChangeToNextMiniTurn();
-                    IngameScene.EnemyAutoPlayCard();
-                }
-            }
-
-            public override void Enter()
-            {
-                Instance.ChangeMiniTurn(CurTurn);
-            }
-
-            public override void Exit()
-            {
-                Instance.ChangeMiniTurn(CurTurn);
             }
         }
 
@@ -188,6 +123,7 @@ namespace CardWar.GameControl
             public override void Enter()
             {
                 //TODO: Use skill that active at conclude phase
+                Instance.ChangeToNextPhase();
             }
 
             public override void Exit()
@@ -201,10 +137,8 @@ namespace CardWar.GameControl
             return phaseType switch
             {
                 EPhase.Opening => new OpeningPhase(EPhase.Opening),
-                EPhase.PreSetUp => new PreSetUpPhase(EPhase.PreSetUp),
                 EPhase.Attack => new AttackPhase(EPhase.Attack),
-                EPhase.PostSetUp => new PostSetUpPhase(EPhase.PostSetUp),
-                EPhase.Conclude => new ConcludePhase(EPhase.Conclude),
+                EPhase.Exercute => new ConcludePhase(EPhase.Exercute),
                 _ => null
             };
         }
@@ -214,20 +148,13 @@ namespace CardWar.GameControl
             CurPhase?.Exit();
             // CurPhase = _phaseDict[nextPhase];
             CurPhase = GetPhase(nextPhase);
-            CurPhase.Enter();
-
             Debug.Log($"{CurPhase.Type} started.");
+            CurPhase.Enter();
         }
 
         public void ChangeToNextPhase()
         {
-            if(PlayerMiniTurn != CurTurn)
-            {
-                Debug.LogWarning("Cant change phase now.");
-                return;
-            }
-
-            if (CurPhase.Type == EPhase.Conclude) 
+            if (CurPhase.Type == EPhase.Exercute) 
             {
                 ChangeToNextTurn();
                 return;
@@ -235,10 +162,8 @@ namespace CardWar.GameControl
 
             var nextPhase = CurPhase.Type switch
             {
-                EPhase.Opening => EPhase.PreSetUp,
-                EPhase.PreSetUp => EPhase.Attack,
-                EPhase.Attack => EPhase.PostSetUp,
-                EPhase.PostSetUp => EPhase.Conclude,
+                EPhase.Opening => EPhase.Attack,
+                EPhase.Attack => EPhase.Exercute,
                 // EPhase.Conclude => EPhase.Opening,
                 _ => EPhase.None
             };
@@ -257,12 +182,12 @@ namespace CardWar.GameControl
         {
             _ingameScene.InitScene();
 
-            var selfDrawTask = _ingameScene.DrawCard(EPlayerTarget.Self, 3);
-            var enemyDrawTask = _ingameScene.DrawCard(EPlayerTarget.Enemy, 3);
+            var selfDrawTask = _ingameScene.DrawCard(3);
 
-            await Task.WhenAll(selfDrawTask, enemyDrawTask);
+            await Task.WhenAll(selfDrawTask);
 
-            ChangeTurn(EPlayerTarget.Self);
+            ChangeTurn(EPlayerTarget.Enemy);
+            // ChangeTurn(EPlayerTarget.Self);
         }
         #endregion
 

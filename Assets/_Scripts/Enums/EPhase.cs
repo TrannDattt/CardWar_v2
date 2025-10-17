@@ -1,12 +1,10 @@
-namespace CardWar.Enums
+namespace CardWar_v2.Enums
 {
     public enum EPhase
     {
         None,
         Opening,
-        PreSetUp,
         Attack,
-        PostSetUp,
-        Conclude,
+        Exercute,
     }
 }

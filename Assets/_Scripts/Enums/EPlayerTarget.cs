@@ -1,9 +1,15 @@
-namespace CardWar.Enums
+namespace CardWar_v2.Enums
 {
     public enum EPlayerTarget
     {
         Self,
         Enemy,
-        Both,
+    }
+
+    public enum EPositionTarget
+    {
+        Front = 0,
+        Mid = 1,
+        Back = 2,
     }
 }
