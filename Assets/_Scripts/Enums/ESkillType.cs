@@ -5,5 +5,13 @@ namespace CardWar_v2.Enums
         Buff,
         Debuff,
         DoDamage,
+        DoEffect,
+    }
+
+    public enum ESkillEffect
+    {
+        None,
+        Regen,
+        Poison,
     }
 }

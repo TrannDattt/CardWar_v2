@@ -33,15 +33,8 @@ namespace CardWar_v2.GameControl
 
         #region Turn Logic
         //TODO: Phase logic and change phase
-        public APhase CurPhase { get; private set; }
-        // private Dictionary<EPhase, APhase> _phaseDict = new()
-        // {
-        //     {EPhase.Opening, new OpeningPhase(EPhase.Opening)},
-        //     {EPhase.PreSetUp, new PreSetUpPhase(EPhase.PreSetUp)},
-        //     {EPhase.Attack, new AttackPhase(EPhase.Attack)},
-        //     {EPhase.PostSetUp, new PostSetUpPhase(EPhase.PostSetUp)},
-        //     {EPhase.Conclude, new ConcludePhase(EPhase.Conclude)},
-        // };
+        private APhase _curPhase;
+        public EPhase CurPhase => _curPhase != null ? _curPhase.Type : EPhase.None;
 
         public abstract class APhase
         {
@@ -120,9 +113,10 @@ namespace CardWar_v2.GameControl
             {
             }
 
-            public override void Enter()
+            public override async void Enter()
             {
                 //TODO: Use skill that active at conclude phase
+                await IngameScene.DoEffectsOnChars(CurTurn);
                 Instance.ChangeToNextPhase();
             }
 
@@ -145,22 +139,22 @@ namespace CardWar_v2.GameControl
 
         private void ChangePhase(EPhase nextPhase)
         {
-            CurPhase?.Exit();
+            _curPhase?.Exit();
             // CurPhase = _phaseDict[nextPhase];
-            CurPhase = GetPhase(nextPhase);
-            Debug.Log($"{CurPhase.Type} started.");
-            CurPhase.Enter();
+            _curPhase = GetPhase(nextPhase);
+            Debug.Log($"{_curPhase.Type} started.");
+            _curPhase.Enter();
         }
 
         public void ChangeToNextPhase()
         {
-            if (CurPhase.Type == EPhase.Exercute) 
+            if (_curPhase.Type == EPhase.Exercute) 
             {
                 ChangeToNextTurn();
                 return;
             }
 
-            var nextPhase = CurPhase.Type switch
+            var nextPhase = _curPhase.Type switch
             {
                 EPhase.Opening => EPhase.Attack,
                 EPhase.Attack => EPhase.Exercute,
@@ -186,8 +180,8 @@ namespace CardWar_v2.GameControl
 
             await Task.WhenAll(selfDrawTask);
 
-            ChangeTurn(EPlayerTarget.Enemy);
-            // ChangeTurn(EPlayerTarget.Self);
+            // ChangeTurn(EPlayerTarget.Enemy);
+            ChangeTurn(EPlayerTarget.Self);
         }
         #endregion
 
@@ -201,9 +195,9 @@ namespace CardWar_v2.GameControl
 
         void Update()
         {
-            if(CurPhase != null)
+            if(_curPhase != null)
             {
-                CurPhase.Do();
+                _curPhase.Do();
             }
         }
         #endregion

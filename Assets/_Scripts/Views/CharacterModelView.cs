@@ -18,8 +18,10 @@ namespace CardWar_v2.Views
     {
         public CharacterCard BaseCard;
 
-        [SerializeField] private HealthBarView _healthBar;
         [SerializeField] private GameObject _modelBase;
+        [SerializeField] private Canvas _canvas;
+        [SerializeField] private HealthBarView _healthBar;
+        [SerializeField] private GameObject _effectBar;
 
         private Animator _animator;
 
@@ -38,6 +40,10 @@ namespace CardWar_v2.Views
             BaseCard = card;
 
             Instantiate(BaseCard.Model, _modelBase.transform);
+            //TODO: Rotate effect bar to face camera
+            _effectBar.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 90, 0);
+            // _canvas.GetComponent<RectTransform>().rotation = Quaternion.Inverse(transform.rotation) * Quaternion.Euler(0, 90, 0);
+
             _animator = _modelBase.GetComponentInChildren<Animator>();
             _animator.runtimeAnimatorController = card.AnimController;
 
@@ -52,10 +58,15 @@ namespace CardWar_v2.Views
             }
 
             card.OnCardUpdated.AddListener(UpdateCardDetail);
-            card.OnTakenDamage.AddListener(UpdateCardDetail);
-            // card.OnAttack.AddListener((t) => DoAttack(t));
+            card.OnChangeHp.AddListener(UpdateCardDetail);
+            card.OnApplyEffect.AddListener((effect) => ApplyEffect(effect));
 
             _healthBar.SetMaxHp(Hp);
+            foreach(Transform c in _effectBar.transform)
+            {
+                var effect = c.GetComponent<EffectView>();
+                EffectViewFactory.Instance.ReturnEffectView(effect);
+            }
 
             UpdateCardDetail();
         }
@@ -88,10 +99,15 @@ namespace CardWar_v2.Views
                 m.SetFloat("_Dissolve", value);
         }
 
+        public void ApplyEffect(SkillEffect effect)
+        {
+            EffectViewFactory.Instance.CreateEffectView(effect, _effectBar.GetComponent<RectTransform>());
+        }
+
         public async Task DestroyChar(float duration)
         {
             var sequence = DOTween.Sequence();
-            sequence.Append(DOTween.To(() => 0f, x => SetDissolve(x), 1f, duration)).SetEase(Ease.InOutQuad);
+            sequence.Append(DOTween.To(() => 0f, x => SetDissolve(x), 1f, duration).SetEase(Ease.InOutQuad));
             sequence.OnComplete(() =>
             {
                 SetDissolve(1f);

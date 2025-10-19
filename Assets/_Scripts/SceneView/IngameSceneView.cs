@@ -39,7 +39,7 @@ namespace CardWar_v2.GameViews
         [SerializeField] private BoardView _boardView;
         [SerializeField] private SkillQueueView _skillQueueView;
 
-        // [SerializeField] private CardDetailView _cardDetailView;
+        [SerializeField] private CardDetailView _cardDetailView;
         //         [SerializeField] private CardSelectorView _cardSelectorView;
 
         //         [SerializeField] private PlayerDeckView _enemyDeckView;
@@ -88,13 +88,14 @@ namespace CardWar_v2.GameViews
                     _handView.AddCardToHand(drawnCard);
                 });
 
-                drawnCard.OnCardClick.AddListener((e) =>
+                drawnCard.OnCardClick.AddListener(async (e) =>
                 {
-                    if(GameplayManager.Instance.CurPhase.Type == EPhase.Opening)
+                    if(GameplayManager.Instance.CurPhase == EPhase.Opening)
                     {
                         if (e.button == InputButton.Right)
                         {
-                            // TODO: Show card detail
+                            Debug.Log($"1.Show detail of card {drawnCard.BaseCard}");
+                            await _cardDetailView.ShowSkillDetail(drawnCard.BaseCard);
                         }
                         else if (e.button == InputButton.Left)
                         {
@@ -118,11 +119,9 @@ namespace CardWar_v2.GameViews
             }
             
             _handView.RemoveCard(cardView);
+            _skillQueueView.AddCard(cardView);
 
-            await PlayCardAnimation(cardView, slot, () =>
-            {
-                _skillQueueView.AddCard(cardView);
-            });
+            await PlayCardAnimation(cardView, slot);
         }
 
         public async Task AutoSelectCard(int amount)
@@ -302,7 +301,7 @@ namespace CardWar_v2.GameViews
                         //TODO: Animation for card if no targets
                         continue;
                     }
-                    
+
                     await caster.UseSkill(ss, targets);
 
                     var destroyTask = new List<Task>();
@@ -328,6 +327,18 @@ namespace CardWar_v2.GameViews
             }
 
             GameplayManager.Instance.ChangeToNextPhase();
+        }
+        
+        public async Task DoEffectsOnChars(EPlayerTarget casterSide)
+        {
+            var targetSide = casterSide == EPlayerTarget.Self ? EPlayerTarget.Enemy : EPlayerTarget.Self;
+            var targetChars = _boardView.GetCharactersInRegion(targetSide);
+            var targetTasks = targetChars.Select(c => c.BaseCard.DoEffects());
+            await Task.WhenAll(targetTasks);
+
+            var casterChars = _boardView.GetCharactersInRegion(casterSide);
+            var casterTasks = casterChars.Select(c => c.BaseCard.DoEffects());
+            await Task.WhenAll(casterTasks);
         }
         #endregion
 
@@ -494,6 +505,7 @@ namespace CardWar_v2.GameViews
             _boardView.Initialize();
             for (int i = 0; i < 3; i++)
             {
+                // TODO: Add event on click show detail for char
                 _boardView.AddCardToSlot(selfChars[i], EPlayerTarget.Self, (EPositionTarget)i);
                 _boardView.AddCardToSlot(enemyChars[i], EPlayerTarget.Enemy, (EPositionTarget)i);
             }

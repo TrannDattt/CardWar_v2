@@ -100,8 +100,8 @@ namespace CardWar_v2.Views
         public async Task DestroySkill(float duration)
         {
             var sequence = DOTween.Sequence();
-            sequence.Append(transform.DORotate(new Vector3(0, 0, -30), .3f)).SetEase(Ease.InOutQuad);
-            sequence.Join(DOTween.To(() => 0f, x => SetDissolve(x), 1f, duration)).SetEase(Ease.InOutQuad);
+            sequence.Append(transform.DORotate(new Vector3(0, 0, -30), .3f).SetEase(Ease.InOutQuad));
+            sequence.Join(DOTween.To(() => 0f, x => SetDissolve(x), 1f, duration).SetEase(Ease.InOutQuad));
             sequence.OnComplete(() =>
             {
                 SetDissolve(1f);
