@@ -34,6 +34,8 @@ namespace CardWar_v2.Views
         [SerializeField] private TextMeshProUGUI _resist;
         private bool _isShownChar;
 
+        //TODO: Add a section for active effects on char
+
         [Header("Skill Detail")]
         [SerializeField] private RectTransform _skillDetail;
         [SerializeField] private Image _skillImage;
@@ -58,6 +60,7 @@ namespace CardWar_v2.Views
 
             if (_isShownChar) await HideDetailView(EDetailType.Char);
             if (!_isShownSkill) await ShowDetailView(EDetailType.Skill);
+            // await ShowDetailView(EDetailType.Skill);
         }
 
         public async Task ShowCharDetail(CharacterCard card)
@@ -71,6 +74,7 @@ namespace CardWar_v2.Views
 
             if (_isShownSkill) await HideDetailView(EDetailType.Skill);
             if (!_isShownChar) await ShowDetailView(EDetailType.Char);
+            // await ShowDetailView(EDetailType.Char);
         }
 
         private async Task ShowDetailView(EDetailType type)

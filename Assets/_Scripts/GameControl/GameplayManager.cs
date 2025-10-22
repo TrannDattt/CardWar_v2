@@ -174,7 +174,7 @@ namespace CardWar_v2.GameControl
         // Make a state machine ??
         public async void StartGame()
         {
-            _ingameScene.InitScene();
+            await _ingameScene.InitScene();
 
             var selfDrawTask = _ingameScene.DrawCard(3);
 

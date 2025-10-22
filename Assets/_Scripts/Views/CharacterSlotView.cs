@@ -25,13 +25,10 @@ namespace CardWar_v2.Views
             RemoveCard(true);
         }
 
-        public void PlaceCard(CharacterCard card)
+        public void PlaceCard(CharacterModelView model)
         {
-            if (card != null && !IsEmpty) return;
-            var model = CardFactory.Instance.CreateCharModel(card, parent: transform);
+            if (model != null && !IsEmpty) return;
             CharInSlot = model;
-            // Debug.Log($"Check: {card == model.BaseCard}");
-            // Debug.Log($"Check: {card.SkillCards[0].Owner == model.BaseCard}");
         }
 
         public void RemoveCard(bool doRecycle)

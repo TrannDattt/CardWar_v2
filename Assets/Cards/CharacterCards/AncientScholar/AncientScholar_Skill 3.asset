@@ -24,9 +24,9 @@ MonoBehaviour:
       data:
         Type: 2
         Clip: {fileID: 7400000, guid: 9a20099255ea4644fb305e57a792e610, type: 2}
-        DelayToSkill: 0.7
+        DelayToSkill: 0.2
         PosTargets: 0300000002000000
         DamageMult: 0.7
         Projectile: {fileID: 8542387179039130532, guid: b8682b7646d938d49911c77830a4f5d1, type: 3}
-        OffsetToCaster: {x: 0, y: 2, z: 3}
+        OffsetToCaster: {x: 3, y: 2, z: 0}
         DamageType: 1

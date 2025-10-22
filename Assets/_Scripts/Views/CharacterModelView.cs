@@ -14,13 +14,13 @@ using UnityEngine.EventSystems;
 
 namespace CardWar_v2.Views
 {
-    public class CharacterModelView : MonoBehaviour
+    public class CharacterModelView : MonoBehaviour, IPointerClickHandler
     {
         public CharacterCard BaseCard;
 
         [SerializeField] private GameObject _modelBase;
         [SerializeField] private Canvas _canvas;
-        [SerializeField] private HealthBarView _healthBar;
+        [SerializeField] private FillBarView _healthBar;
         [SerializeField] private GameObject _effectBar;
 
         private Animator _animator;
@@ -61,7 +61,7 @@ namespace CardWar_v2.Views
             card.OnChangeHp.AddListener(UpdateCardDetail);
             card.OnApplyEffect.AddListener((effect) => ApplyEffect(effect));
 
-            _healthBar.SetMaxHp(Hp);
+            _healthBar?.SetMaxValue(Hp);
             foreach(Transform c in _effectBar.transform)
             {
                 var effect = c.GetComponent<EffectView>();
@@ -71,9 +71,9 @@ namespace CardWar_v2.Views
             UpdateCardDetail();
         }
 
-        private void UpdateCardDetail()
+        private async void UpdateCardDetail()
         {
-            _healthBar.UpdateBar(Hp);
+            await _healthBar?.UpdateBar(Hp);
             // Debug.Log($"Hp remain: {Hp}");
         }
 

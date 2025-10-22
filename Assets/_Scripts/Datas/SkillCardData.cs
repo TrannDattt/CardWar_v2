@@ -87,7 +87,7 @@ namespace CardWar_v2.Datas
         {
             // TODO: Spawn projectile with factory
             var projectile = UnityEngine.Object.Instantiate(Projectile, caster.transform);
-            await projectile.FlyToTarget(caster.transform.position + OffsetToCaster,
+            await projectile.FlyToTarget(caster.transform.position, OffsetToCaster,
                                         target.transform.position + OffsetToCaster.y * Vector3.up,
                                         () => DoDamage(caster, target.BaseCard));
         }

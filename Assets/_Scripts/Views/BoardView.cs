@@ -29,14 +29,11 @@ namespace CardWar_v2.Views
             return region.GetSlotByPosition(pos);
         }
 
-        public void AddCardToSlot(CharacterCard card, EPlayerTarget playerTarget, EPositionTarget posTarget)
+        public void AddCharToSlot(CharacterModelView model, CharacterSlotView slot)
         {
-            if (card == null) return;
+            if (model == null) return;
 
-            var region = playerTarget == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
-            var pos = posTarget == EPositionTarget.Random ? region.GetRandomPos() : posTarget;
-            var slot = region.GetSlotByPosition(pos);
-            slot.PlaceCard(card);
+            slot.PlaceCard(model);
         }
 
         public void RemoveCard(CharacterCard card, EPlayerTarget target)
