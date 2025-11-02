@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using CardWar.Enums;
 using CardWar.Untils;
 using CardWar_v2.Enums;
-using CardWar_v2.GameViews;
+using CardWar_v2.SceneViews;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -95,7 +95,9 @@ namespace CardWar_v2.GameControl
 
             public override async void Enter()
             {
-                IngameScene.ExercuteSkillQueue();
+                await IngameScene.ExercuteSkillQueue();
+
+                Instance.ChangeToNextPhase();
             }
 
             public override void Exit()

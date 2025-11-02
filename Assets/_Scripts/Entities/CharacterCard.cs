@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CardWar.Enums;
 using CardWar.Interfaces;
 using CardWar_v2.Datas;
 using CardWar_v2.Enums;
@@ -12,23 +13,43 @@ namespace CardWar_v2.Entities
 {
     public class CharacterCard : IDamagable
     {
-        private CharacterCardData _data;
+        public class CharStat
+        {
+            public float Hp;
+            public float Atk;
+            public float Armor;
+            public float Resist;
 
-        public string Name => _data.name;
-        public Sprite Image => _data.Image;
-        public AnimatorController AnimController => _data.AnimController;
-        public GameObject Model => _data.Model;
+            public CharStat(float hp, float atk, float armor, float resist)
+            {
+                Hp = hp;
+                Atk = atk;
+                Armor = armor;
+                Resist = resist;
+            }
+        }
 
-        public float Hp => _data.Hp + _bonusHp;
+        public CharacterCardData Data { get; private set; }
+
+        public ECharacter Character => Data.Character;
+        public string Name => Data.name;
+        public Sprite Image => Data.Image;
+        public AnimatorController AnimController => Data.AnimController;
+        public GameObject Model => Data.Model;
+
+        public bool IsUnlocked { get; set; }
+        public int Level { get; set; }
+
+        public float Hp => Data.Hp + Data.HpPerLevel * Level + _bonusHp;
         private float _bonusHp;
 
-        public float Atk => _data.Atk + _bonusAtk;
+        public float Atk => Data.Atk + Data.AtkPerLevel * Level + _bonusAtk;
         private float _bonusAtk;
 
-        public float Armor => _data.Armor + _bonusArmor;
+        public float Armor => Data.Armor + Data.ArmorPerLevel * Level + _bonusArmor;
         private float _bonusArmor;
 
-        public float Resist => _data.Resist + _bonusResist;
+        public float Resist => Data.Resist + Data.ResistPerLevel * Level + _bonusResist;
         private float _bonusResist;
 
         public List<SkillCard> SkillCards;
@@ -41,9 +62,18 @@ namespace CardWar_v2.Entities
         public UnityEvent OnChangeHp { get; set; } = new();
         public UnityEvent OnDeath { get; set; } = new();
 
-        public CharacterCard(CharacterCardData data)
+        public CharacterCard(CharacterCardData data, int level = 1, bool isUnlock = false)
         {
-            _data = data;
+            Data = data;
+
+            if (!isUnlock)
+            {
+                Level = 1;
+            }
+            else
+            {
+                Level = level;
+            }
 
             _bonusHp = 0;
             _bonusAtk = 0;
@@ -52,8 +82,15 @@ namespace CardWar_v2.Entities
 
             SkillCards = new();
             ActiveEffects = new();
-            _data.SkillCardDatas.ForEach(d => SkillCards.Add(new(d, this)));
+            Data.SkillCardDatas.ForEach(d => SkillCards.Add(new(d, this)));
         }
+
+        public CharStat GetCurStat() => new(Hp, Atk, Armor, Resist);
+
+        public CharStat GetStatAtLevel(int level) => new(Data.Hp + Data.HpPerLevel * level,
+                                                         Data.Atk + Data.AtkPerLevel * level,
+                                                         Data.Armor + Data.ArmorPerLevel * level,
+                                                         Data.Resist + Data.ResistPerLevel * level);
 
         public void Die()
         {

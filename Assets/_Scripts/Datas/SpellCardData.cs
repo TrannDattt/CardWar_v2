@@ -1,10 +1,10 @@
-using UnityEngine;
+// using UnityEngine;
 
-namespace CardWar.Datas
-{
-    [CreateAssetMenu(menuName = "SO/Card Data/Spell")]
-    public class SpellCardData : CardData
-    {
+// namespace CardWar.Datas
+// {
+//     [CreateAssetMenu(menuName = "SO/Card Data/Spell")]
+//     public class SpellCardData : CardData
+//     {
 
-    }
-}
+//     }
+// }

@@ -4,7 +4,7 @@ namespace CardWar_v2.Factories
     using CardWar.Untils;
     using CardWar_v2.Entities;
     using CardWar_v2.Enums;
-    using CardWar_v2.Views;
+    using CardWar_v2.ComponentViews;
     using UnityEngine;
 
     public class EffectViewFactory : Singleton<EffectViewFactory>

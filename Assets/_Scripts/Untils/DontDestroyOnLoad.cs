@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace CardWar.Untils
+namespace CardWar_v2.Untils
 {
     public class DontDestroyOnLoad : MonoBehaviour
     {

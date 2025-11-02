@@ -11,7 +11,7 @@ using CardWar_v2.Entities;
 using CardWar_v2.Enums;
 using CardWar_v2.Factories;
 using CardWar_v2.GameControl;
-using CardWar_v2.Views;
+using CardWar_v2.ComponentViews;
 
 // using CardWar.Views;
 using DG.Tweening;
@@ -19,7 +19,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using static UnityEngine.EventSystems.PointerEventData;
 
-namespace CardWar_v2.GameViews
+namespace CardWar_v2.SceneViews
 {
     public class IngameSceneView : Singleton<IngameSceneView>
     {
@@ -281,7 +281,7 @@ namespace CardWar_v2.GameViews
         // #endregion
 
         #region Do Skill
-        public async void ExercuteSkillQueue()
+        public async Task ExercuteSkillQueue()
         {
             // Debug.Log($"Exercuting queue with {_skillQueueView.CardQueue.Count} skills");
             var casterSide = GameplayManager.Instance.CurTurn;
@@ -325,8 +325,6 @@ namespace CardWar_v2.GameViews
                 }
                 _skillQueueView.RemoveCard(skillCard, true);
             }
-
-            GameplayManager.Instance.ChangeToNextPhase();
         }
 
         public async Task DoEffectsOnChars(EPlayerTarget casterSide)
