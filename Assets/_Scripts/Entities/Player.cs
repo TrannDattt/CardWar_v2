@@ -23,7 +23,10 @@ namespace CardWar_v2.Entities
         public UnityEvent OnGemUpdated = new();
         public UnityEvent OnGoldUpdated = new();
 
-        public Player(PlayerDataJson data) => Data = data;
+        public Player(PlayerDataJson data) 
+        {
+            Data = data;
+        }
 
         public void UpdateName(string newName)
         {
@@ -36,7 +39,7 @@ namespace CardWar_v2.Entities
             var newLevel = Level;
             while (Data.Exp + amount >= GetExpToNextLevel(newLevel))
             {
-                amount -= GetExpToNextLevel(newLevel);
+                amount = Data.Exp + amount - GetExpToNextLevel(newLevel);
                 newLevel++;
                 Data.Exp = 0;
             }

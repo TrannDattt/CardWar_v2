@@ -89,7 +89,10 @@ namespace CardWar_v2.Session
     {
         public string Id;
         //TODO: More item details
-        public int Price;
+        // public EItemType Type;
+        public int GoldCost;
+        public int GemCost;
+        public int StockAmount;
     }
 
     [Serializable]

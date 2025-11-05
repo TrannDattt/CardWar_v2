@@ -4,5 +4,7 @@ namespace CardWar_v2.Enums
     {
         Physical,
         Magical,
+        Pure,
+        None,
     }
 }

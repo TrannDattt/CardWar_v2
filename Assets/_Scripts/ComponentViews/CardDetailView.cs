@@ -44,7 +44,7 @@ namespace CardWar_v2.ComponentViews
 
         private string GetSkillDetail(SubSkill subSkill, CharacterCard owner)
         {
-            return subSkill.GenerateDescription(owner);
+            return subSkill.GenerateDescription(owner, false);
         }
         
         public async Task ShowSkillDetail(SkillCard card)
@@ -67,10 +67,10 @@ namespace CardWar_v2.ComponentViews
         {
             _charImage.sprite = card.Image;
             _charName.SetText(card.Name);
-            _atk.SetText($"ATK: {card.Atk}");
-            _hp.SetText($"HP: {card.Hp}");
-            _armor.SetText($"Armor: {card.Armor}");
-            _resist.SetText($"Resist: {card.Resist}");
+            _atk.SetText($"ATK: {card.CurAtk}");
+            _hp.SetText($"HP: {card.CurHp}");
+            _armor.SetText($"Armor: {card.CurArmor}");
+            _resist.SetText($"Resist: {card.CurResist}");
 
             if (_isShownSkill) await HideDetailView(EDetailType.Skill);
             if (!_isShownChar) await ShowDetailView(EDetailType.Char);

@@ -54,44 +54,55 @@ namespace CardWar_v2.GameControl
 
             var charDatas = handle.Result;
             var charJSONs = SessionSaveLoad.LoadFromFile<CharacterListJson>("characters").Characters;
-            // if(charDatas.Count != charJSONs.Count)
-            // {
-            //     Debug.LogError("Character amount is not match");
-            //     return;
-            // }
 
+            // Debug.Log($"Char amount loaded: {charJSONs.Count}");
             for (int i = 0; i < charDatas.Count; i++)
             {
-                if (i >= charJSONs.Count)
-                {
-                    CharacterList.Add(new(charDatas[i]));
-                    continue;
-                }
+                CharacterCard newChar;
+                if (i >= charJSONs.Count) newChar = new(charDatas[i]);
+                else newChar = new(charDatas[i], charJSONs[i].Level, charJSONs[i].IsUnlocked);
 
-                CharacterList.Add(new(charDatas[i], charJSONs[i].Level, charJSONs[i].IsUnlocked));
+                CharacterList.Add(newChar);
+
+                newChar.OnCardLevelUp.AddListener(SaveSessionData);
+                newChar.OnCardUnlock.AddListener(SaveSessionData);
+                // Debug.Log($"Character {CharacterList[i].Name} is {CharacterList[i].IsUnlocked}");
             }
+        }
+
+        // TODO: Save load more properly
+        public void SaveSessionData()
+        {
+            var charJSONs = new CharacterListJson();
+            CharacterList.ForEach(c => charJSONs.Characters.Add(new(c)));
+            SessionSaveLoad.SaveToFile(charJSONs, "characters");
+
+            SessionSaveLoad.SaveToFile(CurPlayer.Data, "player");
         }
 
         protected override async void Awake()
         {
             // var playerData = SessionSaveLoad.LoadFromFile<PlayerDataJson>("player");
             var playerData = SessionSaveLoad.LoadFromFile<PlayerDataJson>("player");
-            if(playerData != null)
+            if (playerData != null)
             {
                 CurPlayer = new(playerData);
+
+                CurPlayer.OnPlayerNameUpdated.AddListener(SaveSessionData);
+                CurPlayer.OnPlayerAvatarUpdated.AddListener(SaveSessionData);
+                CurPlayer.OnPlayerExpUpdated.AddListener((_) => SaveSessionData());
+                CurPlayer.OnGemUpdated.AddListener(SaveSessionData);
+                CurPlayer.OnGoldUpdated.AddListener(SaveSessionData);
             }
             await FetchAllCharacters();
             // UpdatePlayerData(playerData);
             OnFinishLoadingSession?.Invoke();
         }
 
+        // TODO: Save data more frequently, dont wait until close app
         private void OnApplicationQuit()
         {
-            var charJSONs = new CharacterListJson();
-            CharacterList.ForEach(c => charJSONs.Characters.Add(new(c)));
-
-            SessionSaveLoad.SaveToFile(CurPlayer.Data, "player");
-            SessionSaveLoad.SaveToFile(charJSONs, "characters");
+            // SaveSessionData();
         }
     }
 }

@@ -5,6 +5,7 @@ using CardWar.Enums;
 using CardWar.Interfaces;
 using CardWar_v2.Datas;
 using CardWar_v2.Enums;
+using CardWar_v2.GameControl;
 using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Events;
@@ -37,26 +38,29 @@ namespace CardWar_v2.Entities
         public AnimatorController AnimController => Data.AnimController;
         public GameObject Model => Data.Model;
 
-        public bool IsUnlocked { get; set; }
-        public int Level { get; set; }
+        public bool IsUnlocked { get; private set; }
+        public int Level { get; private set; }
 
-        public float Hp => Data.Hp + Data.HpPerLevel * Level + _bonusHp;
+        public float CurHp => Data.Hp + Data.HpPerLevel * Level + _bonusHp;
         private float _bonusHp;
 
-        public float Atk => Data.Atk + Data.AtkPerLevel * Level + _bonusAtk;
+        public float CurAtk => Data.Atk + Data.AtkPerLevel * Level + _bonusAtk;
         private float _bonusAtk;
 
-        public float Armor => Data.Armor + Data.ArmorPerLevel * Level + _bonusArmor;
+        public float CurArmor => Data.Armor + Data.ArmorPerLevel * Level + _bonusArmor;
         private float _bonusArmor;
 
-        public float Resist => Data.Resist + Data.ResistPerLevel * Level + _bonusResist;
+        public float CurResist => Data.Resist + Data.ResistPerLevel * Level + _bonusResist;
         private float _bonusResist;
+
+        public int GoldCost => Data.GoldCost;
+        public int GemCost => Data.GemCost;
 
         public List<SkillCard> SkillCards;
         public Dictionary<ESkillEffect, SkillEffect> ActiveEffects;
 
-        public UnityEvent OnCardUpdated = new();
-
+        public UnityEvent OnCardLevelUp = new();
+        public UnityEvent OnCardUnlock = new();
         public UnityEvent<SubSkill> OnUseSkill { get; set; } = new();
         public UnityEvent<SkillEffect> OnApplyEffect { get; set; } = new();
         public UnityEvent OnChangeHp { get; set; } = new();
@@ -65,6 +69,7 @@ namespace CardWar_v2.Entities
         public CharacterCard(CharacterCardData data, int level = 1, bool isUnlock = false)
         {
             Data = data;
+            IsUnlocked = isUnlock;
 
             if (!isUnlock)
             {
@@ -85,7 +90,21 @@ namespace CardWar_v2.Entities
             Data.SkillCardDatas.ForEach(d => SkillCards.Add(new(d, this)));
         }
 
-        public CharStat GetCurStat() => new(Hp, Atk, Armor, Resist);
+        public void LevelUp()
+        {
+            Level += 1;
+
+            OnCardLevelUp?.Invoke();
+        }
+
+        public void UnlockCard()
+        {
+            IsUnlocked = true;
+
+            OnCardUnlock?.Invoke();
+        }
+
+        public CharStat GetCurStat() => new(CurHp, CurAtk, CurArmor, CurResist);
 
         public CharStat GetStatAtLevel(int level) => new(Data.Hp + Data.HpPerLevel * level,
                                                          Data.Atk + Data.AtkPerLevel * level,
@@ -96,7 +115,7 @@ namespace CardWar_v2.Entities
         {
             OnDeath?.Invoke();
 
-            OnCardUpdated.RemoveAllListeners();
+            OnCardLevelUp.RemoveAllListeners();
             OnUseSkill.RemoveAllListeners();
             OnChangeHp.RemoveAllListeners();
             OnDeath.RemoveAllListeners();
@@ -104,8 +123,15 @@ namespace CardWar_v2.Entities
 
         public void TakeDamage(float amount, EDamageType type)
         {
-            var dmgReduce = type == EDamageType.Physical ? Armor : Resist;
-            ChangeHp(-amount + dmgReduce);
+            var dmgReduce = type == EDamageType.Physical ? CurArmor : CurResist;
+            float vulAmount = 0;
+            foreach(var e in ActiveEffects)
+            {
+                if (e.Key != ESkillEffect.Vulnerable) continue;
+                vulAmount += (e.Value as VulnerableEffect).GetCurAmount();
+            }
+            
+            ChangeHp((-amount + dmgReduce) * vulAmount);
         }
 
         public void ApplyEffect(SkillEffect effect)

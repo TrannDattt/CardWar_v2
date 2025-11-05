@@ -23,6 +23,7 @@ namespace CardWar_v2.ComponentViews
 
         public void ChangeCharacter(CharacterCard charCard)
         {
+            if (_selectedChar == charCard) return;
             _selectedChar = charCard;
 
             var curModel = _charModelHolder.GetComponentInChildren<CharacterModelView>();

@@ -37,7 +37,7 @@ namespace CardWar_v2.Datas
         public List<EPositionTarget> PosTargets;
 
         public abstract Task DoSkill(CharacterModelView caster, CharacterModelView target);
-        public abstract string GenerateDescription(CharacterCard owner);
+        public abstract string GenerateDescription(CharacterCard owner, bool isShowNextLevel);
     }
     #endregion
 
@@ -46,11 +46,12 @@ namespace CardWar_v2.Datas
     public class DoRangeAttack : SubSkill
     {
         public float DamageMult;
+        public float BonusDamageMultPerLevel;
         public ProjectileView Projectile;
         public Vector3 OffsetToCaster;
         public EDamageType DamageType;
 
-        public override string GenerateDescription(CharacterCard owner)
+        public override string GenerateDescription(CharacterCard owner, bool isShowNextLevel)
         {
             var randomTargets = PosTargets.Where(p => p == EPositionTarget.Random).ToList();
             var normalTargets = PosTargets.Where(p => p != EPositionTarget.Random).ToList();
@@ -80,7 +81,9 @@ namespace CardWar_v2.Datas
                 targetList = "unknown positions";
 
             return $"Fire projectile(s) to targets at {targetList}, " +
-                $"dealing {DamageMult * owner.Atk} {DamageType} damage to each target.";
+                $"dealing {(DamageMult + owner.Level * BonusDamageMultPerLevel) * owner.GetStatAtLevel(owner.Level).Atk} " +
+                $"{(isShowNextLevel ? $"=> {(DamageMult + (owner.Level + 1) * BonusDamageMultPerLevel) * owner.GetStatAtLevel(owner.Level + 1).Atk} " : "")}" +
+                $"{DamageType} damage to each target.";
         }
 
         public override async Task DoSkill(CharacterModelView caster, CharacterModelView target)
@@ -106,25 +109,33 @@ namespace CardWar_v2.Datas
     [Serializable]
     public class ApplyEffect : SubSkill
     {
-        public ESkillEffect EffectType;
-        public float DamageMult;
+        public float Multiplier;
+        public float BonusMultiplierPerLevel;
+        public EDamageType DamageType; // Use for effects that deal damage
+        public ESkillEffect EffectType = ESkillEffect.None;
         public int Duration;
-        public EDamageType DamageType;
+
+        private SkillEffect GetSkillEffect(CharacterCard caster, CharacterCard target)
+        {
+            return EffectType switch
+            {
+                ESkillEffect.Poison => new PoisonEffect(caster, target, Duration, Multiplier, BonusMultiplierPerLevel, DamageType),
+                ESkillEffect.Regen => new RegenEffect(caster, target, Duration, Multiplier, BonusMultiplierPerLevel),
+                ESkillEffect.Vulnerable => new VulnerableEffect(caster, target, Duration, Multiplier, BonusMultiplierPerLevel),
+                _ => null,
+            };
+        }
 
         public override async Task DoSkill(CharacterModelView caster, CharacterModelView target)
         {
-            SkillEffect effect = EffectType switch
-            {
-                ESkillEffect.Poison => new PoisonEffect(caster.BaseCard, target.BaseCard, Duration, caster.Atk * DamageMult),
-                ESkillEffect.Regen => new RegenEffect(caster.BaseCard, target.BaseCard, Duration, caster.Atk * DamageMult),
-                _ => null,
-            };
+            var effect = GetSkillEffect(caster.BaseCard, target.BaseCard);
 
             target.BaseCard.ApplyEffect(effect);
         }
 
-        public override string GenerateDescription(CharacterCard owner)
+        public override string GenerateDescription(CharacterCard owner, bool isShowNextLevel)
         {
+            var effect = GetSkillEffect(owner, null);
             var randomTargets = PosTargets.Where(p => p == EPositionTarget.Random).ToList();
             var normalTargets = PosTargets.Where(p => p != EPositionTarget.Random).ToList();
 
@@ -152,8 +163,7 @@ namespace CardWar_v2.Datas
             if (string.IsNullOrEmpty(targetList))
                 targetList = "unknown positions";
 
-            return $"Apply {EffectType} to targets at {targetList}, " +
-                $"dealing {DamageMult * owner.Atk} {DamageType} damage for {Duration} turn(s).";
+            return effect.GetDescription(targetList, isShowNextLevel);
         }
     }
     #endregion

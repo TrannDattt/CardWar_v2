@@ -28,8 +28,8 @@ namespace CardWar_v2.ComponentViews
         private List<Renderer> _rends = new();
         private HashSet<Material> _mats = new();
 
-        public float Hp => BaseCard.Hp;
-        public float Atk => BaseCard.Atk;
+        public float Hp => BaseCard.CurHp;
+        public float Atk => BaseCard.CurAtk;
 
         public UnityEvent<PointerEventData> OnModelClicked;
 
@@ -56,7 +56,7 @@ namespace CardWar_v2.ComponentViews
                 }
             }
 
-            card.OnCardUpdated.AddListener(UpdateCardDetail);
+            // card.OnCardUpdated.AddListener(UpdateCardDetail);
             card.OnChangeHp.AddListener(UpdateCardDetail);
             card.OnApplyEffect.AddListener((effect) => ApplyEffect(effect));
 

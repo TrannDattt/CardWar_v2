@@ -28,6 +28,7 @@ MonoBehaviour:
         DelayToSkill: 0.2
         PosTargets: 00000000
         DamageMult: 1
+        BonusDamageMultPerLevel: 0.02
         Projectile: {fileID: 8542387179039130532, guid: b8682b7646d938d49911c77830a4f5d1, type: 3}
         OffsetToCaster: {x: 3, y: 2, z: 0}
         DamageType: 1
@@ -40,5 +41,6 @@ MonoBehaviour:
         PosTargets: 00000000
         EffectType: 2
         DamageMult: 0.2
+        BonusDamageMultPerLevel: 0
         Duration: 3
         DamageType: 1

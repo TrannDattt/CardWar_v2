@@ -13,5 +13,6 @@ namespace CardWar_v2.Enums
         None,
         Regen,
         Poison,
+        Vulnerable,
     }
 }
