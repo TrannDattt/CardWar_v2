@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: ShopItems
+  m_EditorClassIdentifier: 
+  m_GroupName: ShopItems
+  m_GUID: 6515ccf1fe680194cac1e3b7d9d0cefb
+  m_SerializeEntries:
+  - m_GUID: 08d6e425d4280844386b64d09ce9a005
+    m_Address: ShopItem/BubblegumPrincess
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ShopItems
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 19cd345845c17ec4a9d89426cdbfd47b
+    m_Address: ShopItem/Finn
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ShopItems
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 218724d33ccc82b449e788f490221e3c
+    m_Address: ShopItem/Marceline
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ShopItems
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2d9957f73a7601043820aea433b0bb84
+    m_Address: ShopItem/IceQueen
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ShopItems
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 924d5974ebcaa514fb16967789d5888b
+    m_Address: ShopItem/LumpySpacePrincess
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ShopItems
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a8d33ccc9a100b94db3c23c2abd4e984
+    m_Address: ShopItem/Jake
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ShopItems
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c82862cfcb1f7664d89a04a42d7e8106
+    m_Address: ShopItem/IceKing
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ShopItems
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e91fec34e21ca714fa8845ee2d5017d9
+    m_Address: ShopItem/FlamePrincess
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ShopItems
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 992fa4cc475bb9640a4b9ac0b0f0b597, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 0c3434e90ae2b9b4b8ba63c8477d0a69, type: 2}
+    - {fileID: 11400000, guid: d02dc37c709bc074cb1b09eb0deb3a15, type: 2}

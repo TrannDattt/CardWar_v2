@@ -15,10 +15,12 @@ namespace CardWar_v2.GameControl
         private IngameSceneView _ingameScene;
 
         #region Turn Logic
-        public EPlayerTarget CurTurn { get; private set; } = EPlayerTarget.Self;
+        public EPlayerTarget CurTurn { get; private set; } = EPlayerTarget.Ally;
+        private int _turnChangeTime;
 
         private void ChangeTurn(EPlayerTarget nextTurn) {
             CurTurn = nextTurn;
+            _turnChangeTime++;
             Debug.Log($"It's {CurTurn}'s turn now.");
 
             ChangePhase(EPhase.Opening);
@@ -26,7 +28,7 @@ namespace CardWar_v2.GameControl
 
         public void ChangeToNextTurn()
         {
-            var nextTurn = CurTurn == EPlayerTarget.Self ? EPlayerTarget.Enemy : EPlayerTarget.Self;
+            var nextTurn = CurTurn == EPlayerTarget.Ally ? EPlayerTarget.Enemy : EPlayerTarget.Ally;
             ChangeTurn(nextTurn);
         }
         #endregion
@@ -117,8 +119,8 @@ namespace CardWar_v2.GameControl
 
             public override async void Enter()
             {
-                //TODO: Use skill that active at conclude phase
-                await IngameScene.DoEffectsOnChars(CurTurn);
+                if (Instance._turnChangeTime % 2 == 0) await IngameScene.DoEffectsOnChars(CurTurn);
+                    
                 Instance.ChangeToNextPhase();
             }
 
@@ -134,7 +136,7 @@ namespace CardWar_v2.GameControl
             {
                 EPhase.Opening => new OpeningPhase(EPhase.Opening),
                 EPhase.Attack => new AttackPhase(EPhase.Attack),
-                EPhase.Exercute => new ConcludePhase(EPhase.Exercute),
+                EPhase.Conclude => new ConcludePhase(EPhase.Conclude),
                 _ => null
             };
         }
@@ -150,7 +152,7 @@ namespace CardWar_v2.GameControl
 
         public void ChangeToNextPhase()
         {
-            if (_curPhase.Type == EPhase.Exercute) 
+            if (_curPhase.Type == EPhase.Conclude) 
             {
                 ChangeToNextTurn();
                 return;
@@ -159,7 +161,7 @@ namespace CardWar_v2.GameControl
             var nextPhase = _curPhase.Type switch
             {
                 EPhase.Opening => EPhase.Attack,
-                EPhase.Attack => EPhase.Exercute,
+                EPhase.Attack => EPhase.Conclude,
                 // EPhase.Conclude => EPhase.Opening,
                 _ => EPhase.None
             };
@@ -177,13 +179,14 @@ namespace CardWar_v2.GameControl
         public async void StartGame()
         {
             await _ingameScene.InitScene();
+            _turnChangeTime = 0;
 
             var selfDrawTask = _ingameScene.DrawCard(3);
 
             await Task.WhenAll(selfDrawTask);
 
             // ChangeTurn(EPlayerTarget.Enemy);
-            ChangeTurn(EPlayerTarget.Self);
+            ChangeTurn(EPlayerTarget.Ally);
         }
         #endregion
 

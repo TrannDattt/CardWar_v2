@@ -35,9 +35,5 @@ namespace CardWar_v2.Datas
 
         // Cards
         public List<SkillCardData> SkillCardDatas;
-
-        // Cost
-        public int GoldCost;
-        public int GemCost;
     }
 }

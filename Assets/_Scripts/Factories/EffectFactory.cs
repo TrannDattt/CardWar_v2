@@ -33,6 +33,7 @@ namespace CardWar_v2.Factories
             if (_effectViewPool.Count == 0)
             {
                 var newEffectView = Instantiate(_effectViewPrefab, parent);
+                newEffectView.gameObject.SetActive(false);
                 _effectViewPool.Enqueue(newEffectView);
             }
 

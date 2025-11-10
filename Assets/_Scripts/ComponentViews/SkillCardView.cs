@@ -16,14 +16,13 @@ namespace CardWar_v2.ComponentViews
     {
         public SkillCard BaseCard { get; private set; }
 
+        [SerializeField] private Canvas _canvas;
+        // [SerializeField] private Material _imageMat;
         [SerializeField] private Image _image;
 
         public UnityEvent OnCardGrab = new();
         public UnityEvent OnCardDrop = new();
         public UnityEvent<PointerEventData> OnCardClick = new();
-
-        [Header("Test")]
-        [SerializeField] private TextMeshProUGUI ownerName;
 
         private Camera _mainCam;
         private Vector3 _offset;
@@ -37,7 +36,9 @@ namespace CardWar_v2.ComponentViews
         {
             BaseCard = card;
 
-            _image.sprite = BaseCard.Image;
+            // _canvas.worldCamera = Camera.main;
+            // _image.sprite = BaseCard.Image;
+            // if(BaseCard.Image != null) Debug.Log(BaseCard.Image.name);
 
             _rends.AddRange(GetComponentsInChildren<MeshRenderer>());
             foreach (var r in _rends)
@@ -55,9 +56,14 @@ namespace CardWar_v2.ComponentViews
                 g.material = instancedMat;
 
                 _mats.Add(instancedMat);
+                // if (instancedMat.Equals(_imageMat))
+                // {
+                //     _imageMat.SetTexture("_BaseColorMap", BaseCard.Image.texture);
+                //     Debug.Log("Change image");
+                // }
             }
 
-            ownerName.SetText(BaseCard.Owner.Name);
+            _image.material.SetTexture("_BaseColorMap", BaseCard.Image != null ? BaseCard.Image.texture : null);
         }
 
         private void GrabCard()

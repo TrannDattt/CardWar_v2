@@ -10,7 +10,7 @@ namespace CardWar_v2.Entities
         protected CharacterCard _target;
 
         public ESkillEffect EffectType { get; protected set; }
-        public int Duration { get; private set; }
+        public int Duration { get; protected set; }
 
         public UnityEvent OnEffectUpdated;
 
@@ -29,7 +29,6 @@ namespace CardWar_v2.Entities
 
         public virtual void OverrideEffect(SkillEffect newEffect)
         {
-            Duration = newEffect.Duration;
             OnEffectUpdated?.Invoke();
         }
 
@@ -44,147 +43,132 @@ namespace CardWar_v2.Entities
             // TODO: Use factory to remove
         }
 
-        public abstract string GetDescription(string targetList, bool isShowNextLevel);
+        public abstract string GetDescription(bool isSelfApply, EPlayerTarget side, string targetList, bool isShowNextLevel);
     }
 
+    #region Regen
     public class RegenEffect : SkillEffect
     {
-        private float _healMult;
-        private float _bonusHealMultPerLevel;
+        private float _mult = .01f;
 
-        // Use in battle
-       public float GetCurAmount() => (_healMult + _caster.Level * _bonusHealMultPerLevel) * _caster.CurAtk; 
-       public float GetCurAmount(int level) => (_healMult + level * _bonusHealMultPerLevel) * _caster.CurAtk; 
-        
-        // Use outside battle
-        public float GetBaseAmount(int level) => (_healMult + level * _bonusHealMultPerLevel) * _caster.GetStatAtLevel(level).Atk; 
+        public float HealAmount => _mult * _target.CurHp;
 
-        public RegenEffect(CharacterCard caster,
-                           CharacterCard target,
-                           int duration,
-                           float damageMult,
-                           float bonusDamageMultPerLevel) : base(caster, target, duration)
+        public RegenEffect(CharacterCard caster, CharacterCard target, int duration) : base(caster, target, duration)
         {
-            _healMult = damageMult;
-            _bonusHealMultPerLevel = bonusDamageMultPerLevel;
             EffectType = ESkillEffect.Regen;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
         {
-            var regenEffect = (RegenEffect)newEffect;
-            _healMult = regenEffect._healMult;
-            _bonusHealMultPerLevel = regenEffect._bonusHealMultPerLevel;
+            Duration += newEffect.Duration;
 
             base.OverrideEffect(newEffect);
         }
 
         public override async Task DoEffect()
         {
-            _target.ChangeHp(GetCurAmount(_caster.Level));
+            _target.ChangeHp(HealAmount);
 
             await base.DoEffect();
         }
 
-        public override string GetDescription(string targetList, bool isShowNextLevel)
+        public override string GetDescription(bool isSelfApply, EPlayerTarget side, string targetList, bool isShowNextLevel)
         {
-            //TODO: Control the stat to scale healing with
-            return $"Apply {EffectType} to targets at {targetList}, " +
-                $"heal them for {GetCurAmount(_caster.Level)} " +
-                $"{(isShowNextLevel ? $"=> {GetCurAmount(_caster.Level + 1)} " : "")}" +
-                $"for {Duration} turn(s).";
+            return $"Regen equals to {_mult * 100}% of your current HP ({HealAmount}) every turn";
         }
     }
+    #endregion
 
+    #region  Poison
     public class PoisonEffect : SkillEffect
     {
-        private float _damageMult;
-        private float _bonusDamageMultPerLevel;
-        private EDamageType _damageType;
+        private float _mult = .45f;
 
         // Use in battle
-       public float GetCurAmount() => (_damageMult + _caster.Level * _bonusDamageMultPerLevel) * _caster.CurAtk; 
-       public float GetCurAmount(int level) => (_damageMult + level * _bonusDamageMultPerLevel) * _caster.CurAtk; 
-        
-        // Use outside battle
-        public float GetBaseAmount(int level) => (_damageMult + level * _bonusDamageMultPerLevel) * _caster.GetStatAtLevel(level).Atk; 
+        public float DamageAmount => _mult * _caster.CurAtk;
 
-        public PoisonEffect(CharacterCard caster,
-                            CharacterCard target,
-                            int duration,
-                            float damageMult,
-                            float bonusDamageMultPerLevel,
-                            EDamageType damageType) : base(caster, target, duration)
+        public PoisonEffect(CharacterCard caster, CharacterCard target, int duration) : base(caster, target, duration)
         {
-            _damageMult = damageMult;
-            _bonusDamageMultPerLevel = bonusDamageMultPerLevel;
-            _damageType = damageType;
             EffectType = ESkillEffect.Poison;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
         {
             var poisonEffect = (PoisonEffect)newEffect;
-            _damageMult = poisonEffect._damageMult;
-            _bonusDamageMultPerLevel = poisonEffect._bonusDamageMultPerLevel;
-            _damageType = poisonEffect._damageType;
-            EffectType = ESkillEffect.Poison;
+            Duration += newEffect.Duration;
+            _caster = poisonEffect._caster;
 
             base.OverrideEffect(newEffect);
         }
 
         public override async Task DoEffect()
         {
-            _target.ChangeHp(-GetCurAmount(_caster.Level));
+            _target.ChangeHp(-DamageAmount);
 
             await base.DoEffect();
         }
 
-        public override string GetDescription(string targetList, bool isShowNextLevel)
+        public override string GetDescription(bool isSelfApply, EPlayerTarget side, string targetList, bool isShowNextLevel)
         {
-            return $"Apply {EffectType} to targets at {targetList}, " +
-                $"dealing {GetCurAmount(_caster.Level)} " +
-                $"{(isShowNextLevel ? $"=> {GetCurAmount(_caster.Level + 1)} " : "")}" +
-                $"{(_damageType != EDamageType.None ? _damageType : "")} damage " +
-                $"for {Duration} turn(s).";
+            return $"Take damage equals to {_mult * 100}% of the caster's ATK ({DamageAmount}) every turn. - Caster: {_caster.Name} -";
         }
     }
+    #endregion
 
+    #region  Vulnerable
     public class VulnerableEffect : SkillEffect
     {
-        private float _damageMult;
-        private float _bonusDamageMultPerLevel;
+        private float _mult;
+        public float VulAmount => _mult;
 
-        public float GetCurAmount() => _damageMult + _caster.Level * _bonusDamageMultPerLevel;
-        public float GetCurAmount(int level) => _damageMult + level * _bonusDamageMultPerLevel;
-
-        public VulnerableEffect(CharacterCard caster,
-                                CharacterCard target,
-                                int duration,
-                                float damageMult,
-                                float bonusDamageMultPerLevel) : base(caster, target, duration)
+        public VulnerableEffect(CharacterCard caster, CharacterCard target, int duration, float mult) : base(caster, target, duration)
         {
-            _damageMult = damageMult;
-            _bonusDamageMultPerLevel = bonusDamageMultPerLevel;
+            _mult = mult;
             EffectType = ESkillEffect.Vulnerable;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
         {
             var vulEffect = (VulnerableEffect)newEffect;
-            _damageMult = vulEffect._damageMult;
-            _bonusDamageMultPerLevel = vulEffect._bonusDamageMultPerLevel;
+            _mult += vulEffect._mult;
+            Duration = vulEffect.Duration;
 
             base.OverrideEffect(newEffect);
         }
 
-        public override string GetDescription(string targetList, bool isShowNextLevel)
+        public override string GetDescription(bool isSelfApply, EPlayerTarget side, string targetList, bool isShowNextLevel)
         {
-            return $"Apply {EffectType} to targets at {targetList}, " +
-                $"increase damage receive by {GetCurAmount(_caster.Level)}% " +
-                $"{(isShowNextLevel ? $"=> {GetCurAmount(_caster.Level + 1)}% " : "")}" +
-                $"for {Duration} turn(s).";
+            return $"Increase incoming damage taken by {VulAmount * 100}%";
         }
     }
+    #endregion
+
+    #region Strengthen
+    public class StrengthenEffect : SkillEffect
+    {
+        private float _mult;
+        public float StrengthAmount => _mult;
+
+        public StrengthenEffect(CharacterCard caster, CharacterCard target, int duration, float mult) : base(caster, target, duration)
+        {
+            _mult = mult;
+            EffectType = ESkillEffect.Vulnerable;
+        }
+
+        public override void OverrideEffect(SkillEffect newEffect)
+        {
+            var strengthenEffect = (StrengthenEffect)newEffect;
+            _mult += strengthenEffect._mult;
+            Duration = strengthenEffect.Duration;
+
+            base.OverrideEffect(newEffect);
+        }
+
+        public override string GetDescription(bool isSelfApply, EPlayerTarget side, string targetList, bool isShowNextLevel)
+        {
+            return $"Decrease incoming damage taken by {StrengthAmount * 100}%";
+        }
+    }
+    #endregion
 }
 

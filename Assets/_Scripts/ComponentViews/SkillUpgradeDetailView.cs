@@ -15,12 +15,13 @@ namespace CardWar_v2.ComponentViews
         {
             _image.sprite = skillCard.Image;
             _name.SetText(skillCard.Name);
-            var detail = "";
-            foreach (var ss in skillCard.SubSkills)
-            {
-                detail += $"- {ss.GenerateDescription(skillCard.Owner, isShowNextLevel)}{(ss == skillCard.SubSkills[^1] ? "" : "\n")}";
-            }
-            _details.SetText(detail);
+            // var detail = "";
+            // foreach (var ss in skillCard.SubSkills)
+            // {
+            //     detail += $"- {ss.GenerateDescription(skillCard.Owner, isShowNextLevel)}{(ss == skillCard.SubSkills[^1] ? "" : "\n")}";
+            // }
+            // _details.SetText(detail);
+            _details.SetText(skillCard.Des);
         }
     }
 }

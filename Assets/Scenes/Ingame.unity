@@ -1677,7 +1677,7 @@ MonoBehaviour:
   _skillQueueView: {fileID: 567003599}
   _cardDetailView: {fileID: 686757910}
   _selfCharDatas:
-  - {fileID: 11400000, guid: 098e6de74c5b5394895c40425c13d15f, type: 2}
+  - {fileID: 11400000, guid: 569b5d909f8ec494c8dd22dd6b52ccea, type: 2}
   - {fileID: 11400000, guid: d4cf8d336d45dd24e8203e80b6471698, type: 2}
   - {fileID: 11400000, guid: 22321c90442f8994babb1cfd7626ff4b, type: 2}
   _enemyCharDatas:

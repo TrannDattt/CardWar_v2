@@ -50,7 +50,7 @@ namespace CardWar_v2.ComponentViews
             foreach (var r in _rends)
             {
                 if (r == null) continue;
-                foreach(var m in r.materials)
+                foreach (var m in r.materials)
                 {
                     _mats.Add(m);
                 }
@@ -61,10 +61,10 @@ namespace CardWar_v2.ComponentViews
             card.OnApplyEffect.AddListener((effect) => ApplyEffect(effect));
 
             // _healthBar?.SetMaxValue(Hp);
-            if(_effectBar != null)
+            if (_effectBar != null)
             {
                 _effectBar.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 90, 0);
-                foreach(Transform c in _effectBar.transform)
+                foreach (Transform c in _effectBar.transform)
                 {
                     var effect = c.GetComponent<EffectView>();
                     EffectViewFactory.Instance.ReturnEffectView(effect);
@@ -88,6 +88,7 @@ namespace CardWar_v2.ComponentViews
             //TODO: Do animation: Charge toward target for melee or summon projectile for range
             //      Do damage to target
             if (clip == null) return;
+            Debug.Log($"Do animation {clip.name}");
             _animator.Play(clip.name);
         }
 
@@ -97,6 +98,26 @@ namespace CardWar_v2.ComponentViews
             await Task.Delay((int)(subSkill.DelayToSkill * 1000));
             var tasks = targets.Where(t => t != null).Select(t => subSkill.DoSkill(this, t));
             await Task.WhenAll(tasks);
+            if (subSkill.Clip != null) await WaitForAnimationEnd(_animator, subSkill.Clip.name);
+            // _animator.Play("Idle");
+        }
+
+        private async Task WaitForAnimationEnd(Animator animator, string clipName)
+        {
+            if (animator == null) return;
+
+            var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            while (!stateInfo.IsName(clipName))
+            {
+                await Task.Yield();
+                stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            }
+
+            while (stateInfo.normalizedTime < 1f)
+            {
+                await Task.Yield();
+                stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            }
         }
 
         private void SetDissolve(float value)
@@ -112,6 +133,7 @@ namespace CardWar_v2.ComponentViews
 
         public async Task DestroyChar(float duration)
         {
+            _animator.Play("Die");
             var sequence = DOTween.Sequence();
             sequence.Append(DOTween.To(() => 0f, x => SetDissolve(x), 1f, duration).SetEase(Ease.InOutQuad));
             sequence.OnComplete(() =>

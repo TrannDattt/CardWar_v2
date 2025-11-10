@@ -152,6 +152,7 @@ Material:
     - _Surface: 0
     - _UVSec: 0
     - _UseTexture: 0
+    - _UseTilingAndOffset: 1
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:

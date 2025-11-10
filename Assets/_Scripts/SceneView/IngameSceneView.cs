@@ -285,17 +285,24 @@ namespace CardWar_v2.SceneViews
         {
             // Debug.Log($"Exercuting queue with {_skillQueueView.CardQueue.Count} skills");
             var casterSide = GameplayManager.Instance.CurTurn;
-            var targetSide = casterSide == EPlayerTarget.Self ? EPlayerTarget.Enemy : EPlayerTarget.Self;
 
             while (_skillQueueView.CardQueue.Count > 0)
             {
                 var skillCard = _skillQueueView.CardQueue[0];
                 var skill = skillCard.BaseCard;
                 var caster = _boardView.GetCharacterByCard(casterSide, skill.Owner);
-                // Debug.Log($"Caster '{caster}' using skill");
+                Debug.Log($"Caster '{caster}' using skill {skill.Name}");
                 foreach (var ss in skill.SubSkills)
                 {
-                    var targets = ss.PosTargets.Select(pt => _boardView.GetCharacterByPos(targetSide, pt)).ToList();
+                    var targetSide = ss.TargetSide;
+                    var targets = new List<CharacterModelView>();
+                    foreach(var pt in ss.PositionTargets)
+                    {
+                        Debug.Log($"Get target {pt} at position {targetSide}");
+                        if (pt == EPositionTarget.Self) targets.Add(caster);
+                        else targets.Add(_boardView.GetCharacterByPos(targetSide, pt, false));
+                    }
+                    // var targets = ss.Targets.Select(pt => _boardView.GetCharacterByPos(targetSide, pt)).ToList();
                     if (targets.Count == 0)
                     {
                         //TODO: Animation for card if no targets
@@ -315,7 +322,7 @@ namespace CardWar_v2.SceneViews
                         {
                             _enemyDeck.RemoveDeadCard(t.BaseCard);
                         }
-                        else if (targetSide == EPlayerTarget.Self)
+                        else if (targetSide == EPlayerTarget.Ally)
                         {
                             _deckView.RemoveDeadCards(t.BaseCard);
                             destroyTask.Add(_handView.RemoveDeadCards(t.BaseCard));
@@ -329,7 +336,7 @@ namespace CardWar_v2.SceneViews
 
         public async Task DoEffectsOnChars(EPlayerTarget casterSide)
         {
-            var targetSide = casterSide == EPlayerTarget.Self ? EPlayerTarget.Enemy : EPlayerTarget.Self;
+            var targetSide = casterSide == EPlayerTarget.Ally ? EPlayerTarget.Enemy : EPlayerTarget.Ally;
             var targetChars = _boardView.GetCharactersInRegion(targetSide);
             var targetTasks = targetChars.Select(c => c.BaseCard.DoEffects());
             await Task.WhenAll(targetTasks);
@@ -519,7 +526,7 @@ namespace CardWar_v2.SceneViews
             for (int i = 0; i < 3; i++)
             {
                 // TODO: Add event on click show detail for char
-                await PlayCharCard(selfChars[i], EPlayerTarget.Self, (EPositionTarget)i);
+                await PlayCharCard(selfChars[i], EPlayerTarget.Ally, (EPositionTarget)i);
                 await PlayCharCard(enemyChars[i], EPlayerTarget.Enemy, (EPositionTarget)i);
             }
         }

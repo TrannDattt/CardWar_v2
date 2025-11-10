@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
+  m_Name: FlamePrincess
+  m_EditorClassIdentifier: 
+  Id: cd3ddf22-25b8-4ee7-a3f8-b119e2957689
+  Character: 5
+  Name: Flame Princess
+  Image: {fileID: 1309198211, guid: 4fd227a8bc99a5d47b20667f45479147, type: 3}
+  Model: {fileID: 3132966575047643614, guid: d42918c77b438484bb35a1e6586b7512, type: 3}
+  AnimController: {fileID: 9100000, guid: ef4257bfc9a30db419c258b2b440c044, type: 2}
+  Hp: 290
+  Atk: 70
+  Armor: 5
+  Resist: 5
+  HpPerLevel: 0
+  AtkPerLevel: 0
+  ArmorPerLevel: 0
+  ResistPerLevel: 0
+  SkillCardDatas:
+  - {fileID: 11400000, guid: 1fbc41ca2b4507643b97de63651a0247, type: 2}
+  - {fileID: 11400000, guid: bc53c6d70116ef449b5ee679c1385cf7, type: 2}
+  - {fileID: 11400000, guid: 635c95fe55b60b142b0c9bfeeb1de982, type: 2}

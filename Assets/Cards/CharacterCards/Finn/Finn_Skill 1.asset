@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628af7680cc8cf847a5455772d37dfb1, type: 3}
+  m_Name: Finn_Skill 1
+  m_EditorClassIdentifier: 
+  Name: Battle Cry
+  Image: {fileID: 21300000, guid: b5c90a123f75cc94188d15c090b9dad6, type: 3}
+  Description: 
+  Skill:
+  - rid: 4516365118960828632
+  - rid: 4516365162812014592
+  references:
+    version: 2
+    RefIds:
+    - rid: 4516365118960828632
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 7400000, guid: d8dcbf76e0b2c6c42bd27f95216f102e, type: 2}
+        DelayToSkill: 0.7
+        TargetSide: 0
+        PositionTargets: 04000000
+        Effects:
+        - EffectType: 7
+          Amount: 0.1
+          Duration: 1
+    - rid: 4516365162812014592
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 1
+        PositionTargets: 02000000
+        Effects:
+        - EffectType: 3
+          Amount: 0.1
+          Duration: 1

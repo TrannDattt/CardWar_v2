@@ -14,5 +14,9 @@ namespace CardWar_v2.Enums
         Regen,
         Poison,
         Vulnerable,
+        Burn,
+        Chill,
+        Silence,
+        Strengthen,
     }
 }

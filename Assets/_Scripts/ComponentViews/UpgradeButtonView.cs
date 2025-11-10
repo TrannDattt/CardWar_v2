@@ -15,13 +15,11 @@ namespace CardWar_v2.ComponentViews
 
         public void UpdateCostInfo(int goldCost, int gemCost)
         {
+            _goldCost.gameObject.SetActive(goldCost != 0);
             _goldCost.SetText(goldCost.ToString());
-            if (gemCost == 0) _gemCost.gameObject.SetActive(false);
-            else
-            {
-                _gemCost.gameObject.SetActive(true);
-                _gemCost.SetText(gemCost.ToString());
-            }
+
+            _gemCost.gameObject.SetActive(gemCost != 0);
+            _gemCost.SetText(gemCost.ToString());
         }
 
         public void AddListener(Action callback = null)

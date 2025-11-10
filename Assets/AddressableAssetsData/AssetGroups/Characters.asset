@@ -21,14 +21,62 @@ MonoBehaviour:
     m_SerializedLabels:
     - Characters
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1e9973b909d53a44086ef5146b3d42bb
+    m_Address: Character/IceQueen
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 22321c90442f8994babb1cfd7626ff4b
     m_Address: Character/AcientScholar 2
     m_ReadOnly: 0
     m_SerializedLabels:
     - Characters
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 569b5d909f8ec494c8dd22dd6b52ccea
+    m_Address: Character/Finn
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 912b461474bff4b4983e6055812b1adc
+    m_Address: Character/FlamePrincess
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a83854c8d8fcf514a92126585c016934
+    m_Address: Character/LumpySpacePrincess
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b92d27c993b57384198b2039b9d42c38
+    m_Address: Character/Marceline
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: be82495c5e9cbff4a933db061c4d29f2
+    m_Address: Character/BubblegumPrincess
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cb94a01d380d11e418f452e34e66e7e4
+    m_Address: Character/IceKing
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d4cf8d336d45dd24e8203e80b6471698
     m_Address: Character/AcientScholar 1
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f5e2313a61253b14eba7424c94079482
+    m_Address: Character/Jake
     m_ReadOnly: 0
     m_SerializedLabels:
     - Characters

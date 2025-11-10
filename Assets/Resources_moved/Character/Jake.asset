@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
+  m_Name: Jake
+  m_EditorClassIdentifier: 
+  Id: cd3ddf22-25b8-4ee7-a3f8-b119e2957689
+  Character: 1
+  Name: Jake
+  Image: {fileID: -852267695, guid: f6804b55c579d4e44a665fee256bf52f, type: 3}
+  Model: {fileID: 5604866015574096732, guid: 05e55cb5c03949e4f9465f293fc6f2c4, type: 3}
+  AnimController: {fileID: 9100000, guid: afac9b315cbf75e48a2ddeca00a729cf, type: 2}
+  Hp: 650
+  Atk: 40
+  Armor: 20
+  Resist: 15
+  HpPerLevel: 0
+  AtkPerLevel: 0
+  ArmorPerLevel: 0
+  ResistPerLevel: 0
+  SkillCardDatas:
+  - {fileID: 11400000, guid: e8082595fc6a64e419309d3d8be35546, type: 2}
+  - {fileID: 11400000, guid: a149067d7feb7684ca2fce7377c96523, type: 2}
+  - {fileID: 11400000, guid: 3f4335b17b93c504e8cc07384c0e6c94, type: 2}

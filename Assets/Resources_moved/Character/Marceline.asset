@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
+  m_Name: Marceline
+  m_EditorClassIdentifier: 
+  Id: cd3ddf22-25b8-4ee7-a3f8-b119e2957689
+  Character: 2
+  Name: Marceline
+  Image: {fileID: -1095819873, guid: 003f6075877260141b914e4c1212a632, type: 3}
+  Model: {fileID: 1336693641478249615, guid: 1234a8d76afaef244b073d548a822500, type: 3}
+  AnimController: {fileID: 9100000, guid: a8df39c35b6061546a430e56e9019a15, type: 2}
+  Hp: 300
+  Atk: 40
+  Armor: 5
+  Resist: 15
+  HpPerLevel: 0
+  AtkPerLevel: 0
+  ArmorPerLevel: 0
+  ResistPerLevel: 0
+  SkillCardDatas:
+  - {fileID: 11400000, guid: a35e6d8aa20edcc41a1c7096f1d6c581, type: 2}
+  - {fileID: 11400000, guid: f3e00d729b9998a4f916f25577a6ab1c, type: 2}
+  - {fileID: 11400000, guid: c60a8eeba5026a3429f688d3fbf942bd, type: 2}

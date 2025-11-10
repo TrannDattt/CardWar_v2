@@ -80,19 +80,19 @@ namespace CardWar_v2.ComponentViews
                 RefillDeck();
             }
 
-            var skillCard = _cardsRemainInDeck[Random.Range(0, _cardsInDeck.Count)];
+            var skillCard = _cardsRemainInDeck[Random.Range(0, _cardsRemainInDeck.Count)];
             RemoveCard(skillCard);
             return skillCard;
         }
 
         public void RemoveCard(SkillCard card)
         {
-            if (!_cardsInDeck.Contains(card))
+            if (!_cardsRemainInDeck.Contains(card))
             {
                 return;
             }
 
-            _cardsInDeck.Remove(card);
+            _cardsRemainInDeck.Remove(card);
         }
 
         public void RemoveDeadCard(CharacterCard charCard)

@@ -22,19 +22,20 @@ namespace CardWar_v2.Factories
 
             if (_iconPool.Count == 0)
             {
-                var cardView = Instantiate(_charIconPrefab, parent, true);
-                _iconPool.Enqueue(cardView);
+                var iconView = Instantiate(_charIconPrefab, parent, true);
+                iconView.gameObject.SetActive(false);
+                _iconPool.Enqueue(iconView);
             }
 
             var pooledIconView = _iconPool.Dequeue();
             pooledIconView.SetBaseCard(card);
             // Debug.Log($"Check: {card.Owner == pooledCardView.BaseCard.Owner}");
 
-            var cardTransform = pooledIconView.GetComponent<RectTransform>();
-            cardTransform.SetParent(parent);
+            var iconTransform = pooledIconView.GetComponent<RectTransform>();
+            iconTransform.SetParent(parent);
             // cardTransform.position = parent == null ? Vector3.zero : (position == default ? parent.position : position);
             // cardTransform.rotation = parent == null ? Quaternion.identity : (rotation == default ? parent.rotation : rotation);
-            cardTransform.localScale = Vector3.one;
+            iconTransform.localScale = Vector3.one;
 
             pooledIconView.gameObject.SetActive(true);
             return pooledIconView;

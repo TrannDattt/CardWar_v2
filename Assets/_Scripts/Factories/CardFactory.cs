@@ -35,6 +35,7 @@ namespace CardWar_v2.Factories
             if (_cardViewPool.Count == 0)
             {
                 var cardView = Instantiate(_cardViewPrefab, parent, true);
+                cardView.gameObject.SetActive(false);
                 _cardViewPool.Enqueue(cardView);
             }
 
@@ -77,6 +78,7 @@ namespace CardWar_v2.Factories
             if (_cardModelPool.Count == 0)
             {
                 var cardModel = Instantiate(_charModelViewPrefab, parent, true);
+                cardModel.gameObject.SetActive(false);
                 _cardModelPool.Enqueue(cardModel);
             }
 

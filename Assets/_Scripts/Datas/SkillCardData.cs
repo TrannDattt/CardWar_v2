@@ -9,6 +9,7 @@ using CardWar_v2.Enums;
 using CardWar_v2.ComponentViews;
 using Demo;
 using UnityEngine;
+using DG.Tweening;
 
 namespace CardWar_v2.Datas
 {
@@ -19,6 +20,7 @@ namespace CardWar_v2.Datas
         // Info
         public string Name;
         public Sprite Image;
+        public string Description;
 
         // Skill
         [SerializeReference]
@@ -31,13 +33,13 @@ namespace CardWar_v2.Datas
     [Serializable]
     public abstract class SubSkill
     {
-        public ESkillType Type;
         public AnimationClip Clip;
         public float DelayToSkill;
-        public List<EPositionTarget> PosTargets;
+        public EPlayerTarget TargetSide;
+        public List<EPositionTarget> PositionTargets;
 
-        public abstract Task DoSkill(CharacterModelView caster, CharacterModelView target);
-        public abstract string GenerateDescription(CharacterCard owner, bool isShowNextLevel);
+        public abstract Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel);
+        // public abstract string GenerateDescription(CharacterCard owner);
     }
     #endregion
 
@@ -45,59 +47,61 @@ namespace CardWar_v2.Datas
     [Serializable]
     public class DoRangeAttack : SubSkill
     {
-        public float DamageMult;
-        public float BonusDamageMultPerLevel;
+        public CharStat CasterStatMult;
+        public CharStat TargetStatMult;
         public ProjectileView Projectile;
         public Vector3 OffsetToCaster;
         public EDamageType DamageType;
 
-        public override string GenerateDescription(CharacterCard owner, bool isShowNextLevel)
-        {
-            var randomTargets = PosTargets.Where(p => p == EPositionTarget.Random).ToList();
-            var normalTargets = PosTargets.Where(p => p != EPositionTarget.Random).ToList();
+        // public override string GenerateDescription(CharacterCard owner)
+        // {
+        //     bool isSelfApply = PositionTargets.Any(t => t == EPositionTarget.Self);
+        //     var randomTargets = PositionTargets.Where(t => t == EPositionTarget.Random).ToList();
+        //     var normalTargets = PositionTargets.Where(t => t != EPositionTarget.Self && t != EPositionTarget.Random).ToList();
 
-            string targetList = "";
+        //     string targetList = "";
 
-            if (normalTargets.Count == 1)
-            {
-                targetList = normalTargets[0].ToString();
-            }
-            else if (normalTargets.Count > 1)
-            {
-                targetList = string.Join(", ", $"the {normalTargets.Take(normalTargets.Count - 1)}")
-                            + $" and the {normalTargets[^1]}";
-            }
+        //     if (normalTargets.Count == 1)
+        //     {
+        //         targetList = normalTargets[0].ToString();
+        //     }
+        //     else if (normalTargets.Count > 1)
+        //     {
+        //         targetList = string.Join(", ", $"the {normalTargets.Take(normalTargets.Count - 1)}")
+        //                     + $" and the {normalTargets[^1]}";
+        //     }
 
-            if (randomTargets.Count > 0)
-            {
-                string randomDesc = $"{randomTargets.Count} random target(s)";
-                if (!string.IsNullOrEmpty(targetList))
-                    targetList += $" and {randomDesc}";
-                else
-                    targetList = randomDesc;
-            }
+        //     if (randomTargets.Count > 0)
+        //     {
+        //         string randomDesc = $"{randomTargets.Count} random target(s)";
+        //         if (!string.IsNullOrEmpty(targetList))
+        //             targetList += $" and {randomDesc}";
+        //         else
+        //             targetList = randomDesc;
+        //     }
 
-            if (string.IsNullOrEmpty(targetList))
-                targetList = "unknown positions";
+        //     if (string.IsNullOrEmpty(targetList))
+        //         targetList = "unknown positions";
 
-            return $"Fire projectile(s) to targets at {targetList}, " +
-                $"dealing {(DamageMult + owner.Level * BonusDamageMultPerLevel) * owner.GetStatAtLevel(owner.Level).Atk} " +
-                $"{(isShowNextLevel ? $"=> {(DamageMult + (owner.Level + 1) * BonusDamageMultPerLevel) * owner.GetStatAtLevel(owner.Level + 1).Atk} " : "")}" +
-                $"{DamageType} damage to each target.";
-        }
+        //     return $"Fire projectile(s) to {(isSelfApply ? "yourself and " : "")}" +
+        //         $"{TargetSide} targets at {targetList}, " +
+        //         $"dealing {DamageMult * owner.GetStatAtLevel(owner.Level).Atk} " +
+        //         $"{DamageType} damage to each target.";
+        // }
 
-        public override async Task DoSkill(CharacterModelView caster, CharacterModelView target)
+        public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
             // TODO: Spawn projectile with factory
-            var projectile = UnityEngine.Object.Instantiate(Projectile, caster.transform);
-            await projectile.FlyToTarget(caster.transform.position, OffsetToCaster,
-                                        target.transform.position + OffsetToCaster.y * Vector3.up,
-                                        () => DoDamage(caster, target.BaseCard));
+            var projectile = UnityEngine.Object.Instantiate(Projectile, casterModel.transform);
+            await projectile.FlyToTarget(casterModel.transform.position, OffsetToCaster,
+                                        targetModel.transform.position + OffsetToCaster.y * Vector3.up,
+                                        () => DoDamage(casterModel, targetModel.BaseCard));
         }
 
-        private void DoDamage(CharacterModelView caster, IDamagable target)
+        private void DoDamage(CharacterModelView casterModel, IDamagable target)
         {
-            var damage = caster.Atk * DamageMult;
+            var caster = casterModel.BaseCard;
+            var damage = (caster.GetCurStat() * CasterStatMult + (target as CharacterCard).GetCurStat() + TargetStatMult).Total;
 
             target.TakeDamage(damage, DamageType);
             // Debug.Log($"Target '{target}' took {damage} damage from Caster '{caster}'");
@@ -109,62 +113,147 @@ namespace CardWar_v2.Datas
     [Serializable]
     public class ApplyEffect : SubSkill
     {
-        public float Multiplier;
-        public float BonusMultiplierPerLevel;
-        public EDamageType DamageType; // Use for effects that deal damage
-        public ESkillEffect EffectType = ESkillEffect.None;
-        public int Duration;
+        public List<AppliedEffect> Effects;
 
-        private SkillEffect GetSkillEffect(CharacterCard caster, CharacterCard target)
+        private List<SkillEffect> GetSkillEffect(CharacterCard caster, CharacterCard target)
         {
-            return EffectType switch
+            var result = new List<SkillEffect>();
+
+            foreach (var e in Effects)
             {
-                ESkillEffect.Poison => new PoisonEffect(caster, target, Duration, Multiplier, BonusMultiplierPerLevel, DamageType),
-                ESkillEffect.Regen => new RegenEffect(caster, target, Duration, Multiplier, BonusMultiplierPerLevel),
-                ESkillEffect.Vulnerable => new VulnerableEffect(caster, target, Duration, Multiplier, BonusMultiplierPerLevel),
-                _ => null,
-            };
+                var effect = e.EffectType switch
+                {
+                    ESkillEffect.Poison => new PoisonEffect(caster, target, e.Duration),
+                    ESkillEffect.Regen => new RegenEffect(caster, target, e.Duration),
+                    ESkillEffect.Vulnerable => new VulnerableEffect(caster, target, e.Duration, e.Amount),
+                    ESkillEffect.Strengthen => new StrengthenEffect(caster, target, e.Duration, e.Amount),
+                    _ => (SkillEffect)null,
+                };
+
+                if (effect == null)
+                {
+                    Debug.LogError($"Effect type {e.EffectType} not found");
+                    return null;
+                }
+
+                result.Add(effect);
+            }
+            return result;
         }
 
         public override async Task DoSkill(CharacterModelView caster, CharacterModelView target)
         {
-            var effect = GetSkillEffect(caster.BaseCard, target.BaseCard);
+            var effects = GetSkillEffect(caster.BaseCard, target.BaseCard);
 
-            target.BaseCard.ApplyEffect(effect);
+            effects.ForEach(e => target.BaseCard.ApplyEffect(e));
         }
 
-        public override string GenerateDescription(CharacterCard owner, bool isShowNextLevel)
+    //     public override string GenerateDescription(CharacterCard owner)
+    //     {
+    //         var effect = GetSkillEffect(owner, null);
+    //         bool isSelfApply = PositionTargets.Any(t => t == EPositionTarget.Self);
+    //         var randomTargets = PositionTargets.Where(t => t == EPositionTarget.Random).ToList();
+    //         var normalTargets = PositionTargets.Where(t => t != EPositionTarget.Self && t != EPositionTarget.Random).ToList();
+
+    //         string targetList = "";
+
+    //         if (normalTargets.Count == 1)
+    //         {
+    //             targetList = normalTargets[0].ToString();
+    //         }
+    //         else if (normalTargets.Count > 1)
+    //         {
+    //             targetList = string.Join(", ", $"the {normalTargets.Take(normalTargets.Count - 1)}")
+    //                         + $" and the {normalTargets[^1]}";
+    //         }
+
+    //         if (randomTargets.Count > 0)
+    //         {
+    //             string randomDesc = $"{randomTargets.Count} random target(s)";
+    //             if (!string.IsNullOrEmpty(targetList))
+    //                 targetList += $" and {randomDesc}";
+    //             else
+    //                 targetList = randomDesc;
+    //         }
+
+    //         if (string.IsNullOrEmpty(targetList))
+    //             targetList = "unknown positions";
+
+    //         // return effect.GetDescription(isSelfApply, TargetSide, targetList, isShowNextLevel);
+    //         return $"Apply {E} to {(isSelfApply ? "yourself and " : "")}" +
+    //             $"{TargetSide} targets at {targetList}, " +
+    //             $"dealing {DamageMult * owner.GetStatAtLevel(owner.Level).Atk} " +
+    //             $"{DamageType} damage to each target.";
+    //     }
+    }
+
+    [Serializable]
+    public struct AppliedEffect
+    {
+        public ESkillEffect EffectType;
+        public float Amount;
+        public int Duration;
+    }
+    #endregion
+
+    #region Close Attack
+    [Serializable]
+    public class DoCloseAttack : SubSkill
+    {
+        public CharStat CasterStatMult;
+        public CharStat TargetStatMult;
+        public EDamageType DamageType;
+
+        private async Task MovePosition(float duration)
         {
-            var effect = GetSkillEffect(owner, null);
-            var randomTargets = PosTargets.Where(p => p == EPositionTarget.Random).ToList();
-            var normalTargets = PosTargets.Where(p => p != EPositionTarget.Random).ToList();
-
-            string targetList = "";
-
-            if (normalTargets.Count == 1)
-            {
-                targetList = normalTargets[0].ToString();
-            }
-            else if (normalTargets.Count > 1)
-            {
-                targetList = string.Join(", ", $"the {normalTargets.Take(normalTargets.Count - 1)}")
-                            + $" and the {normalTargets[^1]}";
-            }
-
-            if (randomTargets.Count > 0)
-            {
-                string randomDesc = $"{randomTargets.Count} random target(s)";
-                if (!string.IsNullOrEmpty(targetList))
-                    targetList += $" and {randomDesc}";
-                else
-                    targetList = randomDesc;
-            }
-
-            if (string.IsNullOrEmpty(targetList))
-                targetList = "unknown positions";
-
-            return effect.GetDescription(targetList, isShowNextLevel);
+            
         }
+
+        public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
+        {
+            var startPos = casterModel.transform.position;
+            var dir = targetModel.transform.position - startPos;
+            var offset = new Vector3(4f * Mathf.Sign(dir.x), 0, 0);
+            var targetPos = targetModel.transform.position - offset;
+            await casterModel.transform.DOMove(targetPos, 1).SetEase(Ease.InCubic).AsyncWaitForCompletion();
+
+            var casterStat = casterModel.BaseCard.GetCurStat();
+            var targetStat = targetModel.BaseCard.GetCurStat();
+            var damage = (casterStat * CasterStatMult + targetStat + TargetStatMult).Total;
+
+            targetModel.BaseCard.TakeDamage(damage, DamageType);
+            await casterModel.transform.DOMove(startPos, 1).SetEase(Ease.InCubic).AsyncWaitForCompletion();
+        }
+    }
+    #endregion
+
+    #region Change Stat
+    public class ChangeStat : SubSkill
+    {
+        public StatMult HpMult;
+        public StatMult AtkMult;
+        public StatMult AmrMult;
+        public StatMult ResMult;
+
+        public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
+        {
+            var casterStat = casterModel.BaseCard.GetCurStat();
+            var targetStat = targetModel.BaseCard.GetCurStat();
+
+            var hpChange = (casterStat * HpMult.CasterStatMult + targetStat + HpMult.TargetStatMult).Total;
+            var atkChange = (casterStat * AtkMult.CasterStatMult + targetStat + AtkMult.TargetStatMult).Total;
+            var amrChange = (casterStat * AmrMult.CasterStatMult + targetStat + AmrMult.TargetStatMult).Total;
+            var resChange = (casterStat * ResMult.CasterStatMult + targetStat + ResMult.TargetStatMult).Total;
+
+            casterModel.BaseCard.ChangeStat(new(hpChange, atkChange, amrChange, resChange));
+        }
+    }
+
+    [Serializable]
+    public struct StatMult
+    {
+        public CharStat CasterStatMult;
+        public CharStat TargetStatMult;
     }
     #endregion
 }

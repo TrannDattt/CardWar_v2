@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,24 +13,53 @@ using UnityEngine.Events;
 
 namespace CardWar_v2.Entities
 {
-    public class CharacterCard : IDamagable
+    [Serializable]
+    public struct CharStat
     {
-        public class CharStat
-        {
-            public float Hp;
-            public float Atk;
-            public float Armor;
-            public float Resist;
+        public float Hp;
+        public float Atk;
+        public float Armor;
+        public float Resist;
 
-            public CharStat(float hp, float atk, float armor, float resist)
-            {
-                Hp = hp;
-                Atk = atk;
-                Armor = armor;
-                Resist = resist;
-            }
+        public readonly float Total => Hp + Atk + Armor + Resist;
+
+        public CharStat(float hp, float atk, float armor, float resist)
+        {
+            Hp = hp;
+            Atk = atk;
+            Armor = armor;
+            Resist = resist;
         }
 
+        public static CharStat operator +(CharStat a, CharStat b)
+        {
+            if (a.Equals(null) || b.Equals(null))
+                throw new ArgumentNullException("Cannot multiply null CharStat");
+
+            return new CharStat(
+                a.Hp + b.Hp,
+                a.Atk + b.Atk,
+                a.Armor + b.Armor,
+                a.Resist + b.Resist
+            );
+        }
+
+        public static CharStat operator *(CharStat a, CharStat b)
+        {
+            if (a.Equals(null) || b.Equals(null))
+                throw new ArgumentNullException("Cannot multiply null CharStat");
+
+            return new CharStat(
+                a.Hp * b.Hp,
+                a.Atk * b.Atk,
+                a.Armor * b.Armor,
+                a.Resist * b.Resist
+            );
+        }
+    }
+
+    public class CharacterCard : IDamagable
+    {
         public CharacterCardData Data { get; private set; }
 
         public ECharacter Character => Data.Character;
@@ -53,8 +83,7 @@ namespace CardWar_v2.Entities
         public float CurResist => Data.Resist + Data.ResistPerLevel * Level + _bonusResist;
         private float _bonusResist;
 
-        public int GoldCost => Data.GoldCost;
-        public int GemCost => Data.GemCost;
+        private bool _isDeath => CurHp <= 0;
 
         public List<SkillCard> SkillCards;
         public Dictionary<ESkillEffect, SkillEffect> ActiveEffects;
@@ -123,20 +152,34 @@ namespace CardWar_v2.Entities
 
         public void TakeDamage(float amount, EDamageType type)
         {
-            var dmgReduce = type == EDamageType.Physical ? CurArmor : CurResist;
-            float vulAmount = 0;
-            foreach(var e in ActiveEffects)
+            if (_isDeath) return;
+
+            var dmgReduce = type switch
             {
-                if (e.Key != ESkillEffect.Vulnerable) continue;
-                vulAmount += (e.Value as VulnerableEffect).GetCurAmount();
+                EDamageType.Physical => CurArmor,
+                EDamageType.Magical => CurResist,
+                EDamageType.Pure => 0,
+                _ => throw new Exception("Invalid damage type")
+            };
+            
+            float vulAmount = 0;
+            foreach (var e in ActiveEffects)
+            {
+                if (e.Key == ESkillEffect.Vulnerable)
+                    vulAmount += (e.Value as VulnerableEffect).VulAmount;
+                else if (e.Key == ESkillEffect.Strengthen)
+                    vulAmount -= (e.Value as StrengthenEffect).StrengthAmount;
             }
             
-            ChangeHp((-amount + dmgReduce) * vulAmount);
+            ChangeHp((-amount + dmgReduce) * Mathf.Max(0, 1 + vulAmount));
         }
 
         public void ApplyEffect(SkillEffect effect)
         {
-            Debug.Log($"Applying {effect.GetType().Name} to {Name}");
+            if (_isDeath) return;
+
+            Debug.Log(effect.EffectType);
+            Debug.Log($"Applying {effect.EffectType} to {Name}");
             if (ActiveEffects.ContainsKey(effect.EffectType))
             {
                 ActiveEffects[effect.EffectType].OverrideEffect(effect);
@@ -152,9 +195,10 @@ namespace CardWar_v2.Entities
 
         public async Task DoEffects()
         {
-            if (ActiveEffects.Count == 0) return;
+            if (_isDeath || ActiveEffects.Count == 0) return;
 
             var activeEffects = new List<SkillEffect>(ActiveEffects.Values.ToList());
+            activeEffects.Reverse();
             foreach (var effect in activeEffects)
             {
                 if (effect.Duration <= 0)
@@ -180,6 +224,29 @@ namespace CardWar_v2.Entities
         {
             _bonusHp += amount;
             OnChangeHp?.Invoke();
+        }
+
+        public void ChangeAtk(float amount)
+        {
+            _bonusAtk += amount;
+        }
+
+        public void ChangeAmr(float amount)
+        {
+            _bonusArmor += amount;
+        }
+
+        public void ChangeRes(float amount)
+        {
+            _bonusResist += amount;
+        }
+
+        public void ChangeStat(CharStat delta)
+        {
+            ChangeHp(delta.Hp);
+            ChangeAtk(delta.Atk);
+            ChangeAmr(delta.Armor);
+            ChangeRes(delta.Resist);
         }
     }
 }

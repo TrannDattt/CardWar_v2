@@ -13,8 +13,15 @@ namespace CardWar_v2.ComponentViews
         public override void UpdateInfoView(CharacterCard charCard, bool isMaxLevel)
         {
             var skills = charCard.SkillCards;
-            for (int i = 0; i < skills.Count; i++)
+            for (int i = 0; i < _skillDetailViews.Count; i++)
             {
+                if (i >= skills.Count) 
+                {
+                    _skillDetailViews[i].gameObject.SetActive(false);
+                    continue;
+                }
+
+                _skillDetailViews[i].gameObject.SetActive(true);
                 _skillDetailViews[i].UpdateDetail(skills[i], !isMaxLevel && charCard.IsUnlocked);
             }
         }

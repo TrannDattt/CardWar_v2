@@ -5,6 +5,6 @@ namespace CardWar_v2.Enums
         None,
         Opening,
         Attack,
-        Exercute,
+        Conclude,
     }
 }

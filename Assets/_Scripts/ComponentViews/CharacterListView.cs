@@ -38,7 +38,7 @@ namespace CardWar_v2.ComponentViews
                 _iconList.Add(newIcon);
             }
 
-            _iconList[0].SelectIcon();
+            _iconList[0].OnPointerClick(null);
         }
 
         private void UnselectOtherIcons(CharacterIconView selectedIcon)

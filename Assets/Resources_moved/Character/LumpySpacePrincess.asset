@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
+  m_Name: LumpySpacePrincess
+  m_EditorClassIdentifier: 
+  Id: cd3ddf22-25b8-4ee7-a3f8-b119e2957689
+  Character: 6
+  Name: Lumpy Space Princess
+  Image: {fileID: -2115133288, guid: 1cc3a5f95a2f9dd46892aaae9b81db00, type: 3}
+  Model: {fileID: 2808779258161444595, guid: b694c6f6bb4204d458086cac89372066, type: 3}
+  AnimController: {fileID: 9100000, guid: 7497303ddbd274845a97b4c9fe8c75d5, type: 2}
+  Hp: 320
+  Atk: 25
+  Armor: 5
+  Resist: 10
+  HpPerLevel: 0
+  AtkPerLevel: 0
+  ArmorPerLevel: 0
+  ResistPerLevel: 0
+  SkillCardDatas:
+  - {fileID: 11400000, guid: 99591a8914e3b11449083731dab5b646, type: 2}
+  - {fileID: 11400000, guid: 13920929e30aa63439cb257c66b57bac, type: 2}
+  - {fileID: 11400000, guid: 1846f6f768ab35141943559c2d520fec, type: 2}

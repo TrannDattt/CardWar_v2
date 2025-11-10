@@ -128,7 +128,7 @@ MonoBehaviour:
     m_Right: 20
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 3
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -147,6 +147,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4450494490226094087}
   - component: {fileID: 3836823091425387560}
+  - component: {fileID: 8619620489479416029}
   m_Layer: 5
   m_Name: Shop_Shelf
   m_TagString: Untagged
@@ -201,3 +202,18 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &8619620489479416029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5925446193208052059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd7c7a8f618d7474e9f04acd8800f38e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _container: {fileID: 3615402199510631212}
+  _size: 5
+  Items: []

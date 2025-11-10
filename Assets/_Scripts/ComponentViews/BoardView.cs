@@ -24,7 +24,7 @@ namespace CardWar_v2.ComponentViews
 
         public CharacterSlotView GetPlayerSlots(EPlayerTarget playerTarget, EPositionTarget posTarget)
         {
-            var region = playerTarget == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            var region = playerTarget == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
             var pos = posTarget == EPositionTarget.Random ? region.GetRandomPos() : posTarget;
             return region.GetSlotByPosition(pos);
         }
@@ -43,33 +43,55 @@ namespace CardWar_v2.ComponentViews
                 Debug.LogWarning("Card not found");
                 return;
             }
-            var region = target == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            var region = target == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
             var slot = region.GetSlotByCard(card);
             slot.RemoveCard(true);
         }
 
         public CharacterModelView GetCharacterByCard(EPlayerTarget region, CharacterCard cardBase)
         {
-            var pr = region == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            var pr = region == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
             return pr.GetCharByCard(cardBase);
         }
 
-        public CharacterModelView GetCharacterByPos(EPlayerTarget region, EPositionTarget pos)
+        public CharacterModelView GetCharacterByPos(EPlayerTarget region, EPositionTarget pos, bool absolutePos)
         {
-            var pr = region == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            var pr = region == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
             var posTarget = pos == EPositionTarget.Random ? pr.GetRandomPos() : pos;
-            return pr.GetCharByPos(posTarget);
+            var character = pr.GetCharByPos(posTarget);
+
+            if (character == null && !absolutePos) return GetAdditionTarget(region, posTarget);
+            return character;
+        }
+
+        private CharacterModelView GetAdditionTarget(EPlayerTarget region, EPositionTarget curPos)
+        {
+            var pr = region == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
+            if (curPos == EPositionTarget.Front)
+            {
+                if (pr.GetCharByPos(EPositionTarget.Mid) == null) return pr.GetCharByPos(EPositionTarget.Back);
+                return pr.GetCharByPos(EPositionTarget.Mid);
+            }
+
+            if (curPos == EPositionTarget.Mid)
+            {
+                if (pr.GetCharByPos(EPositionTarget.Back) == null) return pr.GetCharByPos(EPositionTarget.Front);
+                return pr.GetCharByPos(EPositionTarget.Back);
+            }
+            
+            if (pr.GetCharByPos(EPositionTarget.Mid) == null) return pr.GetCharByPos(EPositionTarget.Front);
+            return pr.GetCharByPos(EPositionTarget.Mid);
         }
 
         public List<CharacterModelView> GetCharactersInRegion(EPlayerTarget region)
         {
-            var pr = region == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            var pr = region == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
             return pr.Slots.Select(s => s.CharInSlot).Where(c => c != null).ToList();
         }
 
         public async Task DestroyDeadChar(CharacterCard charCard, EPlayerTarget targetSide)
         {
-            var region = targetSide == EPlayerTarget.Self ? _selfRegion : _enemyRegion;
+            var region = targetSide == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
             var slot = region.GetSlotByCard(charCard);
             var cardView = slot.CharInSlot;
 
@@ -90,14 +112,14 @@ namespace CardWar_v2.ComponentViews
 
         public EPositionTarget GetRandomPos()
         {
-            var values = Enum.GetValues(typeof(EPositionTarget)).Cast<EPositionTarget>().Where(p => p != EPositionTarget.Random).ToArray();
-            var randomIndex = UnityEngine.Random.Range(0, values.Length);
-            return values[randomIndex];
+            var pos = Slots.Where(s => !s.IsEmpty).Select(s => s.SlotPos).ToList();
+            var randomIndex = UnityEngine.Random.Range(0, pos.Count);
+            return pos[randomIndex];
         }
 
         public CharacterSlotView GetSlotByCard(CharacterCard card)
         {
-            return Slots.FirstOrDefault(s => s.CharInSlot != null && s.CharInSlot.BaseCard == card);
+            return Slots.FirstOrDefault(s => !s.IsEmpty && s.CharInSlot.BaseCard == card);
         }
 
         public CharacterSlotView GetSlotByPosition(EPositionTarget pos)

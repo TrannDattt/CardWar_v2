@@ -11,6 +11,7 @@ namespace CardWar_v2.Entities
         public CharacterCard Owner { get; private set; }
 
         public string Name => _data.Name;
+        public string Des => _data.Description;
         public Sprite Image => _data.Image;
         public List<SubSkill> SubSkills => _data.Skill;
 

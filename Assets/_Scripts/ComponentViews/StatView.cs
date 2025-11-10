@@ -1,6 +1,6 @@
+using CardWar_v2.Entities;
 using TMPro;
 using UnityEngine;
-using static CardWar_v2.Entities.CharacterCard;
 
 namespace CardWar_v2.ComponentViews
 {

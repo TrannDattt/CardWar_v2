@@ -42,21 +42,22 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private TextMeshProUGUI _skillDes;
         private bool _isShownSkill;
 
-        private string GetSkillDetail(SubSkill subSkill, CharacterCard owner)
-        {
-            return subSkill.GenerateDescription(owner, false);
-        }
+        // private string GetSkillDetail(SubSkill subSkill, CharacterCard owner)
+        // {
+        //     return subSkill.GenerateDescription(owner, false);
+        // }
         
         public async Task ShowSkillDetail(SkillCard card)
         {
             Debug.Log($"2.Show detail of card {card}");
             _skillImage.sprite = card.Image;
-            var skillDes = "";
-            foreach (var ss in card.SubSkills)
-            {
-                skillDes += $"- {GetSkillDetail(ss, card.Owner)}.{(ss == card.SubSkills[^1] ? "" : "\n")}";
-            }
-            _skillDes.SetText(skillDes);
+            // var skillDes = "";
+            // foreach (var ss in card.SubSkills)
+            // {
+            //     skillDes += $"- {GetSkillDetail(ss, card.Owner)}.{(ss == card.SubSkills[^1] ? "" : "\n")}";
+            // }
+            // _skillDes.SetText(skillDes);
+            _skillDes.SetText(card.Des);
 
             if (_isShownChar) await HideDetailView(EDetailType.Char);
             if (!_isShownSkill) await ShowDetailView(EDetailType.Skill);

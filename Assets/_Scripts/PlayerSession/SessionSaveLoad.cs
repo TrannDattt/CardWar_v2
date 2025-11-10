@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using CardWar.Enums;
 using CardWar_v2.Entities;
+using CardWar_v2.Enums;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -88,11 +89,15 @@ namespace CardWar_v2.Session
     public class ShopItemDataJson
     {
         public string Id;
-        //TODO: More item details
-        // public EItemType Type;
-        public int GoldCost;
-        public int GemCost;
         public int StockAmount;
+
+        public ShopItemDataJson() {}
+
+        public ShopItemDataJson(ShopItem item)
+        {
+            Id = item.Id;
+            StockAmount = item.StockAmount;
+        }
     }
 
     [Serializable]
