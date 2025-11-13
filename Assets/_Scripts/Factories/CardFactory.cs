@@ -1,14 +1,11 @@
+using System.Collections.Generic;
+using CardWar.Untils;
+using CardWar_v2.Entities;
+using CardWar_v2.ComponentViews;
+using UnityEngine;
+
 namespace CardWar_v2.Factories
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using CardWar.Entities;
-    using CardWar.Untils;
-    using CardWar_v2.Entities;
-    using CardWar_v2.ComponentViews;
-    using UnityEngine;
-
     public class CardFactory : Singleton<CardFactory>
     {
         [SerializeField] private SkillCardView _cardViewPrefab;

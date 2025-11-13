@@ -7,19 +7,31 @@ namespace CardWar_v2.ComponentViews
 {
     public class CharacterFaceSwapper : MonoBehaviour
     {
-        [SerializeField] List<FaceEmotion> _emotions;
-        [SerializeField] Material _faceMat;
+        [SerializeField] private List<FaceEmotion> _emotions;
+        [field: SerializeField] public Material FaceMatRef { get; private set; }
 
+        private Material _faceMat;
         private Dictionary<EEmotion, FaceEmotion> _emotionDict = new();
         private FaceEmotion _curEmotion;
+
+        public void SetFaceMat(Material mat) 
+        {
+            _faceMat = mat;
+        }
 
         public void ChangeEmotion(EEmotion key)
         {
             if (_curEmotion != null && _curEmotion.Key == key)
+            {
+                // Debug.Log($"Change to same emotion: {key}");
                 return;
+            }
 
             if (!_emotionDict.TryGetValue(key, out var faceEmotion) || faceEmotion.Sprite == null)
+            {
+                // Debug.Log($"Emotion {key}'s sprite of character {gameObject.name} is null");
                 return;
+            }
 
             _curEmotion = faceEmotion;
             var sprite = faceEmotion.Sprite;
@@ -42,7 +54,6 @@ namespace CardWar_v2.ComponentViews
         void Start()
         {
             _emotions.ForEach(e => _emotionDict[e.Key] = e);
-            ChangeEmotion(EEmotion.Normal);
         }
     }
 

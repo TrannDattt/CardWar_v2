@@ -1,11 +1,6 @@
-using CardWar.Entities;
-using CardWar.Enums;
-using CardWar_v2.Entities;
 using CardWar_v2.Enums;
 using CardWar_v2.Factories;
-using CardWar_v2.ComponentViews;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace CardWar_v2.ComponentViews
 {

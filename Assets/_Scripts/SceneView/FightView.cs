@@ -1,7 +1,9 @@
 // using CardWar.Factories;
 using System.Threading.Tasks;
+using CardWar.Untils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 // using CardWar.Views;
 
@@ -9,17 +11,13 @@ namespace CardWar_v2.SceneViews
 {
     public class FightView : MonoBehaviour
     {
-        private string _campaignScene = "Campaign";
-        private string _arenaScene = "Arena";
+        [SerializeField] private Button _arenaBtn;
+        [SerializeField] private Button _campaignBtn;
 
-        public async void NavToCampaign()
+        void Start()
         {
-            await SceneManager.LoadSceneAsync(_campaignScene);
-        }
-
-        public async void NavToArena()
-        {
-            await SceneManager.LoadSceneAsync(_arenaScene);
+            _campaignBtn.onClick.AddListener(() => SceneNavigator.Instance.ChangeScene(EScene.Campaign));
+            _arenaBtn.onClick.AddListener(() => SceneNavigator.Instance.ChangeScene(EScene.Arena));
         }
     }
 }

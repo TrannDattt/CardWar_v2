@@ -27,11 +27,17 @@ namespace CardWar_v2.ComponentViews
 
         private List<Renderer> _rends = new();
         private HashSet<Material> _mats = new();
+        private CharacterFaceSwapper _faceSwapper;
 
         public float Hp => BaseCard.CurHp;
         public float Atk => BaseCard.CurAtk;
 
         public UnityEvent<PointerEventData> OnModelClicked;
+
+        public bool CompareMaterial(Material mat, Material reference)
+        {
+            return mat.shader == reference.shader && mat.name.Contains(reference.name);
+        }
 
         public void SetBaseCard(CharacterCard card)
         {
@@ -45,6 +51,8 @@ namespace CardWar_v2.ComponentViews
             _animator = _modelBase.GetComponentInChildren<Animator>();
             _animator.runtimeAnimatorController = card.AnimController;
 
+            _faceSwapper = GetComponentInChildren<CharacterFaceSwapper>();
+
             _rends.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>());
             _rends.AddRange(GetComponentsInChildren<MeshRenderer>());
             foreach (var r in _rends)
@@ -53,6 +61,10 @@ namespace CardWar_v2.ComponentViews
                 foreach (var m in r.materials)
                 {
                     _mats.Add(m);
+                    if (_faceSwapper != null && CompareMaterial(m, _faceSwapper.FaceMatRef))
+                    {
+                        _faceSwapper.SetFaceMat(m);
+                    }
                 }
             }
 

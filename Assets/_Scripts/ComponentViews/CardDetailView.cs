@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CardWar.Entities;
-using CardWar_v2.Datas;
 using CardWar_v2.Entities;
 using DG.Tweening;
 using TMPro;

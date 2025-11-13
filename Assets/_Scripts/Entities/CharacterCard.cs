@@ -97,6 +97,11 @@ namespace CardWar_v2.Entities
 
         public CharacterCard(CharacterCardData data, int level = 1, bool isUnlock = false)
         {
+            if(data == null)
+            {
+                data = ScriptableObject.CreateInstance("CharacterCardData") as CharacterCardData;
+            }
+
             Data = data;
             IsUnlocked = isUnlock;
 
@@ -116,7 +121,7 @@ namespace CardWar_v2.Entities
 
             SkillCards = new();
             ActiveEffects = new();
-            Data.SkillCardDatas.ForEach(d => SkillCards.Add(new(d, this)));
+            Data.SkillCardDatas?.ForEach(d => SkillCards.Add(new(d, this)));
         }
 
         public void LevelUp()

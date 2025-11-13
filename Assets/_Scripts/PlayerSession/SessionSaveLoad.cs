@@ -64,7 +64,7 @@ namespace CardWar_v2.Session
     public class CharacterDataJson
     {
         public string Id;
-        public ECharacter Character;
+        public string Name;
         public bool IsUnlocked;
         public int Level;
 
@@ -73,7 +73,7 @@ namespace CardWar_v2.Session
         public CharacterDataJson(CharacterCard charCard)
         {
             Id = charCard.Data.Id;
-            Character = charCard.Character;
+            Name = charCard.Name;
             IsUnlocked = charCard.IsUnlocked;
             Level = charCard.Level;
         }
@@ -104,5 +104,18 @@ namespace CardWar_v2.Session
     public class ShopDataJson
     {
         public List<ShopItemDataJson> Items = new();
+    }
+
+    [Serializable]
+    public class CampaignProgressJson
+    {
+        public string LevelId;
+
+        public CampaignProgressJson() {}
+
+        public CampaignProgressJson(Level curLevel)
+        {
+            LevelId = curLevel.Data.Id;
+        }
     }
 }

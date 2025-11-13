@@ -1,53 +1,165 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CardWar_v2.Entities;
 using CardWar_v2.Factories;
 using CardWar_v2.GameControl;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace CardWar_v2.ComponentViews
 {
     public class CharacterListView : MonoBehaviour
     {
         [SerializeField] private RectTransform _container;
+        [SerializeField] private SelectBorderView _iconSelectBorder;
+        [SerializeField] private SelectBorderView _iconHoverBorder;
 
         private List<CharacterCard> CharList => PlayerSessionManager.Instance.CharacterList;
         private List<CharacterIconView> _iconList = new();
 
-        public void ShowCharacterIcons(bool showUnlockOnly, Action<CharacterIconView> callback = null)
+        private int _selectAmount;
+        private List<CharacterIconView> _selectedIcons = new();
+        private List<SelectBorderView> _selectedIconBorders = new();
+
+        //TODO: Use bool _canBeSelected to enable or disable an icon
+
+        public void SetSelectAmount(int amount)
         {
+            _selectAmount = amount;
+        }
+
+        public void ShowCharacterIcons(bool showUnlockOnly, bool canMultiSelect, Action<CharacterIconView> callback = null)
+        {
+            _selectedIcons.Clear();
+            _selectAmount = canMultiSelect ? _selectAmount : 1;
+
+            _selectedIconBorders.ForEach(b => b.DeselectUI());
+
             _iconList.Clear();
+
             foreach (RectTransform rt in _container)
             {
                 if (rt.gameObject.TryGetComponent<CharacterIconView>(out var icon))
                 {
-                    CharacterIconFactory.Instance.RecycleIconView(icon);
+                    IconFactory.Instance.RecycleIconView(icon);
                 }
             }
 
-            foreach (var card in CharList)
+            var arrangedCharList = CharList.OrderByDescending(c => c.IsUnlocked);
+
+            foreach (var card in arrangedCharList)
             {
-                if (showUnlockOnly && !card.IsUnlocked) continue;
-                var newIcon = CharacterIconFactory.Instance.CreateNewIcon(card, _container);
+                if (showUnlockOnly && !card.IsUnlocked) break;
+                var newIcon = IconFactory.Instance.CreateNewCharIcon(card, false, _container);
+
                 newIcon.OnIconClicked.AddListener(() =>
                 {
-                    UnselectOtherIcons(newIcon);
+                    if (!canMultiSelect)
+                        DeselectOtherIcons(newIcon);
+                    else
+                    {
+                        if (_selectedIcons.Contains(newIcon))
+                        {
+                            DeselectIcon(newIcon);
+                            callback(null);
+                            return;
+                        }
+
+                        if (_selectedIcons.Count == _selectAmount)
+                        {
+                            Debug.Log("Maximum selected");
+                            return;
+                        }
+                    }
+
+                    SelectIcon(newIcon);
                     callback(newIcon);
                 });
+
+                newIcon.OnPointerEnterIcon.AddListener(() => _iconHoverBorder.SelectUI(newIcon.GetComponent<RectTransform>()));
+                newIcon.OnPointerExitIcon.AddListener(() => _iconHoverBorder.DeselectUI());
+
                 _iconList.Add(newIcon);
             }
 
             _iconList[0].OnPointerClick(null);
         }
 
-        private void UnselectOtherIcons(CharacterIconView selectedIcon)
+        private void SelectIcon(CharacterIconView icon)
         {
-            foreach(var i in _iconList)
+            if (_selectedIcons.Contains(icon)) return;
+            
+            _selectedIcons.Add(icon);
+
+            if (_selectedIcons.Count > _selectedIconBorders.Count)
             {
-                if (i.BaseCard == selectedIcon.BaseCard) continue;
-                i.UnselectIcon();
+                var newBorder = new SelectBorderView(_iconSelectBorder, _container);
+                _selectedIconBorders.Add(newBorder);
+                newBorder.Rt.SetSiblingIndex(_container.childCount - 1 - _iconList.Count);
             }
+            var selectBorder = _selectedIconBorders.FirstOrDefault(s => !s.IsActive);
+
+            selectBorder.SelectUI(icon.GetComponent<RectTransform>());
+        }
+
+        private void DeselectIcon(CharacterIconView icon)
+        {
+            if (!_selectedIcons.Contains(icon)) return;
+
+            _selectedIcons.Remove(icon);
+            _selectedIconBorders.FirstOrDefault(b => b.Target == icon.GetComponent<RectTransform>()).DeselectUI();
+        }
+
+        private void DeselectOtherIcons(CharacterIconView selectedIcon)
+        {
+            _selectedIcons.RemoveAll(i => i.BaseCard != selectedIcon.BaseCard);
+
+            foreach(var b in _selectedIconBorders)
+            {
+                if (b.Target == selectedIcon.GetComponent<RectTransform>()) continue;
+                b.DeselectUI();
+            }
+        }
+    }
+    
+    [Serializable]
+    public class SelectBorderView
+    {
+        [field: SerializeField] public RectTransform Rt { get; private set; }
+        [SerializeField] private Image _border;
+        [SerializeField] private Color _selectedColor;
+        [SerializeField] private Color _defaultColor = Color.clear;
+
+        public bool IsActive { get; private set; }
+        public RectTransform Target { get; private set; }
+
+        public SelectBorderView(SelectBorderView prefab, RectTransform parent)
+        {
+            var inst = UnityEngine.Object.Instantiate(prefab._border, parent);
+
+            Rt = inst.rectTransform;
+            _border = inst.GetComponent<Image>();
+            _selectedColor = prefab._selectedColor;
+            _defaultColor = prefab._defaultColor;
+
+            DeselectUI();
+        }
+
+        public void SelectUI(RectTransform rt)
+        {
+            Rt.anchoredPosition = rt.anchoredPosition;
+            _border.color = _selectedColor;
+            Target = rt;
+            IsActive = true;
+        }
+
+        public void DeselectUI()
+        {
+            _border.color = _defaultColor;
+            Target = null;
+            IsActive = false;
         }
     }
 }

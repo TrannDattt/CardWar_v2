@@ -525,7 +525,6 @@ namespace CardWar_v2.SceneViews
             _boardView.Initialize();
             for (int i = 0; i < 3; i++)
             {
-                // TODO: Add event on click show detail for char
                 await PlayCharCard(selfChars[i], EPlayerTarget.Ally, (EPositionTarget)i);
                 await PlayCharCard(enemyChars[i], EPlayerTarget.Enemy, (EPositionTarget)i);
             }

@@ -7,7 +7,7 @@ namespace CardWar_v2.Datas
     [CreateAssetMenu(menuName = "SO/Shop Item")]
     public class ShopItemData : ScriptableObject
     {
-        public string Id => Guid.NewGuid().ToString();
+        public string Id => GetInstanceID().ToString();
         public ScriptableObject Item;
         public EShopItemType Type;
         public int StockAmount;

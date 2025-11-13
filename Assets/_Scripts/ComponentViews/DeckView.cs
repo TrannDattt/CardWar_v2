@@ -1,11 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using CardWar.Entities;
-using CardWar_v2.Datas;
 using CardWar_v2.Entities;
 using CardWar_v2.Factories;
-using CardWar_v2.ComponentViews;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace CardWar_v2.ComponentViews

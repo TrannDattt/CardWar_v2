@@ -18,6 +18,8 @@ namespace CardWar_v2.GameControl
         public Player CurPlayer { get; private set; } = new(new());
         public List<CharacterCard> CharacterList { get; private set; } = new();
         public List<ShopItem> ShopItemList { get; private set; } = new();
+        public List<Level> CampaignLevels { get; private set; } = new();
+        public Level CurLevel { get; private set; }
 
         // private Dictionary<ECharacter, CharacterDataJson> _characterDataDict = new();
 
@@ -46,6 +48,26 @@ namespace CardWar_v2.GameControl
         }
 
         //-------------------
+        // TODO: Save load more properly
+        #region Save Data
+        public async void SaveSessionData()
+        {
+            var charJSONs = new CharacterListJson();
+            CharacterList.ForEach(c => charJSONs.Characters.Add(new(c)));
+            SessionSaveLoad.SaveToFile(charJSONs, "characters");
+
+            var itemJSONs = new ShopDataJson();
+            ShopItemList.ForEach(i => itemJSONs.Items.Add(new(i)));
+            SessionSaveLoad.SaveToFile(itemJSONs, "shop-items");
+
+            SessionSaveLoad.SaveToFile(CurPlayer.Data, "player");
+            SessionSaveLoad.SaveToFile(new CampaignProgressJson(CurLevel), "campaign-progress");
+
+            //TODO: Save player ranking
+        }
+        #endregion
+
+        #region Load Data
         public async Task FetchAllCharacters()
         {
             CharacterList.Clear();
@@ -67,7 +89,7 @@ namespace CardWar_v2.GameControl
 
                 newChar.OnCardLevelUp.AddListener(SaveSessionData);
                 newChar.OnCardUnlock.AddListener(SaveSessionData);
-                // Debug.Log($"Character {CharacterList[i].Name} is {CharacterList[i].IsUnlocked}");
+                Debug.Log($"Create character {newChar.Name} with id: {newChar.Data.Id}");
             }
         }
 
@@ -93,27 +115,37 @@ namespace CardWar_v2.GameControl
             }
             Debug.Log($"Createed {ShopItemList.Count} shop items");
         }
-        
+
         public CharacterCard GetCharById(string id)
         {
             return CharacterList.FirstOrDefault(c => c.Data.Id == id);
         }
 
-        // TODO: Save load more properly
-        public void SaveSessionData()
+        public async Task FetchAllCampaignLevels()
         {
-            var charJSONs = new CharacterListJson();
-            CharacterList.ForEach(c => charJSONs.Characters.Add(new(c)));
-            SessionSaveLoad.SaveToFile(charJSONs, "characters");
+            CampaignLevels.Clear();
+            
+            var handle = Addressables.LoadAssetsAsync<LevelData>("Levels");
+            await handle.Task;
+            foreach(LevelData d in handle.Result)
+            {
+                Level newLevel = new(d);
+                newLevel.OnLevelClear.AddListener(SaveSessionData);
+                CampaignLevels.Add(newLevel);
+            }
+        }
+        
+        public async Task LoadCurrentLevelData()
+        {
+            if (CampaignLevels.Count == 0) await FetchAllCampaignLevels();
+            var campaignProgressJSON = SessionSaveLoad.LoadFromFile<CampaignProgressJson>("campaign-progress");
+            CurLevel = campaignProgressJSON != null ? CampaignLevels[0] 
+                                                    : CampaignLevels.FirstOrDefault(l => l.Data.Id == campaignProgressJSON.LevelId);
 
-            var itemJSONs = new ShopDataJson();
-            ShopItemList.ForEach(i => itemJSONs.Items.Add(new(i)));
-            SessionSaveLoad.SaveToFile(itemJSONs, "shop-items");
-
-            SessionSaveLoad.SaveToFile(CurPlayer.Data, "player");
-
-            //TODO: Save player ranking
-            //TODO: Save player campaign progress
+            if(CurLevel == null)
+            {
+                Debug.LogError("Cant find current level");
+            }
         }
 
         protected override async void Awake()
@@ -132,8 +164,10 @@ namespace CardWar_v2.GameControl
 
             await FetchAllCharacters();
             await FetchAllShopItems();
+            await LoadCurrentLevelData();
 
             OnFinishLoadingSession?.Invoke();
         }
+        #endregion
     }
 }

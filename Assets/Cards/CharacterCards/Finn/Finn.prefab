@@ -2699,4 +2699,4 @@ MonoBehaviour:
     Sprite: {fileID: 1652111775, guid: eebc7f9cfaf8dbf4d9317f7937df3605, type: 3}
   - Key: 4
     Sprite: {fileID: 776781933, guid: eebc7f9cfaf8dbf4d9317f7937df3605, type: 3}
-  _faceMat: {fileID: 2100000, guid: 9d9fdf8a026e7ce48ae4e566a8ebd771, type: 2}
+  <FaceMatRef>k__BackingField: {fileID: 2100000, guid: 9d9fdf8a026e7ce48ae4e566a8ebd771, type: 2}

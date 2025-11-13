@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CardWar.Enums;
 using CardWar.Untils;
+using CardWar_v2.Entities;
 using CardWar_v2.Enums;
 using CardWar_v2.SceneViews;
 using JetBrains.Annotations;
@@ -12,7 +13,7 @@ namespace CardWar_v2.GameControl
 {
     public class GameplayManager : Singleton<GameplayManager>
     {
-        private IngameSceneView _ingameScene;
+        private IngameSceneView _ingameScene => IngameSceneView.Instance;
 
         #region Turn Logic
         public EPlayerTarget CurTurn { get; private set; } = EPlayerTarget.Ally;
@@ -174,9 +175,8 @@ namespace CardWar_v2.GameControl
         #endregion
 
         #region Gameplay Logic
-        //TODO: Manage the game flow, things happen when game start, conclude match, ...
-        // Make a state machine ??
         public async void StartGame()
+        // public async void StartGame(List<CharacterCard> selfTeam, List<CharacterCard> enemyTeam)
         {
             await _ingameScene.InitScene();
             _turnChangeTime = 0;
@@ -193,17 +193,12 @@ namespace CardWar_v2.GameControl
         #region Init For Testing
         void Start()
         {
-            _ingameScene = IngameSceneView.Instance;
-
             StartGame();
         }
 
         void Update()
         {
-            if(_curPhase != null)
-            {
-                _curPhase.Do();
-            }
+            _curPhase?.Do();
         }
         #endregion
     }

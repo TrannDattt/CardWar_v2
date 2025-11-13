@@ -10,7 +10,7 @@ namespace CardWar_v2.Datas
     public class CharacterCardData : ScriptableObject
     {
         // Info
-        public string Id = Guid.NewGuid().ToString();
+        public string Id => GetInstanceID().ToString();
         public ECharacter Character;
         public string Name;
         public Sprite Image;

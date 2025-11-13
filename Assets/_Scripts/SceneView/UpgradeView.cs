@@ -21,7 +21,7 @@ namespace CardWar_v2.SceneViews
 
         // private CharacterCard _selectedChar;
 
-        private Player CurPLayer => PlayerSessionManager.Instance.CurPlayer;
+        private Player CurPlayer => PlayerSessionManager.Instance.CurPlayer;
         private List<CharacterCard> AllChars => PlayerSessionManager.Instance.CharacterList;
 
         private const int MAX_LEVEL = 10;
@@ -58,7 +58,7 @@ namespace CardWar_v2.SceneViews
 
         private void LevelUpCharacter(CharacterCard charCard, int goldCost, int gemCost)
         {
-            if (CurPLayer.Gold < goldCost || CurPLayer.Gem < gemCost)
+            if (CurPlayer.Gold < goldCost || CurPlayer.Gem < gemCost)
             {
                 // TODO: Pop up notice ??
                 Debug.Log("Not enough resources to level up");
@@ -67,7 +67,7 @@ namespace CardWar_v2.SceneViews
 
             charCard.LevelUp();
             Debug.Log($"Level up character {charCard.Name} to level {charCard.Level}");
-            CurPLayer.UpdatePlayerCurrency(-goldCost, -gemCost);
+            CurPlayer.UpdatePlayerCurrency(-goldCost, -gemCost);
 
             //TODO: Do some animation ??
         }
@@ -112,7 +112,7 @@ namespace CardWar_v2.SceneViews
         {
             // Debug.Log($"Total char amount: {AllChars.Count}");
             // ChangeSelectedChar(AllChars[0]);
-            _charList.ShowCharacterIcons(false, (i) => ChangeSelectedChar(i.BaseCard));
+            _charList.ShowCharacterIcons(false, false, (i) => ChangeSelectedChar(i.BaseCard));
             ShowUpgradeInfo();
         }
     }

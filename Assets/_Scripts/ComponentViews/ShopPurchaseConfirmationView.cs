@@ -1,5 +1,6 @@
 using System;
 using CardWar_v2.Entities;
+using CardWar_v2.GameControl;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,11 +21,13 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private TextMeshProUGUI _gemCost;
 
         private ShopItem _curItem;
+        private Player CurPlayer => PlayerSessionManager.Instance.CurPlayer;
 
         public void OpenPopup(ShopItem item)
         {
             if (item == null) return;
             _canvasGroup.alpha = 1;
+            _canvasGroup.blocksRaycasts = true;
 
             _curItem = item;
             _itemIcon.sprite = item.Icon;
@@ -34,12 +37,21 @@ namespace CardWar_v2.ComponentViews
         public void ClosePopup()
         {
             _canvasGroup.alpha = 0;
+            _canvasGroup.blocksRaycasts = false;
         }
 
         public void BuyItem()
         {
             if (_curItem == null) return;
+            var goldCost = _curItem.GoldCost * Quantity;
+            var gemCost = _curItem.GemCost * Quantity;
+            if (CurPlayer.Gold < goldCost || CurPlayer.Gem < gemCost)
+            {
+                Debug.Log("Not enough resources to buy item");
+                return;
+            }
             _curItem.BuyItem(Quantity);
+            CurPlayer.UpdatePlayerCurrency(-goldCost, -gemCost);
             if (_curItem.StockAmount == 0) ClosePopup();
         }
 
