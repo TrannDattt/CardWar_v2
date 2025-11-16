@@ -14,6 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Absolute Zero Law
   Image: {fileID: 21300000, guid: ef007f39a09ecdf47b0d1986b35223d0, type: 3}
+  Description: '- Apply Chill to a random enemy for 4 turns.
+
+    - If that same
+    enemy''s ATK is less or equal to 0, deal Pure damage equal to 100% target''s
+    Max HP'
   Skill:
   - rid: 4516365139864977513
   - rid: -2
@@ -29,8 +34,7 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 1
         PositionTargets: 03000000
-        Multiplier: 0
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 5
-        Duration: 4
+        Effects:
+        - EffectType: 5
+          Amount: 0
+          Duration: 4

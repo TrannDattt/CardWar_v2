@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Crimson Rush
   Image: {fileID: 21300000, guid: c65c934d283fe3747b49daa0fc8a144d, type: 3}
-  Description: 
+  Description: '- Attack enemy at the Front, deal Physical damage equal to 100% ATK.
+
+    -
+    If the attack takes down the enemy, gain ATK equal to 20% his ATK and remove
+    Chill.'
   Skill:
   - rid: 4516365123665002592
   - rid: 4516365139864977503

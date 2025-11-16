@@ -6,15 +6,20 @@ using CardWar_v2.Factories;
 using CardWar_v2.GameControl;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace CardWar_v2.ComponentViews
 {
     public class CharacterListView : MonoBehaviour
     {
+        [SerializeField] private RectTransform _rt;
         [SerializeField] private RectTransform _container;
         [SerializeField] private SelectBorderView _iconSelectBorder;
         [SerializeField] private SelectBorderView _iconHoverBorder;
+        [SerializeField] private float _offsetY;
+
+        public UnityEvent<CharacterIconView, bool> OnIconClicked { get; set; } = new();
 
         private List<CharacterCard> CharList => PlayerSessionManager.Instance.CharacterList;
         private List<CharacterIconView> _iconList = new();
@@ -23,14 +28,33 @@ namespace CardWar_v2.ComponentViews
         private List<CharacterIconView> _selectedIcons = new();
         private List<SelectBorderView> _selectedIconBorders = new();
 
-        //TODO: Use bool _canBeSelected to enable or disable an icon
+        private Vector3 _originalPos;
+        private bool _isVisible = true;
 
         public void SetSelectAmount(int amount)
         {
             _selectAmount = amount;
         }
 
-        public void ShowCharacterIcons(bool showUnlockOnly, bool canMultiSelect, Action<CharacterIconView> callback = null)
+        public void ShowList()
+        {
+            if (_isVisible) return;
+
+            _isVisible = true;
+            // _rt.anchoredPosition = _originalPos;
+            transform.position = _originalPos;
+        }
+
+        public void HideList()
+        {
+            if (!_isVisible) return;
+
+            _isVisible = false;
+            // _rt.anchoredPosition = _originalPos + new Vector2(0, _offsetY);
+            transform.position = _originalPos + new Vector3(0, _offsetY);
+        }
+
+        public void ShowCharacterIcons(bool showUnlockOnly, bool canMultiSelect)
         {
             _selectedIcons.Clear();
             _selectAmount = canMultiSelect ? _selectAmount : 1;
@@ -63,7 +87,7 @@ namespace CardWar_v2.ComponentViews
                         if (_selectedIcons.Contains(newIcon))
                         {
                             DeselectIcon(newIcon);
-                            callback(null);
+                            OnIconClicked?.Invoke(newIcon, false);
                             return;
                         }
 
@@ -75,7 +99,7 @@ namespace CardWar_v2.ComponentViews
                     }
 
                     SelectIcon(newIcon);
-                    callback(newIcon);
+                    OnIconClicked?.Invoke(newIcon, true);
                 });
 
                 newIcon.OnPointerEnterIcon.AddListener(() => _iconHoverBorder.SelectUI(newIcon.GetComponent<RectTransform>()));
@@ -84,13 +108,15 @@ namespace CardWar_v2.ComponentViews
                 _iconList.Add(newIcon);
             }
 
-            _iconList[0].OnPointerClick(null);
+            if (!canMultiSelect)
+                _iconList[0].OnPointerClick(null);
         }
 
         private void SelectIcon(CharacterIconView icon)
         {
             if (_selectedIcons.Contains(icon)) return;
             
+            Debug.Log($"Selected icon {icon.BaseCard.Name}");
             _selectedIcons.Add(icon);
 
             if (_selectedIcons.Count > _selectedIconBorders.Count)
@@ -121,6 +147,11 @@ namespace CardWar_v2.ComponentViews
                 if (b.Target == selectedIcon.GetComponent<RectTransform>()) continue;
                 b.DeselectUI();
             }
+        }
+
+        void Start()
+        {
+            _originalPos = transform.position;
         }
     }
     

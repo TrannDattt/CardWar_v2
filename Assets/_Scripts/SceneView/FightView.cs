@@ -16,8 +16,8 @@ namespace CardWar_v2.SceneViews
 
         void Start()
         {
-            _campaignBtn.onClick.AddListener(() => SceneNavigator.Instance.ChangeScene(EScene.Campaign));
-            _arenaBtn.onClick.AddListener(() => SceneNavigator.Instance.ChangeScene(EScene.Arena));
+            _campaignBtn.onClick.AddListener(async () => await SceneNavigator.Instance.ChangeScene(EScene.Campaign));
+            _arenaBtn.onClick.AddListener(async () => await SceneNavigator.Instance.ChangeScene(EScene.Arena));
         }
     }
 }

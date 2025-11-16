@@ -14,11 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Overdramatic Savior
   Image: {fileID: 21300000, guid: 0229857a5f86c0840aa27461dfac71be, type: 3}
+  Description: '- Apply Strengthen to all allies, decrease incoming damage by 100%
+    for 1 turn.
+
+    - Apply Poison, Burn and Silence to herself for 3 turns.'
   Skill:
   - rid: 4516365139864977527
-  - rid: 4516365139864977528
   - rid: 4516365139864977529
-  - rid: 4516365139864977530
   references:
     version: 2
     RefIds:
@@ -29,23 +31,10 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 000000000100000002000000
-        Multiplier: 1
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 7
-        Duration: 1
-    - rid: 4516365139864977528
-      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
-      data:
-        Clip: {fileID: 0}
-        DelayToSkill: 0
-        TargetSide: 0
-        PositionTargets: 04000000
-        Multiplier: 0
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 2
-        Duration: 3
+        Effects:
+        - EffectType: 7
+          Amount: 1
+          Duration: 1
     - rid: 4516365139864977529
       type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
@@ -53,20 +42,13 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 04000000
-        Multiplier: 0
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 4
-        Duration: 3
-    - rid: 4516365139864977530
-      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
-      data:
-        Clip: {fileID: 0}
-        DelayToSkill: 0
-        TargetSide: 0
-        PositionTargets: 04000000
-        Multiplier: 0
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 5
-        Duration: 3
+        Effects:
+        - EffectType: 2
+          Amount: 0
+          Duration: 3
+        - EffectType: 4
+          Amount: 0
+          Duration: 3
+        - EffectType: 6
+          Amount: 0
+          Duration: 3

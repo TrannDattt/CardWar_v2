@@ -14,7 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Wildfire Waltz
   Image: {fileID: 21300000, guid: 395e93ed6f3f4c249b96cf07bd5d1b2e, type: 3}
+  Description: '- Lose HP equal to 90% ATK.
+
+    - Apply Vulnerable to herself, increase
+    incoming damage by 20% for 1 turn.
+
+    - Attack 2 random enemy, deal Magical
+    damage equal to 80% ATK.'
   Skill:
+  - rid: 4516365282946842718
   - rid: 4516365123665002600
   - rid: 4516365123665002601
   references:
@@ -27,11 +35,10 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 04000000
-        Multiplier: 0.2
-        BonusMultiplierPerLevel: 0
-        DamageType: 3
-        EffectType: 3
-        Duration: 1
+        Effects:
+        - EffectType: 3
+          Amount: 0.2
+          Duration: 1
     - rid: 4516365123665002601
       type: {class: DoRangeAttack, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
@@ -39,8 +46,67 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 1
         PositionTargets: 0300000003000000
-        DamageMult: 0.8
-        BonusDamageMultPerLevel: 0
+        CasterStatMult:
+          Hp: 0
+          Atk: 0.8
+          Armor: 0
+          Resist: 0
+        TargetStatMult:
+          Hp: 0
+          Atk: 0
+          Armor: 0
+          Resist: 0
         Projectile: {fileID: 0}
         OffsetToCaster: {x: 0, y: 0, z: 0}
         DamageType: 1
+    - rid: 4516365282946842718
+      type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 04000000
+        HpMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: -0.9
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AtkMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AmrMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        ResMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0

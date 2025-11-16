@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Finn Step
   Image: {fileID: 21300000, guid: d62f8676312124b40ae68fd265632ba2, type: 3}
-  Description: 
+  Description: '- Apply Vulnerable to a random enemy, increase incoming damage by
+    15%.
+
+    - Attack that same enemy, deal Physical damage equal to 65% ATK + 3%
+    target''s Max HP.'
   Skill:
   - rid: 4516365123665002594
   - rid: 4516365162812014593

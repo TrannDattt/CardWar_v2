@@ -71,6 +71,7 @@ namespace CardWar_v2.Factories
             // Debug.Log($"Recycling card {cardView.BaseCard?.Name}");
             // cardView.RecycleCard();
             // iconView.transform.SetParent(transform);
+            iconView.RecycleIcon();
             iconView.gameObject.SetActive(false);
 
             if (iconView is CharacterIconView charIcon)

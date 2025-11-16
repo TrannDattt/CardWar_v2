@@ -1,0 +1,4 @@
+repository "CardWar/CardWar@18967871073699@cloud"
+  path "/"
+    br "/main"
+    co "/main"

@@ -97,11 +97,6 @@ namespace CardWar_v2.Entities
 
         public CharacterCard(CharacterCardData data, int level = 1, bool isUnlock = false)
         {
-            if(data == null)
-            {
-                data = ScriptableObject.CreateInstance("CharacterCardData") as CharacterCardData;
-            }
-
             Data = data;
             IsUnlocked = isUnlock;
 
@@ -118,6 +113,8 @@ namespace CardWar_v2.Entities
             _bonusAtk = 0;
             _bonusArmor = 0;
             _bonusResist = 0;
+            
+            if(data == null) return;
 
             SkillCards = new();
             ActiveEffects = new();

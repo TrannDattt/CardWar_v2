@@ -17,13 +17,12 @@ namespace CardWar_v2.ComponentViews
 
         public void SetBaseCard(CharacterCard card, bool ignoreLock)
         {
-            card ??= new(null, 1, true);
-            BaseCard = card;
+            BaseCard = card ?? new(null, 1, true);
 
-            SetIcon(card.Image);
-            _level?.SetText($"Lv.{card.Level}");
+            SetIcon(card != null ? BaseCard.Image : null);
+            _level?.SetText($"Lv.{BaseCard.Level}");
 
-            if (!card.IsUnlocked && !ignoreLock)
+            if (!BaseCard.IsUnlocked && !ignoreLock)
             {
                 _icon.color = AdjustColorValue(_icon.color, .5f);
             }
@@ -32,7 +31,7 @@ namespace CardWar_v2.ComponentViews
                 _icon.color = AdjustColorValue(_icon.color, 1f);
             }
 
-            card?.OnCardUnlock.AddListener(() => _icon.color = AdjustColorValue(_icon.color, 1f));
+            BaseCard?.OnCardUnlock.AddListener(() => _icon.color = AdjustColorValue(_icon.color, 1f));
 
             // UnselectIcon();
         }
@@ -48,46 +47,6 @@ namespace CardWar_v2.ComponentViews
         {
             return new(color.r, color.g, color.b, Mathf.Clamp01(newAlpha));
         }
-
-        // public void SelectIcon()
-        // {
-        //     _isSelected = true;
-        //     _selectBorder.color = AdjustColorAlpha(_selectBorder.color, 1);
-        // }
-
-        // public void UnselectIcon()
-        // {
-        //     _isSelected = false;
-        //     _selectBorder.color = AdjustColorAlpha(_selectBorder.color, 0);
-        // }
-
-        // public void HoverIcon()
-        // {
-        //     _selectBorder.color = AdjustColorAlpha(_selectBorder.color, .5f);
-        // }
-
-        // public override void OnPointerClick(PointerEventData eventData)
-        // {
-        //     base.OnPointerClick(eventData);
-
-        //     if (_isSelected) UnselectIcon();
-        //     else SelectIcon();
-        // }
-
-        // public override void OnPointerEnter(PointerEventData eventData)
-        // {
-        //     base.OnPointerEnter(eventData);
-
-        //     HoverIcon();
-        // }
-
-        // public override void OnPointerExit(PointerEventData eventData)
-        // {
-        //     base.OnPointerExit(eventData);
-
-        //     if (!_isSelected) UnselectIcon();
-        //     else SelectIcon();
-        // }
     }
 }
 

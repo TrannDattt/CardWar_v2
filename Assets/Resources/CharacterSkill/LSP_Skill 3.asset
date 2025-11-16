@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: The Silent Treatment
   Image: {fileID: 21300000, guid: fac52f0aa1fe79542a446cc2ab05194d, type: 3}
+  Description: '- Apply Silence to enemies at the Mid and the Back for 2 turns.
+
+    -
+    Lose HP equal to 5% Max HP.'
   Skill:
   - rid: 4516365139864977531
   - rid: 4516365139864977532
@@ -27,11 +31,10 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 1
         PositionTargets: 0100000002000000
-        Multiplier: 0
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 6
-        Duration: 2
+        Effects:
+        - EffectType: 6
+          Amount: 0
+          Duration: 2
     - rid: 4516365139864977532
       type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
@@ -39,13 +42,47 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 04000000
-        Mult:
-          Hp: 0.05
-          Atk: 0
-          Armor: 0
-          Resist: 0
-        BonusMultPerLevel:
-          Hp: 0
-          Atk: 0
-          Armor: 0
-          Resist: 0
+        HpMult:
+          CasterStatMult:
+            Hp: -0.05
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AtkMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AmrMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        ResMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0

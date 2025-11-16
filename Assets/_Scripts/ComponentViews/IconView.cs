@@ -19,8 +19,11 @@ namespace CardWar_v2.ComponentViews
         {
             _icon.sprite = icon;
             _amount.gameObject.SetActive(amount > 1);
-            _amount.SetText($"x {amount}");
-            
+            _amount.SetText($"x {amount}");   
+        }
+
+        public void RecycleIcon()
+        {
             OnIconClicked.RemoveAllListeners();
         }
 

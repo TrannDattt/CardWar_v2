@@ -14,10 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Elastic Breakdown
   Image: {fileID: 21300000, guid: 40cb3f55832677541b024effe2db34f1, type: 3}
+  Description: '- Attack enemies at the Mid and the Back, deal Physical damage equal
+    to 60% ATK.
+
+    - Apply Poison to himself for 5 turns.
+
+    - Apply Vulnerable
+    to himself, increase incoming damage by 35% for 1 turn.'
   Skill:
   - rid: 4516365139864977519
   - rid: 4516365139864977520
-  - rid: 4516365139864977521
   references:
     version: 2
     RefIds:
@@ -28,8 +34,16 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 1
         PositionTargets: 0100000002000000
-        DamageMult: 0.6
-        BonusDamageMultPerLevel: 0
+        CasterStatMult:
+          Hp: 0
+          Atk: 0.6
+          Armor: 0
+          Resist: 0
+        TargetStatMult:
+          Hp: 0
+          Atk: 0
+          Armor: 0
+          Resist: 0
         DamageType: 0
     - rid: 4516365139864977520
       type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
@@ -38,20 +52,10 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 04000000
-        Multiplier: 0
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 2
-        Duration: 5
-    - rid: 4516365139864977521
-      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
-      data:
-        Clip: {fileID: 0}
-        DelayToSkill: 0
-        TargetSide: 0
-        PositionTargets: 04000000
-        Multiplier: 0.35
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 3
-        Duration: 0
+        Effects:
+        - EffectType: 2
+          Amount: 0
+          Duration: 5
+        - EffectType: 3
+          Amount: 0.35
+          Duration: 1

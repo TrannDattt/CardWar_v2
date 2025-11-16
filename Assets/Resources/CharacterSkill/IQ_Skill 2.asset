@@ -14,6 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Queen's Wrath
   Image: {fileID: 21300000, guid: 0802d08c78e39ff4aaa1e410e3a1a280, type: 3}
+  Description: '- Attack all enemy, deal Magical damage equal to 55% ATK.
+
+    -
+    Lose 100% RES and 100% AMR.
+
+    - Apply Vulnerable to herself, increase incoming
+    damage by 15% for 1 turn.'
   Skill:
   - rid: 4516365139864977509
   - rid: 4516365139864977510
@@ -28,8 +35,16 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 1
         PositionTargets: 000000000100000002000000
-        DamageMult: 0.55
-        BonusDamageMultPerLevel: 0
+        CasterStatMult:
+          Hp: 0
+          Atk: 0.55
+          Armor: 0
+          Resist: 0
+        TargetStatMult:
+          Hp: 0
+          Atk: 0
+          Armor: 0
+          Resist: 0
         Projectile: {fileID: 0}
         OffsetToCaster: {x: 0, y: 0, z: 0}
         DamageType: 1
@@ -40,16 +55,50 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 04000000
-        Mult:
-          Hp: 0
-          Atk: 0
-          Armor: -1
-          Resist: -1
-        BonusMultPerLevel:
-          Hp: 0
-          Atk: 0
-          Armor: 0
-          Resist: 0
+        HpMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AtkMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AmrMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 1
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        ResMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 1
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
     - rid: 4516365139864977512
       type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
@@ -57,8 +106,7 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 04000000
-        Multiplier: 0.15
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 3
-        Duration: 1
+        Effects:
+        - EffectType: 3
+          Amount: 0.15
+          Duration: 1

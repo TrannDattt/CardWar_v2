@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CardWar.Enums;
 using CardWar.Untils;
@@ -13,7 +14,7 @@ namespace CardWar_v2.GameControl
 {
     public class GameplayManager : Singleton<GameplayManager>
     {
-        private IngameSceneView _ingameScene => IngameSceneView.Instance;
+        private IngameSceneView _ingameScene;
 
         #region Turn Logic
         public EPlayerTarget CurTurn { get; private set; } = EPlayerTarget.Ally;
@@ -175,26 +176,35 @@ namespace CardWar_v2.GameControl
         #endregion
 
         #region Gameplay Logic
-        public async void StartGame()
-        // public async void StartGame(List<CharacterCard> selfTeam, List<CharacterCard> enemyTeam)
+        // public async void StartGame()
+        public async void StartGame(List<CharacterCard> selfTeam, List<CharacterCard> enemyTeam)
         {
-            await _ingameScene.InitScene();
-            _turnChangeTime = 0;
+            // Debug.Log($"1.Start game with self team: {selfTeam[0].Name}, {selfTeam[1].Name}, {selfTeam[2].Name}");
+            // Debug.Log($" and enemy team: {enemyTeam[0].Name}");
 
-            var selfDrawTask = _ingameScene.DrawCard(3);
+            SceneNavigator.Instance.OnSceneLoaded.AddListener(async (sk) =>
+            {
+                if(sk != EScene.Ingame) return;
 
-            await Task.WhenAll(selfDrawTask);
+                _ingameScene = FindFirstObjectByType<IngameSceneView>();
+                await _ingameScene.InitScene(selfTeam, enemyTeam);
+                _turnChangeTime = 0;
 
-            // ChangeTurn(EPlayerTarget.Enemy);
-            ChangeTurn(EPlayerTarget.Ally);
+                await _ingameScene.DrawCard(3);
+                // var selfDrawTask = _ingameScene.DrawCard(3);
+                // await Task.WhenAll(selfDrawTask);
+                ChangeTurn(EPlayerTarget.Ally); 
+            });
+
+            await SceneNavigator.Instance.ChangeScene(EScene.Ingame);
         }
         #endregion
 
         #region Init For Testing
-        void Start()
-        {
-            StartGame();
-        }
+        // void Start()
+        // {
+        //     StartGame();
+        // }
 
         void Update()
         {

@@ -1,5 +1,6 @@
 // using CardWar.Factories;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CardWar.Untils;
 using CardWar_v2.ComponentViews;
@@ -59,12 +60,14 @@ namespace CardWar_v2.SceneViews
         }
 
         // public void SetLevelDetail()
-        public async void SetLevelDetail(LevelData data)
-        // public void SetLevelDetail(Level level)
+        // public async void SetLevelDetail(LevelData data)
+        public async void SetLevelDetail(Level level)
         {
             await ClearLevelDetail();
 
-            Level level = new(data);
+            if (level == null) return;
+
+            // Level level = new(data);
             // var level = CurLevel;
 
             _name.SetText($"Level {level.Chapter} - {level.Room}");
@@ -82,24 +85,42 @@ namespace CardWar_v2.SceneViews
 
         void Start()
         {
-            _backBtn.onClick.AddListener(() => SceneNavigator.Instance.BackToPreviousScene());
+            _backBtn.onClick.AddListener(async () => await SceneNavigator.Instance.BackToPreviousScene());
             _fightBtn.onClick.AddListener(() =>
             {
-
+                GameplayManager.Instance.StartGame(_selfTeam, _enemyTeam);
             });
 
             _characters.ForEach(c =>
             {
-                c.OnIconClicked.AddListener(() => _charList.ShowCharacterIcons(true, true, (icon) =>
+                c.OnIconClicked.AddListener(() => 
                 {
-                    c.SetBaseCard(icon.BaseCard, true);
-                }));
+                    _charList.ShowList();
+                });
             });
+
+            _charList.SetSelectAmount(3);
+            _charList.OnIconClicked.AddListener((i, isSelected) => 
+            {
+                // _characters.ForEach(c => Debug.Log(c.BaseCard.Name));
+                var charIcon = _characters.FirstOrDefault(c => c.BaseCard.Data == (isSelected ? null : i.BaseCard.Data));
+                charIcon.SetBaseCard(isSelected ? i.BaseCard : null, true);
+                if (isSelected) _selfTeam.Add(i.BaseCard);
+                else _selfTeam.Remove(i.BaseCard);
+            });
+            // _charList.HideList();
+
+            // PlayerSessionManager.Instance.OnFinishLoadingSession.AddListener(() => 
+            // {
+            //     _charList.ShowCharacterIcons(true, true);
+            //     SetLevelDetail(CurLevel);
+            // });
         }
 
         void OnEnable()
         {
-            // SetLevelDetail(CurLevel);
+            _charList.ShowCharacterIcons(true, true);
+            SetLevelDetail(CurLevel);
         }
     }
 }

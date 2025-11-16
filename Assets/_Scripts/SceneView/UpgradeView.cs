@@ -112,7 +112,8 @@ namespace CardWar_v2.SceneViews
         {
             // Debug.Log($"Total char amount: {AllChars.Count}");
             // ChangeSelectedChar(AllChars[0]);
-            _charList.ShowCharacterIcons(false, false, (i) => ChangeSelectedChar(i.BaseCard));
+            _charList.OnIconClicked.AddListener((i, _) => ChangeSelectedChar(i.BaseCard));
+            _charList.ShowCharacterIcons(false, false);
             ShowUpgradeInfo();
         }
     }

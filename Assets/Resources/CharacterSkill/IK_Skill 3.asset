@@ -14,8 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Frostbound Aegis
   Image: {fileID: 21300000, guid: f3d52cdf1a5263a468baba5c36ec352d, type: 3}
+  Description: '- Apply Strengthen to all allies, decrease incoming damage by 10%
+    for 1 turn.
+
+    - Remove all debuff from all allies.
+
+    - Apply Vulnerable
+    to himself, increase incoming damage by 90% for 1 turn.'
   Skill:
   - rid: 4516365139864977505
+  - rid: 4516365282946842719
   references:
     version: 2
     RefIds:
@@ -26,8 +34,18 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 000000000100000002000000
-        Multiplier: 0.1
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 7
-        Duration: 0
+        Effects:
+        - EffectType: 7
+          Amount: 0.1
+          Duration: 1
+    - rid: 4516365282946842719
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 04000000
+        Effects:
+        - EffectType: 3
+          Amount: 0.9
+          Duration: 1

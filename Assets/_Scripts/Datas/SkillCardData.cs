@@ -20,7 +20,7 @@ namespace CardWar_v2.Datas
         // Info
         public string Name;
         public Sprite Image;
-        public string Description;
+        [TextArea(5, 10)] public string Description;
 
         // Skill
         [SerializeReference]

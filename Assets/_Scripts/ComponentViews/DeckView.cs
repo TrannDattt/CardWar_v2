@@ -43,7 +43,7 @@ namespace CardWar_v2.ComponentViews
 
             foreach (var c in chars)
             {
-                c.SkillCards.ForEach(s =>
+                c.SkillCards?.ForEach(s =>
                 {
                     for (int i = 0; i < 3; i++)
                     {

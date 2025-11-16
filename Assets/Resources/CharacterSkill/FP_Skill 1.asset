@@ -14,24 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Focused Inferno
   Image: {fileID: 21300000, guid: 548396b291352ac459521fb520c0702e, type: 3}
+  Description: '- Apply Burn to enemy at the Front for 4 turns.
+
+    - Apply Vulnerable
+    to that same enemy, increase incoming damage by 50% in 1 turn.'
   Skill:
-  - rid: 4516365123665002597
   - rid: 4516365123665002598
   references:
     version: 2
     RefIds:
-    - rid: 4516365123665002597
-      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
-      data:
-        Clip: {fileID: 0}
-        DelayToSkill: 0
-        TargetSide: 1
-        PositionTargets: 00000000
-        Multiplier: 0
-        BonusMultiplierPerLevel: 0
-        DamageType: 2
-        EffectType: 4
-        Duration: 4
     - rid: 4516365123665002598
       type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
@@ -39,8 +30,10 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 1
         PositionTargets: 00000000
-        Multiplier: 0.5
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 3
-        Duration: 1
+        Effects:
+        - EffectType: 4
+          Amount: 0
+          Duration: 4
+        - EffectType: 3
+          Amount: 0.5
+          Duration: 1

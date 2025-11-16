@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 namespace CardWar.Untils
@@ -31,14 +33,19 @@ namespace CardWar.Untils
         private string _curScene;
         private string _preScene;
 
+        public UnityEvent<EScene> OnSceneLoaded { get; set; } = new();
+
         private async Task ChangeScene(string name)
         {
             _curScene = name;
-            SceneManager.LoadScene(_curScene);
-            // await SceneManager.LoadSceneAsync(_sceneDict[key].name);
+            // SceneManager.LoadScene(_curScene);
+            var op = SceneManager.LoadSceneAsync(name);
+
+            while (!op.isDone)
+                await Task.Yield();
         }
 
-        public async void ChangeScene(EScene key)
+        public async Task ChangeScene(EScene key)
         {
             if (!_sceneDict.TryGetValue(key, out string s))
             {
@@ -48,17 +55,21 @@ namespace CardWar.Untils
 
             _preScene = _curScene;
             await ChangeScene(s);
+            OnSceneLoaded?.Invoke(key);
         }
 
-        public async void BackToPreviousScene()
+        public async Task BackToPreviousScene()
         {
             if (_preScene == "" || SceneManager.GetSceneByName(_preScene) == null)
             {
                 await ChangeScene(_sceneDict[EScene.MainMenu]);
+                OnSceneLoaded?.Invoke(EScene.MainMenu);
                 return;
             }
 
             await ChangeScene(_preScene);
+            var sceneKey = _sceneDict.FirstOrDefault(s => s.Value == _preScene).Key;
+            OnSceneLoaded?.Invoke(sceneKey);
         }
 
         protected override void Awake()

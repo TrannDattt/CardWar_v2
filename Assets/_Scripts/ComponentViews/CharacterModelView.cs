@@ -176,6 +176,7 @@ namespace CardWar_v2.ComponentViews
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            Debug.Log($"Clicked to character {BaseCard.Name}");
             OnModelClicked?.Invoke(eventData);
         }
     }

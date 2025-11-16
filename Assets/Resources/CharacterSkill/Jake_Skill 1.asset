@@ -14,6 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Hero Hug
   Image: {fileID: 21300000, guid: 6fcb58e7cd95505429101562afcabec5, type: 3}
+  Description: '- Apply Strengthen to all allies, decrease incoming damage by 10%
+    for 1 turn.
+
+    - Apply Strengthen to himself, decrease incoming damage by 15%
+    for 1 turn.'
   Skill:
   - rid: 4516365139864977514
   - rid: 4516365139864977515
@@ -27,11 +32,10 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 000000000100000002000000
-        Multiplier: 0.1
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 7
-        Duration: 1
+        Effects:
+        - EffectType: 7
+          Amount: 0.1
+          Duration: 1
     - rid: 4516365139864977515
       type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
@@ -39,8 +43,7 @@ MonoBehaviour:
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 04000000
-        Multiplier: 0.15
-        BonusMultiplierPerLevel: 0
-        DamageType: 0
-        EffectType: 7
-        Duration: 1
+        Effects:
+        - EffectType: 7
+          Amount: 0.15
+          Duration: 1
