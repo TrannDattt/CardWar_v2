@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
   m_Name: Jake
   m_EditorClassIdentifier: 
-  Id: cd3ddf22-25b8-4ee7-a3f8-b119e2957689
   Character: 1
   Name: Jake
-  Image: {fileID: -852267695, guid: f6804b55c579d4e44a665fee256bf52f, type: 3}
+  Image: {fileID: 462387245, guid: 20f2590f20281b544b648b7c90e347cb, type: 3}
   Model: {fileID: 5604866015574096732, guid: 05e55cb5c03949e4f9465f293fc6f2c4, type: 3}
   AnimController: {fileID: 9100000, guid: afac9b315cbf75e48a2ddeca00a729cf, type: 2}
   Hp: 650
