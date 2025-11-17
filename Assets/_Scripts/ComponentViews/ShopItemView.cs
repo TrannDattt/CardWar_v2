@@ -10,8 +10,10 @@ namespace CardWar_v2.ComponentViews
     public class ShopItemView : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField] private Image _icon;
-        [SerializeField] private TextMeshProUGUI _goldCost;
-        [SerializeField] private TextMeshProUGUI _gemCost;
+        [SerializeField] private Image _goldCost;
+        [SerializeField] private Image _gemCost;
+        [SerializeField] private TextMeshProUGUI _textGoldCost;
+        [SerializeField] private TextMeshProUGUI _textGemCost;
 
         public UnityEvent OnItemClicked = new();
 
@@ -24,10 +26,10 @@ namespace CardWar_v2.ComponentViews
             _icon.sprite = item.Icon;
 
             _goldCost.gameObject.SetActive(item.GoldCost != 0);
-            _goldCost.SetText(item.GoldCost.ToString());
+            _textGoldCost.SetText(item.GoldCost.ToString());
 
             _gemCost.gameObject.SetActive(item.GemCost != 0);
-            _gemCost.SetText(item.GemCost.ToString());
+            _textGemCost.SetText(item.GemCost.ToString());
         }
 
         public void OnPointerClick(PointerEventData eventData)

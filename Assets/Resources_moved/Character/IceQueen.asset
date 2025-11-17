@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
   m_Name: IceQueen
   m_EditorClassIdentifier: 
-  Id: cd3ddf22-25b8-4ee7-a3f8-b119e2957689
   Character: 7
   Name: Ice Queen
-  Image: {fileID: -900809361, guid: eb1ccb78ed6fc8047915609c8f787b6c, type: 3}
+  Image: {fileID: 331943854, guid: 8dda1d188da43c742852c0027631dd72, type: 3}
   Model: {fileID: 1028757992813124796, guid: 5fc15a8982fdadb41a92e0f15299c680, type: 3}
   AnimController: {fileID: 9100000, guid: d809a3e214b895a49af22c28d97ad81e, type: 2}
   Hp: 400

@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
   m_Name: Marceline
   m_EditorClassIdentifier: 
-  Id: cd3ddf22-25b8-4ee7-a3f8-b119e2957689
   Character: 2
   Name: Marceline
-  Image: {fileID: -1095819873, guid: 003f6075877260141b914e4c1212a632, type: 3}
+  Image: {fileID: -1827203796, guid: cd6b333434492dc40b29ee0b4a1bf9a5, type: 3}
   Model: {fileID: 1336693641478249615, guid: 1234a8d76afaef244b073d548a822500, type: 3}
   AnimController: {fileID: 9100000, guid: a8df39c35b6061546a430e56e9019a15, type: 2}
   Hp: 300

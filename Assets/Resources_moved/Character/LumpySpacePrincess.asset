@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
   m_Name: LumpySpacePrincess
   m_EditorClassIdentifier: 
-  Id: cd3ddf22-25b8-4ee7-a3f8-b119e2957689
   Character: 6
   Name: Lumpy Space Princess
-  Image: {fileID: -2115133288, guid: 1cc3a5f95a2f9dd46892aaae9b81db00, type: 3}
+  Image: {fileID: -200358015, guid: 189ae4b8a3d276940ada66a1347939e7, type: 3}
   Model: {fileID: 2808779258161444595, guid: b694c6f6bb4204d458086cac89372066, type: 3}
   AnimController: {fileID: 9100000, guid: 7497303ddbd274845a97b4c9fe8c75d5, type: 2}
   Hp: 320
