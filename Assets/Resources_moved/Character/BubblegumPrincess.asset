@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
   m_Name: BubblegumPrincess
   m_EditorClassIdentifier: 
-  Id: cd3ddf22-25b8-4ee7-a3f8-b119e2957689
   Character: 3
   Name: Bubblegum Princess
-  Image: {fileID: -1623378087, guid: ac16198453d81c846a564a8db0b94d3b, type: 3}
+  Image: {fileID: 628811333, guid: 1f6ccd148f4dcba49b56a374de8c76f3, type: 3}
   Model: {fileID: 9109676095162369329, guid: 0df6db4317df43f448ed2f4e9269de66, type: 3}
   AnimController: {fileID: 9100000, guid: 86caa3a214dd4ba4ea46cf87f64d1113, type: 2}
   Hp: 380

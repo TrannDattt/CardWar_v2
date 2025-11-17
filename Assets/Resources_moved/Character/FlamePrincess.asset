@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
   m_Name: FlamePrincess
   m_EditorClassIdentifier: 
-  Id: cd3ddf22-25b8-4ee7-a3f8-b119e2957689
   Character: 5
   Name: Flame Princess
-  Image: {fileID: 1309198211, guid: 4fd227a8bc99a5d47b20667f45479147, type: 3}
+  Image: {fileID: -198477359, guid: 9baa88070efa22b4abfa10a10442ec0d, type: 3}
   Model: {fileID: 3132966575047643614, guid: d42918c77b438484bb35a1e6586b7512, type: 3}
   AnimController: {fileID: 9100000, guid: ef4257bfc9a30db419c258b2b440c044, type: 2}
   Hp: 290

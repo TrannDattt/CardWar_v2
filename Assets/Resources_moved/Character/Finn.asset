@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
   m_Name: Finn
   m_EditorClassIdentifier: 
-  Id: cd3ddf22-25b8-4ee7-a3f8-b119e2957689
   Character: 0
   Name: Finn
-  Image: {fileID: -1436173214, guid: eebc7f9cfaf8dbf4d9317f7937df3605, type: 3}
+  Image: {fileID: -1575479349, guid: 4d3b5739118a2c447949038960d1a51b, type: 3}
   Model: {fileID: 309590202036201373, guid: 259dd9519824cb741a30ad70631c6479, type: 3}
   AnimController: {fileID: 9100000, guid: a019fc17f8a22c143a16dedd84fda0c2, type: 2}
   Hp: 400
