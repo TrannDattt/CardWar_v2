@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using CardWar.Untils;
 using CardWar_v2.Entities;
 using CardWar_v2.ComponentViews;
 using UnityEngine;
+using CardWar_v2.Enums;
+using CardWar_v2.Untils;
 
 namespace CardWar_v2.Factories
 {
@@ -11,14 +11,14 @@ namespace CardWar_v2.Factories
         [SerializeField] private SkillCardView _cardViewPrefab;
         [SerializeField] private CharacterModelView _charModelViewPrefab;
 
-        private Queue<SkillCardView> _cardViewPool = new();
-        private Queue<CharacterModelView> _cardModelPool = new();
+        // private Queue<SkillCardView> _cardViewPool = new();
+        // private Queue<CharacterModelView> _cardModelPool = new();
 
-        public void Initialize()
-        {
-            _cardModelPool.Clear();
-            _cardViewPool.Clear();
-        }
+        // public void Initialize()
+        // {
+        //     _cardModelPool.Clear();
+        //     _cardViewPool.Clear();
+        // }
 
         #region Spawn Card View
         public SkillCardView CreateCardView(SkillCard card, Vector3 position = default, Quaternion rotation = default, Transform parent = null)
@@ -29,14 +29,15 @@ namespace CardWar_v2.Factories
                 return null;
             }
 
-            if (_cardViewPool.Count == 0)
-            {
-                var cardView = Instantiate(_cardViewPrefab, parent, true);
-                cardView.gameObject.SetActive(false);
-                _cardViewPool.Enqueue(cardView);
-            }
+            // if (_cardViewPool.Count == 0)
+            // {
+            //     var cardView = Instantiate(_cardViewPrefab, parent, true);
+            //     cardView.gameObject.SetActive(false);
+            //     _cardViewPool.Enqueue(cardView);
+            // }
 
-            var pooledCardView = _cardViewPool.Dequeue();
+            // var pooledCardView = _cardViewPool.Dequeue();
+            var pooledCardView = Instantiate(_cardViewPrefab, parent, true);
             pooledCardView.SetBaseCard(card);
             // Debug.Log($"Check: {card.Owner == pooledCardView.BaseCard.Owner}");
 
@@ -56,15 +57,18 @@ namespace CardWar_v2.Factories
 
             // cardView.SetBaseCard(null);
             // Debug.Log($"Recycling card {cardView.BaseCard?.Name}");
-            cardView.RecycleCard();
-            cardView.transform.SetParent(transform);
 
-            _cardViewPool.Enqueue(cardView);
+            // cardView.RecycleCard();
+            // cardView.transform.SetParent(transform);
+
+            // _cardViewPool.Enqueue(cardView);
+
+            Destroy(cardView.gameObject);
         }
         #endregion
 
         #region Spawn Card Model
-        public CharacterModelView CreateCharModel(CharacterCard card, Vector3 position = default, Quaternion rotation = default, Transform parent = null)
+        public CharacterModelView CreateCharModel(CharacterCard card, EPlayerTarget side = EPlayerTarget.Neutral, Vector3 position = default, Quaternion rotation = default, Transform parent = null)
         {
             if (card == null)
             {
@@ -72,15 +76,16 @@ namespace CardWar_v2.Factories
                 return null;
             }
 
-            if (_cardModelPool.Count == 0)
-            {
-                var cardModel = Instantiate(_charModelViewPrefab, parent, true);
-                cardModel.gameObject.SetActive(false);
-                _cardModelPool.Enqueue(cardModel);
-            }
+            // if (_cardModelPool.Count == 0)
+            // {
+            //     var cardModel = Instantiate(_charModelViewPrefab, parent, true);
+            //     cardModel.gameObject.SetActive(false);
+            //     _cardModelPool.Enqueue(cardModel);
+            // }
 
-            var pooledCardModel = _cardModelPool.Dequeue();
-            pooledCardModel.SetBaseCard(card);
+            // var pooledCardModel = _cardModelPool.Dequeue();
+            var pooledCardModel = Instantiate(_charModelViewPrefab, parent, true);
+            pooledCardModel.SetBaseCard(card, side);
             // Debug.Log($"Check: {card == pooledCardModel.BaseCard}");
             // Debug.Log($"Check: {card.SkillCards[0].Owner == pooledCardModel.BaseCard}");
 
@@ -100,10 +105,13 @@ namespace CardWar_v2.Factories
 
             // cardView.SetBaseCard(null);
             // Debug.Log($"Recycling card {cardView.BaseCard?.Name}");
-            cardModel.RecycleModel();
-            cardModel.transform.SetParent(transform);
 
-            _cardModelPool.Enqueue(cardModel);
+            // cardModel.RecycleModel();
+            // cardModel.transform.SetParent(transform);
+
+            // _cardModelPool.Enqueue(cardModel);
+
+            Destroy(cardModel.gameObject);
         }
         #endregion
     }

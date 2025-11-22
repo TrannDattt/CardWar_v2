@@ -65,16 +65,18 @@ namespace CardWar_v2.Entities
         public ECharacter Character => Data.Character;
         public string Name => Data.name;
         public Sprite Image => Data.Image;
+        public Sprite SplashArt => Data.SplashArt;
         public AnimatorController AnimController => Data.AnimController;
         public GameObject Model => Data.Model;
 
+        public bool IsPlayable => Data.IsPlayable;
         public bool IsUnlocked { get; private set; }
         public int Level { get; private set; }
 
         public float CurHp => Data.Hp + Data.HpPerLevel * Level + _bonusHp;
         private float _bonusHp;
 
-        public float CurAtk => Data.Atk + Data.AtkPerLevel * Level + _bonusAtk;
+        public float CurAtk => Data.Atk + Data.AtkPerLevel * Level * (1 - GetChillDebuffAmount()) + _bonusAtk;
         private float _bonusAtk;
 
         public float CurArmor => Data.Armor + Data.ArmorPerLevel * Level + _bonusArmor;
@@ -90,7 +92,8 @@ namespace CardWar_v2.Entities
 
         public UnityEvent OnCardLevelUp = new();
         public UnityEvent OnCardUnlock = new();
-        public UnityEvent<SubSkill> OnUseSkill { get; set; } = new();
+
+        public UnityEvent<SkillCard> OnUseSkill { get; set; } = new();
         public UnityEvent<SkillEffect> OnApplyEffect { get; set; } = new();
         public UnityEvent OnChangeHp { get; set; } = new();
         public UnityEvent OnDeath { get; set; } = new();
@@ -121,6 +124,7 @@ namespace CardWar_v2.Entities
             Data.SkillCardDatas?.ForEach(d => SkillCards.Add(new(d, this)));
         }
 
+        #region Level & Unlock
         public void LevelUp()
         {
             Level += 1;
@@ -134,7 +138,9 @@ namespace CardWar_v2.Entities
 
             OnCardUnlock?.Invoke();
         }
+        #endregion
 
+        #region Stat Manager
         public CharStat GetCurStat() => new(CurHp, CurAtk, CurArmor, CurResist);
 
         public CharStat GetStatAtLevel(int level) => new(Data.Hp + Data.HpPerLevel * level,
@@ -142,11 +148,20 @@ namespace CardWar_v2.Entities
                                                          Data.Armor + Data.ArmorPerLevel * level,
                                                          Data.Resist + Data.ResistPerLevel * level);
 
+        public void ResetCharStat()
+        {
+            _bonusHp = 0;
+            _bonusAtk = 0;
+            _bonusArmor = 0;
+            _bonusResist = 0;
+
+            ActiveEffects.Clear();
+        }
+
         public void Die()
         {
             OnDeath?.Invoke();
 
-            OnCardLevelUp.RemoveAllListeners();
             OnUseSkill.RemoveAllListeners();
             OnChangeHp.RemoveAllListeners();
             OnDeath.RemoveAllListeners();
@@ -164,18 +179,24 @@ namespace CardWar_v2.Entities
                 _ => throw new Exception("Invalid damage type")
             };
             
-            float vulAmount = 0;
-            foreach (var e in ActiveEffects)
-            {
-                if (e.Key == ESkillEffect.Vulnerable)
-                    vulAmount += (e.Value as VulnerableEffect).VulAmount;
-                else if (e.Key == ESkillEffect.Strengthen)
-                    vulAmount -= (e.Value as StrengthenEffect).StrengthAmount;
-            }
+            var vulAmount = ActiveEffects.ContainsKey(ESkillEffect.Vulnerable) 
+                            ? (ActiveEffects[ESkillEffect.Vulnerable] as VulnerableEffect).VulAmount
+                            : 0f;
+            var strAmount = ActiveEffects.ContainsKey(ESkillEffect.Strengthen) 
+                            ? (ActiveEffects[ESkillEffect.Strengthen] as StrengthenEffect).StrengthAmount
+                            : 0f;
             
-            ChangeHp((-amount + dmgReduce) * Mathf.Max(0, 1 + vulAmount));
+            ChangeHp((-amount + dmgReduce) * Mathf.Max(0, 1 + vulAmount - strAmount));
         }
 
+        private float GetChillDebuffAmount()
+        {
+            if (!ActiveEffects.ContainsKey(ESkillEffect.Chill)) return 0f;
+            return (ActiveEffects[ESkillEffect.Chill] as ChillEffect).ChillAmount;
+        }
+        #endregion
+
+        #region Effect Manager
         public void ApplyEffect(SkillEffect effect)
         {
             if (_isDeath) return;
@@ -221,26 +242,28 @@ namespace CardWar_v2.Entities
                 ActiveEffects.Remove(effectType);
             }
         }
+        #endregion
 
+        #region Change Stat
         public void ChangeHp(float amount)
         {
-            _bonusHp += amount;
+            _bonusHp = Mathf.Clamp(_bonusHp + amount, -GetStatAtLevel(Level).Hp, float.MaxValue);
             OnChangeHp?.Invoke();
         }
 
         public void ChangeAtk(float amount)
         {
-            _bonusAtk += amount;
+            _bonusAtk = Mathf.Clamp(_bonusAtk + amount, -GetStatAtLevel(Level).Atk, float.MaxValue);
         }
 
         public void ChangeAmr(float amount)
         {
-            _bonusArmor += amount;
+            _bonusArmor = Mathf.Clamp(_bonusArmor + amount, -GetStatAtLevel(Level).Armor, float.MaxValue);
         }
 
         public void ChangeRes(float amount)
         {
-            _bonusResist += amount;
+            _bonusResist = Mathf.Clamp(_bonusResist + amount, -GetStatAtLevel(Level).Resist, float.MaxValue);
         }
 
         public void ChangeStat(CharStat delta)
@@ -250,6 +273,7 @@ namespace CardWar_v2.Entities
             ChangeAmr(delta.Armor);
             ChangeRes(delta.Resist);
         }
+        #endregion
     }
 }
 

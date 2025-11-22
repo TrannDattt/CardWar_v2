@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: AncientScholar_Skill 3
   m_EditorClassIdentifier: 
   Name: Atk3
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: fa924f91238d8c6488c9fc73c61d7677, type: 3}
+  Description: 
   Skill:
   - rid: 3413777266601885837
   references:
@@ -22,11 +23,20 @@ MonoBehaviour:
     - rid: 3413777266601885837
       type: {class: DoRangeAttack, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
-        Type: 2
         Clip: {fileID: 7400000, guid: 9a20099255ea4644fb305e57a792e610, type: 2}
         DelayToSkill: 0.2
-        PosTargets: 0300000002000000
-        DamageMult: 0.7
+        TargetSide: 1
+        PositionTargets: 02000000
+        CasterStatMult:
+          Hp: 0
+          Atk: 1
+          Armor: 0
+          Resist: 0
+        TargetStatMult:
+          Hp: 0
+          Atk: 0
+          Armor: 0
+          Resist: 0
         Projectile: {fileID: 8542387179039130532, guid: b8682b7646d938d49911c77830a4f5d1, type: 3}
         OffsetToCaster: {x: 3, y: 2, z: 0}
         DamageType: 1

@@ -111,8 +111,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -10}
+  m_SizeDelta: {x: -30, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8870363232763095444
 CanvasRenderer:
@@ -295,8 +295,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 583976135, guid: 1c0eba091da5a2c41a6be5855593ec7c, type: 3}
-  m_Type: 1
+  m_Sprite: {fileID: 872501091, guid: 7ede6f97f9563864b95f106b679bef23, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -557,10 +557,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 40
-    m_Right: 40
-    m_Top: 40
-    m_Bottom: 40
+    m_Left: 25
+    m_Right: 25
+    m_Top: 10
+    m_Bottom: 0
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
@@ -616,11 +616,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3382074222669869941, guid: 441c511d4e6dae74b8e16e4890aab263, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 160
+      value: 155
       objectReference: {fileID: 0}
     - target: {fileID: 3382074222669869941, guid: 441c511d4e6dae74b8e16e4890aab263, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 160
+      value: 155
       objectReference: {fileID: 0}
     - target: {fileID: 3382074222669869941, guid: 441c511d4e6dae74b8e16e4890aab263, type: 3}
       propertyPath: m_LocalPosition.x
@@ -676,7 +676,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5155269443720381946, guid: 441c511d4e6dae74b8e16e4890aab263, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6464820263248582249, guid: 441c511d4e6dae74b8e16e4890aab263, type: 3}
       propertyPath: m_Sprite
@@ -692,7 +692,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6464820263248582249, guid: 441c511d4e6dae74b8e16e4890aab263, type: 3}
       propertyPath: m_PreserveAspect
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

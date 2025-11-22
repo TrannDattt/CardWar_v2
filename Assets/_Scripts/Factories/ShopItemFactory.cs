@@ -1,9 +1,9 @@
 namespace CardWar_v2.Factories
 {
     using System.Collections.Generic;
-    using CardWar.Untils;
     using CardWar_v2.ComponentViews;
     using CardWar_v2.Entities;
+    using CardWar_v2.Untils;
     using UnityEngine;
 
     public class ShopItemFactory : Singleton<ShopItemFactory>

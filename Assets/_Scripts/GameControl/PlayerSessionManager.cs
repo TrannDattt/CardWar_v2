@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CardWar.Enums;
-using CardWar.Untils;
 using CardWar_v2.Datas;
 using CardWar_v2.Entities;
 using CardWar_v2.Session;
+using CardWar_v2.Untils;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Events;
@@ -19,7 +19,7 @@ namespace CardWar_v2.GameControl
         public List<CharacterCard> CharacterList { get; private set; } = new();
         public List<ShopItem> ShopItemList { get; private set; } = new();
         public List<Level> CampaignLevels { get; private set; } = new();
-        public Level CurLevel { get; private set; }
+        public Level CurLevel => CampaignLevels.FirstOrDefault(l => !l.ClearCheck) ?? CampaignLevels.Last();
 
         // private Dictionary<ECharacter, CharacterDataJson> _characterDataDict = new();
 
@@ -50,20 +50,38 @@ namespace CardWar_v2.GameControl
         //-------------------
         // TODO: Save load more properly
         #region Save Data
-        public async void SaveSessionData()
+        public void SavePlayerData()
+        {
+            SessionSaveLoad.SaveToFile(CurPlayer.Data, "player");
+        }
+
+        public void SaveCharacterData()
         {
             var charJSONs = new CharacterListJson();
             CharacterList.ForEach(c => charJSONs.Characters.Add(new(c)));
             SessionSaveLoad.SaveToFile(charJSONs, "characters");
+        }
 
+        public void SaveShopItemData()
+        {
             var itemJSONs = new ShopDataJson();
             ShopItemList.ForEach(i => itemJSONs.Items.Add(new(i)));
             SessionSaveLoad.SaveToFile(itemJSONs, "shop-items");
+        }
 
-            SessionSaveLoad.SaveToFile(CurPlayer.Data, "player");
-            SessionSaveLoad.SaveToFile(new CampaignProgressJson(CurLevel), "campaign-progress");
+        public void SaveCampaignProgress()
+        {
+            var levelJSONs = new List<LevelDataJSON>();
+            CampaignLevels.ForEach(l => levelJSONs.Add(new LevelDataJSON(l)));
+            SessionSaveLoad.SaveToFile(levelJSONs, "campaign-progress");
+        }
 
-            //TODO: Save player ranking
+        public void SaveSessionData()
+        {
+            SaveCharacterData();
+            SaveShopItemData();
+            SavePlayerData();
+            SaveCampaignProgress();
         }
         #endregion
 
@@ -87,9 +105,9 @@ namespace CardWar_v2.GameControl
 
                 CharacterList.Add(newChar);
 
-                newChar.OnCardLevelUp.AddListener(SaveSessionData);
-                newChar.OnCardUnlock.AddListener(SaveSessionData);
-                Debug.Log($"Create character {newChar.Name} with id: {newChar.Data.Id}");
+                newChar.OnCardLevelUp.AddListener(SaveCharacterData);
+                newChar.OnCardUnlock.AddListener(SaveCharacterData);
+                // Debug.Log($"Create character {newChar.Name} with id: {newChar.Data.Id}");
             }
         }
 
@@ -111,7 +129,7 @@ namespace CardWar_v2.GameControl
 
                 ShopItemList.Add(newItem);
 
-                newItem.OnItemBought.AddListener(SaveSessionData);
+                newItem.OnItemBought.AddListener(SaveShopItemData);
             }
             Debug.Log($"Createed {ShopItemList.Count} shop items");
         }
@@ -125,27 +143,24 @@ namespace CardWar_v2.GameControl
         {
             CampaignLevels.Clear();
             
+            var levelsJSON = SessionSaveLoad.LoadFromFile<List<LevelDataJSON>>("campaign-progress");
             var handle = Addressables.LoadAssetsAsync<LevelData>("Levels");
             await handle.Task;
-            foreach(LevelData d in handle.Result)
+            var levelDatas = handle.Result;
+
+            for (int i = 0; i < levelDatas.Count; i++)
             {
-                Level newLevel = new(d);
-                newLevel.OnLevelClear.AddListener(SaveSessionData);
+                var (clearCheck, turnConditionCheck, allAliveCheck) = i >= levelsJSON.Count ? (false, false, false) 
+                                                                    : (levelsJSON[i].ClearCheck, levelsJSON[i].TurnConditionCheck, levelsJSON[i].AllAliveCheck);
+                Level newLevel = new(levelDatas[i], clearCheck, turnConditionCheck, allAliveCheck);
+                newLevel.OnLevelClear.AddListener(SaveCampaignProgress);
                 CampaignLevels.Add(newLevel);
             }
-        }
-        
-        public async Task LoadCurrentLevelData()
-        {
-            if (CampaignLevels.Count == 0) await FetchAllCampaignLevels();
-            var campaignProgressJSON = SessionSaveLoad.LoadFromFile<CampaignProgressJson>("campaign-progress");
-            CurLevel = campaignProgressJSON != null ? CampaignLevels[0] 
-                                                    : CampaignLevels.FirstOrDefault(l => l.Data.Id == campaignProgressJSON.LevelId);
+            CampaignLevels = CampaignLevels.OrderBy(l => l.Chapter).ThenBy(l => l.Room).ToList();
 
-            if(CurLevel == null)
-            {
-                Debug.LogError("Cant find current level");
-            }
+            Debug.Log($"Loaded {CampaignLevels.Count} campaign levels");
+            Debug.Log("Current Level JSON: " + (CurLevel == null ? "null" : $"Chapter {CurLevel.Chapter} - Room {CurLevel.Room}"));
+            Debug.Log($"Final level: Chapter {CampaignLevels[^1].Chapter} - Room {CampaignLevels[^1].Room}");
         }
 
         protected override async void Awake()
@@ -155,16 +170,16 @@ namespace CardWar_v2.GameControl
             {
                 CurPlayer = new(playerData);
 
-                CurPlayer.OnPlayerNameUpdated.AddListener(SaveSessionData);
-                CurPlayer.OnPlayerAvatarUpdated.AddListener(SaveSessionData);
-                CurPlayer.OnPlayerExpUpdated.AddListener((_) => SaveSessionData());
-                CurPlayer.OnGemUpdated.AddListener(SaveSessionData);
-                CurPlayer.OnGoldUpdated.AddListener(SaveSessionData);
+                CurPlayer.OnPlayerNameUpdated.AddListener(SavePlayerData);
+                CurPlayer.OnPlayerAvatarUpdated.AddListener(SavePlayerData);
+                CurPlayer.OnPlayerExpUpdated.AddListener((_) => SavePlayerData());
+                CurPlayer.OnGemUpdated.AddListener(SavePlayerData);
+                CurPlayer.OnGoldUpdated.AddListener(SavePlayerData);
             }
 
             await FetchAllCharacters();
             await FetchAllShopItems();
-            await LoadCurrentLevelData();
+            await FetchAllCampaignLevels();
 
             OnFinishLoadingSession?.Invoke();
         }

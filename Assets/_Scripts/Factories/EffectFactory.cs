@@ -1,31 +1,36 @@
 namespace CardWar_v2.Factories
 {
     using System.Collections.Generic;
-    using CardWar.Untils;
     using CardWar_v2.Entities;
     using CardWar_v2.Enums;
     using CardWar_v2.ComponentViews;
     using UnityEngine;
+    using System;
+    using CardWar_v2.Untils;
 
     public class EffectViewFactory : Singleton<EffectViewFactory>
     {
-        [SerializeField] private Sprite _regenIcon;
-        [SerializeField] private Sprite _poisonIcon;
+        [Serializable]
+        struct IconMapping
+        {
+            public ESkillEffect EffectType;
+            public Sprite Icon;
+        }
 
+        [SerializeField] private List<IconMapping> _iconMappings;
         [SerializeField] private EffectView _effectViewPrefab;
 
-        private Dictionary<ESkillEffect, Sprite> _iconDict;
+        private Dictionary<ESkillEffect, Sprite> _iconDict = new();
         private Queue<EffectView> _effectViewPool = new();
 
         protected override void Awake()
         {
             base.Awake();
 
-            _iconDict = new Dictionary<ESkillEffect, Sprite>
+            _iconMappings.ForEach(mapping =>
             {
-                { ESkillEffect.Regen, _regenIcon },
-                { ESkillEffect.Poison, _poisonIcon },
-            };
+                _iconDict[mapping.EffectType] = mapping.Icon;
+            });
         }
 
         public EffectView CreateEffectView(SkillEffect effect, RectTransform parent)
@@ -40,7 +45,7 @@ namespace CardWar_v2.Factories
             var effectView = _effectViewPool.Dequeue();
             effectView.GetComponent<RectTransform>().SetParent(parent);
             effectView.gameObject.SetActive(true);
-            effectView.SetEffect(effect);
+            effectView.SetEffect(effect, _iconDict[effect.EffectType]);
 
             return effectView;
         }

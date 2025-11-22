@@ -1,5 +1,6 @@
 // using CardWar.Factories;
 using System.Collections.Generic;
+using System.Linq;
 using CardWar_v2.ComponentViews;
 using CardWar_v2.Entities;
 using CardWar_v2.GameControl;
@@ -62,7 +63,7 @@ namespace CardWar_v2.SceneViews
 
         public void Initialize()
         {
-            _selectedChar = CharacterList[0];
+            _selectedChar = CharacterList.FirstOrDefault(c => c.IsUnlocked && c.Model != null);
 
             UpdatePlayerName();
             UpdateExpBar();

@@ -51,13 +51,13 @@ namespace CardWar_v2.ComponentViews
             return pr.GetCharByCard(cardBase);
         }
 
-        public CharacterModelView GetCharacterByPos(EPlayerTarget region, EPositionTarget pos, bool absolutePos)
+        public CharacterModelView GetCharacterByPos(EPlayerTarget region, EPositionTarget pos, bool flexPos)
         {
             var pr = region == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
             var posTarget = pos == EPositionTarget.Random ? pr.GetRandomPos() : pos;
             var character = pr.GetCharByPos(posTarget);
 
-            if (character == null && !absolutePos) return GetAdditionTarget(region, posTarget);
+            if (character == null && flexPos) return GetAdditionTarget(region, posTarget);
             return character;
         }
 
@@ -88,8 +88,12 @@ namespace CardWar_v2.ComponentViews
 
         public async Task DestroyDeadChar(CharacterCard charCard, EPlayerTarget targetSide)
         {
+            if (charCard == null) return;
             var region = targetSide == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
+            Debug.Log($"Destroy dead character {charCard.Name} at region {region}");
             var slot = region.GetSlotByCard(charCard);
+            if (slot == null) return;
+            Debug.Log($"and at position {slot}");
             var cardView = slot.CharInSlot;
 
             slot.RemoveCard(false);
@@ -116,6 +120,7 @@ namespace CardWar_v2.ComponentViews
 
         public CharacterSlotView GetSlotByCard(CharacterCard card)
         {
+            if (card == null) return null;
             return Slots.FirstOrDefault(s => !s.IsEmpty && s.CharInSlot.BaseCard == card);
         }
 

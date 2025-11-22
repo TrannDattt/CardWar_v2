@@ -1,21 +1,40 @@
 namespace CardWar_v2.Factories
 {
+    using System;
     using System.Collections.Generic;
-    using CardWar.Untils;
     using CardWar_v2.ComponentViews;
     using CardWar_v2.Entities;
+    using CardWar_v2.Untils;
     using UnityEngine;
 
     public class IconFactory : Singleton<IconFactory>
     {
+        public enum EIconType
+        {
+            Exp,
+            Gold,
+            Gem,
+            Item,
+            Character,
+        }
+
+        [Serializable]
+        public class Icon
+        {
+            public EIconType Type;
+            public Sprite Image;
+        }
+
         [SerializeField] private IconView _iconPrefab;
         [SerializeField] private CharacterIconView _charIconPrefab;
+        [SerializeField] private List<Icon> _iconList; 
 
         private Queue<IconView> _iconPool = new();
         private Queue<CharacterIconView> _charIconPool = new();
+        private Dictionary<EIconType, Sprite> _iconDict = new();
 
         // public IconView CreateNewIcon(EIconType type, int amount, RectTransform parent)
-        public IconView CreateNewIcon(int amount, RectTransform parent)
+        public IconView CreateNewIcon(EIconType type, int amount, RectTransform parent)
         {
             if (_iconPool.Count == 0)
             {
@@ -24,8 +43,9 @@ namespace CardWar_v2.Factories
                 _iconPool.Enqueue(iconView);
             }
 
+            var image = _iconDict[type];
             var pooledIconView = _iconPool.Dequeue();
-            pooledIconView.SetIcon(null, amount);
+            pooledIconView.SetIcon(image, amount);
             // Debug.Log($"Check: {card.Owner == pooledCardView.BaseCard.Owner}");
 
             var iconTransform = pooledIconView.GetComponent<RectTransform>();
@@ -81,6 +101,13 @@ namespace CardWar_v2.Factories
             }
 
             _iconPool.Enqueue(iconView);
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            _iconList.ForEach(i => _iconDict[i.Type] = i.Image);
         }
     }
 }

@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,7 +10,9 @@ namespace CardWar_v2.ComponentViews
 {
     public class IconView : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
+        [SerializeField] protected CanvasGroup _canvasGroup;
         [SerializeField] protected Image _icon;
+        [SerializeField] protected Sprite _defaultIcon;
         [SerializeField] protected TextMeshProUGUI _amount;
 
         public UnityEvent OnIconClicked = new();
@@ -17,6 +21,7 @@ namespace CardWar_v2.ComponentViews
 
         public void SetIcon(Sprite icon, int amount = 1)
         {
+            icon = icon == null ? _defaultIcon : icon;
             _icon.sprite = icon;
             _amount.gameObject.SetActive(amount > 1);
             _amount.SetText($"x {amount}");   
@@ -25,6 +30,11 @@ namespace CardWar_v2.ComponentViews
         public void RecycleIcon()
         {
             OnIconClicked.RemoveAllListeners();
+        }
+
+        public async Task SetIconAlpha(float alpha, float transitionTime = 0f)
+        {
+            await _canvasGroup.DOFade(alpha, transitionTime).SetEase(Ease.InOutQuad).SetUpdate(true).AsyncWaitForCompletion();
         }
 
         public virtual void OnPointerClick(PointerEventData eventData)

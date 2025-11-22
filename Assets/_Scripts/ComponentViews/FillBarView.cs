@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using CardWar_v2.Enums;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,20 @@ namespace CardWar_v2.ComponentViews
     {
         [SerializeField] private Image _bar;
         [SerializeField] private Image _barOverlay;
+
+        public void Initialize(EPlayerTarget side)
+        {
+            var barColor = side switch
+            {
+                EPlayerTarget.Ally => Color.green,  
+                EPlayerTarget.Enemy => Color.red,  
+                EPlayerTarget.Neutral => Color.white,
+                _ => Color.white  
+            };
+
+            _bar.color = barColor;
+            _barOverlay.color = new(barColor.r, barColor.g, barColor.b, .8f);
+        }
 
         public void SetFillValue(float value)
         {

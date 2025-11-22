@@ -19,19 +19,39 @@ namespace CardWar_v2.Entities
         public List<CharacterCard> Enemies = new();
         public Reward Rewards => Data.Rewards;
 
+        // Clear State
+        public bool ClearCheck { get; private set; }
+        public bool TurnConditionCheck { get; private set; }
+        public bool AllAliveCheck { get; private set; }
+
         public UnityEvent OnLevelClear { get; set; } = new();
 
-        public Level(LevelData data)
+        public Level(LevelData data, bool clearCkeck, bool turnConditionCheck, bool allAliveCheck)
         {
             Data = data;
+            ClearCheck = clearCkeck;
+            TurnConditionCheck = turnConditionCheck;
+            AllAliveCheck = allAliveCheck;
 
-            Enemies.Clear();
             Data.Enemies.ForEach(e =>
             {
-                var enemy = PlayerSessionManager.Instance.GetCharById(e.Id);
-                Debug.Log($"Create enemy {enemy.Name} from data {e.name}");
-                Enemies.Add(enemy);
+                Enemies.Add(new(e.Data, e.Level));
             });
+        }
+
+        public void ClearLevel(bool turnConditionCheck, bool allAliveCheck)
+        {
+            if(!ClearCheck)
+            {
+                PlayerSessionManager.Instance.CurPlayer.UpdatePlayerExp(Rewards.Exp);
+                PlayerSessionManager.Instance.CurPlayer.UpdatePlayerCurrency(Rewards.Gold, Rewards.Gem);
+            }
+
+            ClearCheck = true;
+            TurnConditionCheck = turnConditionCheck;
+            AllAliveCheck = allAliveCheck;
+
+            OnLevelClear?.Invoke();
         }
     }
 }

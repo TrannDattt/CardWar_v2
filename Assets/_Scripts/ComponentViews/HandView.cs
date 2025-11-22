@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CardWar_v2.Entities;
+using CardWar_v2.Factories;
 using CardWar_v2.SceneViews;
 using DG.Tweening;
 using UnityEngine;
@@ -22,21 +23,10 @@ namespace CardWar_v2.ComponentViews
 
         private List<SkillCardView> _cardInHand = new();
 
-        private bool CheckCardInHandRange(SkillCardView cardView)
+        public void Initialize()
         {
-            // Vector3 center = _handRange.transform.TransformPoint(_handRange.center);
-            // Vector3 halfExtents = _handRange.size * 0.5f;
-            // Quaternion rotation = _handRange.transform.rotation;
-
-            // Collider[] overlaps = Physics.OverlapBox(center, halfExtents, rotation);
-            // foreach (var col in overlaps)
-            // {
-            //     if (col == cardView.GetComponent<Collider>())
-            //         return true;
-            // }
-            // return false;
-            // return Vector3.Distance(transform.position, cardView.transform.position) < _handRange;
-            return Mathf.Abs(transform.position.y - cardView.transform.position.y) < _handRange;
+            _cardInHand.ForEach(c => CardFactory.Instance.RecycleCardView(c));
+            _cardInHand.Clear();
         }
 
         // TODO: Fix arrange when draw cards
@@ -101,10 +91,6 @@ namespace CardWar_v2.ComponentViews
         public void RemoveCard(SkillCardView cardView)
         {
             if (!_cardInHand.Contains(cardView) && _selectedCard != cardView) return;
-
-            cardView.OnCardDrop.RemoveAllListeners();
-            cardView.OnCardGrab.RemoveAllListeners();
-            cardView.transform.SetParent(null);
             _cardInHand.Remove(cardView);
 
             ArrangeHand();

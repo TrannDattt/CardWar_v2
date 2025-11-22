@@ -88,13 +88,15 @@ namespace CardWar_v2.ComponentViews
                 return;
             }
 
+            // Debug.Log($"Remove card {card.Name}");
             _cardsRemainInDeck.Remove(card);
         }
 
         public void RemoveDeadCard(CharacterCard charCard)
         {
+            // Debug.Log($"Remove card of character {charCard.Name}");
             var deadCards = _cardsInDeck.Where(sc => sc.Owner == charCard).ToList();
-            deadCards.ForEach(sc => RemoveCard(sc));
+            deadCards.ForEach(sc => _cardsInDeck.Remove(sc));
 
             _cardsRemainInDeck.Clear();
             RefillDeck();

@@ -4,6 +4,7 @@ namespace CardWar_v2.Enums
     {
         Ally,
         Enemy,
+        Neutral,
     }
 
     public enum EPositionTarget

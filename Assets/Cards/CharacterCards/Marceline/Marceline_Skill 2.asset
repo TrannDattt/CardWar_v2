@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628af7680cc8cf847a5455772d37dfb1, type: 3}
+  m_Name: Marceline_Skill 2
+  m_EditorClassIdentifier: 
+  Name: Crimson Oath
+  Image: {fileID: 21300000, guid: 5de0409bc500d0848922d4db1d940079, type: 3}
+  Description: '- Attack enemy at the Front, deal Physical damage equal to 60% ATK
+    + 15% target''s HP.
+
+    - Apply Poison for 5 turns and Silence for 1 turn to
+    that same target.
+
+    - Gain ATK equal to 5% ATK.
+
+    - Apply Silence to herself
+    for 2 turns.'
+  Skill:
+  - rid: 4516365139864977535
+  - rid: 4516365139864977538
+  - rid: 4516365299649609728
+  - rid: 4516365139864977539
+  references:
+    version: 2
+    RefIds:
+    - rid: 4516365139864977535
+      type: {class: DoCloseAttack, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 7400000, guid: 9c366687dc429e84484d0869f412e45b, type: 2}
+        DelayToSkill: 0
+        TargetSide: 1
+        PositionTargets: 00000000
+        CasterStatMult:
+          Hp: 0
+          Atk: 0.6
+          Armor: 0
+          Resist: 0
+        TargetStatMult:
+          Hp: 0.15
+          Atk: 0
+          Armor: 0
+          Resist: 0
+        DamageType: 0
+    - rid: 4516365139864977538
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 1
+        PositionTargets: 00000000
+        Effects:
+        - EffectType: 2
+          Amount: 0
+          Duration: 5
+        - EffectType: 6
+          Amount: 0
+          Duration: 1
+    - rid: 4516365139864977539
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 04000000
+        Effects:
+        - EffectType: 6
+          Amount: 0
+          Duration: 2
+    - rid: 4516365299649609728
+      type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 04000000
+        HpMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AtkMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0.05
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AmrMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        ResMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0

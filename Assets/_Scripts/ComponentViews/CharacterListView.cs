@@ -71,7 +71,7 @@ namespace CardWar_v2.ComponentViews
                 }
             }
 
-            var arrangedCharList = CharList.OrderByDescending(c => c.IsUnlocked);
+            var arrangedCharList = CharList.Where(c => c.IsPlayable).OrderByDescending(c => c.IsUnlocked);
 
             foreach (var card in arrangedCharList)
             {
@@ -109,14 +109,14 @@ namespace CardWar_v2.ComponentViews
             }
 
             if (!canMultiSelect)
-                _iconList[0].OnPointerClick(null);
+                _iconList.FirstOrDefault(i => i.BaseCard.Model != null).OnPointerClick(null);
         }
 
         private void SelectIcon(CharacterIconView icon)
         {
             if (_selectedIcons.Contains(icon)) return;
             
-            Debug.Log($"Selected icon {icon.BaseCard.Name}");
+            // Debug.Log($"Selected icon {icon.BaseCard.Name}");
             _selectedIcons.Add(icon);
 
             if (_selectedIcons.Count > _selectedIconBorders.Count)

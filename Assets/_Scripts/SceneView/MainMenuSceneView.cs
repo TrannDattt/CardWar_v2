@@ -2,11 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CardWar.Untils;
 using CardWar_v2.ComponentViews;
 using CardWar_v2.Entities;
 using CardWar_v2.GameControl;
-using CardWar_v2.Session;
 using DG.Tweening;
 using UnityEngine;
 
@@ -14,7 +12,7 @@ using UnityEngine;
 
 namespace CardWar_v2.SceneViews
 {
-    public class MainMenuSceneView : Singleton<MainMenuSceneView>
+    public class MainMenuSceneView : MonoBehaviour
     {
         public enum EMenuTab
         {

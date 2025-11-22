@@ -2,11 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CardWar.Interfaces;
 
 // using CardWar.Factories;
-using CardWar.Untils;
-using CardWar_v2.Datas;
 using CardWar_v2.Entities;
 using CardWar_v2.Enums;
 using CardWar_v2.Factories;
@@ -16,12 +13,12 @@ using CardWar_v2.ComponentViews;
 // using CardWar.Views;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using static UnityEngine.EventSystems.PointerEventData;
+using UnityEngine.UI;
 
 namespace CardWar_v2.SceneViews
 {
-    public class IngameSceneView : Singleton<IngameSceneView>
+    public class IngameSceneView : MonoBehaviour
     {
         // This class can be used to manage the overall scene view for the game.
         // It can include references to various UI elements, game state, and other components.
@@ -40,15 +37,11 @@ namespace CardWar_v2.SceneViews
         [SerializeField] private SkillQueueView _skillQueueView;
 
         [SerializeField] private CardDetailView _cardDetailView;
-        //         [SerializeField] private CardSelectorView _cardSelectorView;
-
-        //         [SerializeField] private PlayerDeckView _enemyDeckView;
-        //         [SerializeField] private PlayerHandView _enemyHandView;
-
-        //         private EPlayerTarget _curTurn => GameplayManager.Instance.CurTurn;
-        //         private EPlayerTarget _playerMiniTurn => GameplayManager.Instance.PlayerMiniTurn;
-        //         private EPhase _curPhase => GameplayManager.Instance.CurPhase.Type;
-
+        [SerializeField] private MatchResultView _concludeMatchView;
+        
+        [Header("Buttons")]
+        [SerializeField] private Button _restartBtn;
+        
         #region Draw Card
         private async Task DrawCardAnimation(SkillCardView cardView, Action callback = null)
         {
@@ -144,7 +137,7 @@ namespace CardWar_v2.SceneViews
 
             var sequence = DOTween.Sequence();
             sequence.Append(cardView.transform.DOMove(toSlot.transform.position, animLength).SetEase(Ease.InOutQuad));
-            sequence.Join(cardView.transform.DOScale(3 * Vector3.one, animLength).SetEase(Ease.InOutQuad));
+            sequence.Join(cardView.transform.DOScale(2.4f * Vector3.one, animLength).SetEase(Ease.InOutQuad));
             // sequence.AppendInterval(.2f);
             sequence.OnComplete(() =>
             {
@@ -192,19 +185,30 @@ namespace CardWar_v2.SceneViews
 
             while (_skillQueueView.CardQueue.Count > 0)
             {
+                if (IsEnd) return;
                 var skillCard = _skillQueueView.CardQueue[0];
                 var skill = skillCard.BaseCard;
                 var caster = _boardView.GetCharacterByCard(casterSide, skill.Owner);
-                Debug.Log($"Caster '{caster}' using skill {skill.Name}");
+                
+                if (caster.BaseCard.ActiveEffects.ContainsKey(ESkillEffect.Silence))
+                {
+                    Debug.Log($"Caster '{caster}' is silenced and cannot use skill {skill.Name}");
+                    _skillQueueView.RemoveCard(skillCard, true);
+                    continue;
+                }
+
+                caster.BaseCard.OnUseSkill?.Invoke(skill);
+                // Debug.Log($"Caster '{caster}' using skill {skill.Name}");
                 foreach (var ss in skill.SubSkills)
                 {
-                    var targetSide = ss.TargetSide;
+                    var targetSide = ss.TargetSide == casterSide ? EPlayerTarget.Ally : EPlayerTarget.Enemy;
                     var targets = new List<CharacterModelView>();
                     foreach(var pt in ss.PositionTargets)
                     {
-                        Debug.Log($"Get target {pt} at position {targetSide}");
+                        // Debug.Log($"Get target {pt} at position {targetSide}");
+                        bool isFlexTarget = _boardView.GetCharactersInRegion(targetSide).Count >= ss.PositionTargets.Count;
                         if (pt == EPositionTarget.Self) targets.Add(caster);
-                        else targets.Add(_boardView.GetCharacterByPos(targetSide, pt, false));
+                        else targets.Add(_boardView.GetCharacterByPos(targetSide, pt, isFlexTarget));
                     }
                     // var targets = ss.Targets.Select(pt => _boardView.GetCharacterByPos(targetSide, pt)).ToList();
                     if (targets.Count == 0)
@@ -221,16 +225,6 @@ namespace CardWar_v2.SceneViews
                         if (t == null) continue;
                         if (t.Hp > 0) continue;
                         destroyTask.Add(DestroyChar(t, targetSide));
-
-                        if (targetSide == EPlayerTarget.Enemy)
-                        {
-                            _enemyDeck.RemoveDeadCard(t.BaseCard);
-                        }
-                        else if (targetSide == EPlayerTarget.Ally)
-                        {
-                            _deckView.RemoveDeadCards(t.BaseCard);
-                            destroyTask.Add(_handView.RemoveDeadCards(t.BaseCard));
-                        }
                     }
                     await Task.WhenAll(destroyTask);
                 }
@@ -255,7 +249,7 @@ namespace CardWar_v2.SceneViews
         private async Task PlayCharCard(CharacterCard card, EPlayerTarget playerSide, EPositionTarget position, Action callback = null)
         {
             var slot = _boardView.GetPlayerSlots(playerSide, position);
-            var charModel = CardFactory.Instance.CreateCharModel(card, parent: slot.transform);
+            var charModel = CardFactory.Instance.CreateCharModel(card, playerSide, parent: slot.transform);
 
             _boardView.AddCharToSlot(charModel, slot);
 
@@ -269,8 +263,41 @@ namespace CardWar_v2.SceneViews
         #region Char Die
         public async Task DestroyChar(CharacterModelView charModel, EPlayerTarget targetSide)
         {
-            // Debug.Log($"Character {charModel.BaseCard.Name} died");
+            if (charModel == null) return;
             await _boardView.DestroyDeadChar(charModel.BaseCard, targetSide);
+            // Debug.Log($"Remove card of character {charModel.BaseCard.Name}");
+            
+            if (targetSide == EPlayerTarget.Enemy)
+            {
+                _enemyDeck.RemoveDeadCard(charModel.BaseCard);
+            }
+            else if (targetSide == EPlayerTarget.Ally)
+            {
+                _deckView.RemoveDeadCards(charModel.BaseCard);
+                await _handView.RemoveDeadCards(charModel.BaseCard);
+            }
+
+            CheckFinishGame();
+        }
+        // #endregion
+
+        // #region Conclude Match
+        private async void CheckFinishGame()
+        {
+            var enemyCount = _boardView.GetCharactersInRegion(EPlayerTarget.Enemy).Count;
+            if(enemyCount == 0)
+            {
+                IsEnd = true;
+                await _concludeMatchView.ShowResult(_curLevel, true, _fightLogger);
+                return;
+            }
+
+            var allyCount = _boardView.GetCharactersInRegion(EPlayerTarget.Ally).Count;
+            if(allyCount == 0)
+            {
+                IsEnd = true;
+                await _concludeMatchView.ShowResult(_curLevel, false, _fightLogger);
+            }
         }
         #endregion
 
@@ -278,28 +305,26 @@ namespace CardWar_v2.SceneViews
         // [SerializeField] private List<CharacterCardData> _selfCharDatas;
         // [SerializeField] private List<CharacterCardData> _enemyCharDatas;
 
+        private Level _curLevel;
         private Deck _enemyDeck = new(null);
+        private FightLogger _fightLogger;
 
-        public async Task InitScene(List<CharacterCard> selfTeam, List<CharacterCard> enemyTeam)
+        public bool IsEnd {get; private set;}
+
+        public async Task SetupMatch(List<CharacterCard> selfTeam, Level level)
         {
-            // if (selfTeam.Count > 3 || e.Count > 3)
-            // {
-            //     Debug.LogError("Character datas exceed limitation");
-            //     return;
-            // }
-            // _cardDetailView.HideCardDetail();
-            // _cardSelectorView.HideCardSelector();
-            // var selfChars = _selfCharDatas.Select(c => new CharacterCard(c)).ToList();
-            // var enemyChars = _enemyCharDatas.Select(c => new CharacterCard(c)).ToList();
-            // Debug.Log($"2.Start game with self team: {selfTeam[0].Name}, {selfTeam[1].Name}, {selfTeam[2].Name}");
-            // Debug.Log($" and enemy team: {enemyTeam[0].Name}");
+            IsEnd = false;
+            _curLevel = level;
+            var enemyTeam = level.Enemies;
 
-            Debug.Log(_deckView);
             _deckView.CreateNewDeck(selfTeam);
             _enemyDeck = new(enemyTeam);
-
+            _handView.Initialize();
             _skillQueueView.Initialize();
             _boardView.Initialize();
+
+            _fightLogger = new(selfTeam, level);
+            _concludeMatchView.HideUI();
 
             var maxIndex = Mathf.Max(selfTeam.Count, enemyTeam.Count) - 1;
             for (int i = 0; i <= maxIndex; i++)
@@ -307,6 +332,14 @@ namespace CardWar_v2.SceneViews
                 if (i < selfTeam.Count) await PlayCharCard(selfTeam[i], EPlayerTarget.Ally, (EPositionTarget)i);
                 if (i < enemyTeam.Count) await PlayCharCard(enemyTeam[i], EPlayerTarget.Enemy, (EPositionTarget)i);
             }
+        }
+
+        void Start()
+        {
+            _restartBtn.onClick.AddListener(() =>
+            {
+                GameplayManager.Instance.StartNewFight();
+            });
         }
         #endregion
     }

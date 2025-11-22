@@ -9,17 +9,16 @@ namespace CardWar_v2.ComponentViews
     public class CharacterIconView : IconView
     {
         [SerializeField] private TextMeshProUGUI _level;
-        // [SerializeField] private Image _selectBorder;
-
-        // private bool _isSelected;
 
         public CharacterCard BaseCard { get; private set; }
 
-        public void SetBaseCard(CharacterCard card, bool ignoreLock)
+        public void SetBaseCard(CharacterCard card, bool ignoreLock, bool useIcon = true)
         {
             BaseCard = card ?? new(null, 1, true);
 
-            SetIcon(card != null ? BaseCard.Image : null);
+            if (useIcon) SetIcon(card != null ? BaseCard.Image : null);
+            else SetIcon(card != null ? BaseCard.SplashArt : null);
+
             _level?.SetText($"Lv.{BaseCard.Level}");
 
             if (!BaseCard.IsUnlocked && !ignoreLock)

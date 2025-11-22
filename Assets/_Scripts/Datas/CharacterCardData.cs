@@ -14,7 +14,9 @@ namespace CardWar_v2.Datas
         public ECharacter Character;
         public string Name;
         public Sprite Image;
+        public Sprite SplashArt;
         public GameObject Model;
+        public bool IsPlayable;
 
         // Animation
         public AnimatorController AnimController;

@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CardWar_v2.GameControl;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-namespace CardWar.Untils
+namespace CardWar_v2.Untils
 {
     public enum EScene
     {
@@ -47,6 +48,7 @@ namespace CardWar.Untils
 
         public async Task ChangeScene(EScene key)
         {
+            GameplayManager.Instance.ResumeGame();
             if (!_sceneDict.TryGetValue(key, out string s))
             {
                 Debug.LogError($"Scene {key} not exist");

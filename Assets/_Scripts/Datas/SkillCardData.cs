@@ -101,10 +101,10 @@ namespace CardWar_v2.Datas
         private void DoDamage(CharacterModelView casterModel, IDamagable target)
         {
             var caster = casterModel.BaseCard;
-            var damage = (caster.GetCurStat() * CasterStatMult + (target as CharacterCard).GetCurStat() + TargetStatMult).Total;
+            var damage = (caster.GetCurStat() * CasterStatMult + (target as CharacterCard).GetCurStat() * TargetStatMult).Total;
 
             target.TakeDamage(damage, DamageType);
-            // Debug.Log($"Target '{target}' took {damage} damage from Caster '{caster}'");
+            Debug.Log($"Target '{target}' took {damage} projectile damage from Caster '{caster}'");
         }
     }
     #endregion
@@ -127,6 +127,11 @@ namespace CardWar_v2.Datas
                     ESkillEffect.Regen => new RegenEffect(caster, target, e.Duration),
                     ESkillEffect.Vulnerable => new VulnerableEffect(caster, target, e.Duration, e.Amount),
                     ESkillEffect.Strengthen => new StrengthenEffect(caster, target, e.Duration, e.Amount),
+                    ESkillEffect.Silence => new SilenceEffect(caster, target, e.Duration),
+                    ESkillEffect.Burn => new BurnEffect(caster, target, e.Duration),
+                    ESkillEffect.Chill => new ChillEffect(caster, target, e.Duration),
+                    ESkillEffect.Omnivamp => new OmnivampEffect(caster, target, e.Duration, e.Amount),
+                    ESkillEffect.Frostbite => new FrostbiteEffect(caster, target, e.Duration),
                     _ => (SkillEffect)null,
                 };
 
@@ -146,6 +151,7 @@ namespace CardWar_v2.Datas
             var effects = GetSkillEffect(caster.BaseCard, target.BaseCard);
 
             effects.ForEach(e => target.BaseCard.ApplyEffect(e));
+            await Task.CompletedTask;
         }
 
     //     public override string GenerateDescription(CharacterCard owner)
@@ -204,11 +210,6 @@ namespace CardWar_v2.Datas
         public CharStat TargetStatMult;
         public EDamageType DamageType;
 
-        private async Task MovePosition(float duration)
-        {
-            
-        }
-
         public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
             var startPos = casterModel.transform.position;
@@ -219,10 +220,13 @@ namespace CardWar_v2.Datas
 
             var casterStat = casterModel.BaseCard.GetCurStat();
             var targetStat = targetModel.BaseCard.GetCurStat();
-            var damage = (casterStat * CasterStatMult + targetStat + TargetStatMult).Total;
+            var damage = (casterStat * CasterStatMult + targetStat * TargetStatMult).Total;
+            await Task.Delay(300);
 
             targetModel.BaseCard.TakeDamage(damage, DamageType);
             await casterModel.transform.DOMove(startPos, 1).SetEase(Ease.InCubic).AsyncWaitForCompletion();
+
+            Debug.Log($"Target '{targetModel.BaseCard.Name}' took {damage} damage from Caster '{casterModel.BaseCard.Name}'");
         }
     }
     #endregion
@@ -246,6 +250,9 @@ namespace CardWar_v2.Datas
             var resChange = (casterStat * ResMult.CasterStatMult + targetStat + ResMult.TargetStatMult).Total;
 
             casterModel.BaseCard.ChangeStat(new(hpChange, atkChange, amrChange, resChange));
+
+            //TODO: Add some animation or effect here
+            await Task.CompletedTask;
         }
     }
 

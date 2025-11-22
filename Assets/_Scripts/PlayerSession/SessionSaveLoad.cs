@@ -107,15 +107,23 @@ namespace CardWar_v2.Session
     }
 
     [Serializable]
-    public class CampaignProgressJson
+    public class LevelDataJSON
     {
-        public string LevelId;
+        public int Chapter = 1;
+        public int Room = 1;
+        public bool ClearCheck;
+        public bool TurnConditionCheck;
+        public bool AllAliveCheck;
 
-        public CampaignProgressJson() {}
+        public LevelDataJSON() {}
 
-        public CampaignProgressJson(Level curLevel)
+        public LevelDataJSON(Level curLevel)
         {
-            LevelId = curLevel.Data.Id;
+            Chapter = curLevel.Data.Chapter;
+            Room = curLevel.Data.Room;
+            ClearCheck = curLevel.ClearCheck;
+            TurnConditionCheck = curLevel.TurnConditionCheck;
+            AllAliveCheck = curLevel.AllAliveCheck;
         }
     }
 }

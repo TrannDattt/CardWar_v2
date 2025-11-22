@@ -23,7 +23,6 @@ namespace CardWar_v2.ComponentViews
             sequence.OnComplete(() =>
             {
                 callback?.Invoke();
-                //TODO: Return project to pool
                 Destroy(gameObject);
             });
 

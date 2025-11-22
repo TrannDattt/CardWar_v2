@@ -31,6 +31,7 @@ namespace CardWar_v2.ComponentViews
 
         public float Hp => BaseCard.CurHp;
         public float Atk => BaseCard.CurAtk;
+        public EPlayerTarget Side { get; private set; } = EPlayerTarget.Ally;
 
         public UnityEvent<PointerEventData> OnModelClicked;
 
@@ -39,19 +40,20 @@ namespace CardWar_v2.ComponentViews
             return mat.shader == reference.shader && mat.name.Contains(reference.name);
         }
 
-        public void SetBaseCard(CharacterCard card)
+        public void SetBaseCard(CharacterCard card, EPlayerTarget side)
         {
             if (card == null) Debug.LogWarning("No card was set");
 
             BaseCard = card;
+            Side = side;
 
-            Instantiate(BaseCard.Model, _modelBase.transform);
+            var model = Instantiate(BaseCard.Model, _modelBase.transform);
             // _canvas.GetComponent<RectTransform>().rotation = Quaternion.Inverse(transform.rotation) * Quaternion.Euler(0, 90, 0);
 
-            _animator = _modelBase.GetComponentInChildren<Animator>();
+            _animator = model.GetComponent<Animator>();
             _animator.runtimeAnimatorController = card.AnimController;
 
-            _faceSwapper = GetComponentInChildren<CharacterFaceSwapper>();
+            _faceSwapper = model.GetComponent<CharacterFaceSwapper>();
 
             _rends.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>());
             _rends.AddRange(GetComponentsInChildren<MeshRenderer>());
@@ -91,6 +93,7 @@ namespace CardWar_v2.ComponentViews
             if (_healthBar == null) return;
 
             var maxHp = BaseCard.GetStatAtLevel(BaseCard.Level).Hp;
+            _healthBar.Initialize(Side);
             await _healthBar.UpdateBarByValue(Hp, maxHp);
             // Debug.Log($"Hp remain: {Hp}");
         }
@@ -100,30 +103,34 @@ namespace CardWar_v2.ComponentViews
             //TODO: Do animation: Charge toward target for melee or summon projectile for range
             //      Do damage to target
             if (clip == null) return;
-            Debug.Log($"Do animation {clip.name}");
+            // Debug.Log($"Do animation {clip.name}");
             _animator.Play(clip.name);
         }
 
         public async Task UseSkill(SubSkill subSkill, List<CharacterModelView> targets)
         {
+            Debug.Log($"Doing sub-skill {subSkill.GetType()}");
             DoSkillAnim(subSkill.Clip);
-            await Task.Delay((int)(subSkill.DelayToSkill * 1000));
             var tasks = targets.Where(t => t != null).Select(t => subSkill.DoSkill(this, t));
+            await Task.Delay((int)(subSkill.DelayToSkill * 1000));
             await Task.WhenAll(tasks);
             if (subSkill.Clip != null) await WaitForAnimationEnd(_animator, subSkill.Clip.name);
-            // _animator.Play("Idle");
+            Debug.Log($"Finished sub-skill {subSkill.GetType()}");
         }
 
         private async Task WaitForAnimationEnd(Animator animator, string clipName)
         {
             if (animator == null) return;
 
-            var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            while (!stateInfo.IsName(clipName))
+            AnimatorClipInfo[] clipInfos = animator.GetCurrentAnimatorClipInfo(0);
+            if (clipInfos[0].clip.name != clipName) return;
+            while (clipInfos.Length == 0)
             {
                 await Task.Yield();
-                stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                clipInfos = animator.GetCurrentAnimatorClipInfo(0);
             }
+
+            var stateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
             while (stateInfo.normalizedTime < 1f)
             {
@@ -151,22 +158,11 @@ namespace CardWar_v2.ComponentViews
             sequence.OnComplete(() =>
             {
                 SetDissolve(1f);
+                BaseCard.Die();
                 CardFactory.Instance.RecycleCardModel(this);
             });
 
             await sequence.AsyncWaitForCompletion();
-        }
-
-        public void RecycleModel()
-        {
-            foreach (Transform t in _modelBase.transform)
-            {
-                Destroy(t.gameObject);
-            }
-            OnModelClicked.RemoveAllListeners();
-
-            gameObject.SetActive(false);
-            SetDissolve(0);
         }
 
         void OnDestroy()

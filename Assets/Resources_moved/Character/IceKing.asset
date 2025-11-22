@@ -15,7 +15,9 @@ MonoBehaviour:
   Character: 4
   Name: Ice King
   Image: {fileID: -409171222, guid: 99facf8724cfe3344911364da80b8d5a, type: 3}
+  SplashArt: {fileID: -1592255065, guid: 7ede6f97f9563864b95f106b679bef23, type: 3}
   Model: {fileID: 6484479950146850124, guid: 360ca18a37f54ad4da6758cf4caf58ef, type: 3}
+  IsPlayable: 1
   AnimController: {fileID: 9100000, guid: 7943e3af1a8c82042a6a1ab6fa5268c2, type: 2}
   Hp: 820
   Atk: 30

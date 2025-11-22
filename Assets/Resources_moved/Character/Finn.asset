@@ -15,7 +15,9 @@ MonoBehaviour:
   Character: 0
   Name: Finn
   Image: {fileID: -1575479349, guid: 4d3b5739118a2c447949038960d1a51b, type: 3}
+  SplashArt: {fileID: -2122755969, guid: 7ede6f97f9563864b95f106b679bef23, type: 3}
   Model: {fileID: 309590202036201373, guid: 259dd9519824cb741a30ad70631c6479, type: 3}
+  IsPlayable: 1
   AnimController: {fileID: 9100000, guid: a019fc17f8a22c143a16dedd84fda0c2, type: 2}
   Hp: 400
   Atk: 55

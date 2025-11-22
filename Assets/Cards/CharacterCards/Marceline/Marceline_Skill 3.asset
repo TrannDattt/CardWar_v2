@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628af7680cc8cf847a5455772d37dfb1, type: 3}
+  m_Name: Marceline_Skill 3
+  m_EditorClassIdentifier: 
+  Name: FInal Lament
+  Image: {fileID: 21300000, guid: 0691ff1ebd4ba6243b020513ca7a5aba, type: 3}
+  Description: 
+  Skill:
+  - rid: 4516365434921156741
+  - rid: 4516365372878749777
+  references:
+    version: 2
+    RefIds:
+    - rid: 4516365372878749777
+      type: {class: DoRangeAttack, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 7400000, guid: e099cad95de3a424db60dbc2cc3f1994, type: 2}
+        DelayToSkill: 0.2
+        TargetSide: 1
+        PositionTargets: 00000000
+        CasterStatMult:
+          Hp: 0
+          Atk: 1.5
+          Armor: 0
+          Resist: 0
+        TargetStatMult:
+          Hp: 0
+          Atk: 0
+          Armor: 0
+          Resist: 0
+        Projectile: {fileID: 0}
+        OffsetToCaster: {x: 0, y: 0, z: 0}
+        DamageType: 0
+    - rid: 4516365434921156741
+      type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 04000000
+        HpMult:
+          CasterStatMult:
+            Hp: -0.99
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AtkMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AmrMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        ResMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0

@@ -12,10 +12,17 @@ namespace CardWar_v2.Datas
         public string Id => GetInstanceID().ToString();
         public int Chapter;
         public int Room;
-        public List<CharacterCardData> Enemies;
+        public List<LevelEnemy> Enemies;
         public Reward Rewards;
+        public int TurnConditionCheck;
     }
 
+    [Serializable]
+    public struct LevelEnemy
+    {
+        public CharacterCardData Data;
+        public int Level;
+    }
 
     [Serializable]
     public struct Reward

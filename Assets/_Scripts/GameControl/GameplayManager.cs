@@ -1,14 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CardWar.Enums;
-using CardWar.Untils;
 using CardWar_v2.Entities;
 using CardWar_v2.Enums;
 using CardWar_v2.SceneViews;
-using JetBrains.Annotations;
+using CardWar_v2.Untils;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace CardWar_v2.GameControl
 {
@@ -19,11 +15,12 @@ namespace CardWar_v2.GameControl
         #region Turn Logic
         public EPlayerTarget CurTurn { get; private set; } = EPlayerTarget.Ally;
         private int _turnChangeTime;
+        public UnityEvent OnTurnChanged { get; private set; } = new();
 
         private void ChangeTurn(EPlayerTarget nextTurn) {
             CurTurn = nextTurn;
             _turnChangeTime++;
-            Debug.Log($"It's {CurTurn}'s turn now.");
+            // Debug.Log($"It's {CurTurn}'s turn now.");
 
             ChangePhase(EPhase.Opening);
         }
@@ -35,7 +32,7 @@ namespace CardWar_v2.GameControl
         }
         #endregion
 
-        #region Turn Logic
+        #region Phase Logic
         //TODO: Phase logic and change phase
         private APhase _curPhase;
         public EPhase CurPhase => _curPhase != null ? _curPhase.Type : EPhase.None;
@@ -121,7 +118,12 @@ namespace CardWar_v2.GameControl
 
             public override async void Enter()
             {
-                if (Instance._turnChangeTime % 2 == 0) await IngameScene.DoEffectsOnChars(CurTurn);
+                if (Instance._turnChangeTime % 2 == 0)
+                {
+                    await IngameScene.DoEffectsOnChars(CurTurn);
+
+                    Instance.OnTurnChanged?.Invoke();
+                }
                     
                 Instance.ChangeToNextPhase();
             }
@@ -132,14 +134,36 @@ namespace CardWar_v2.GameControl
             }
         }
 
+        public class NonePhase : APhase
+        {
+            public NonePhase(EPhase phaseType) : base(phaseType)
+            {
+            }
+
+            public override void Do()
+            {
+            }
+
+            public override void Enter()
+            {
+            }
+
+            public override void Exit()
+            {
+            }
+        }
+
         private APhase GetPhase(EPhase phaseType)
         {
+            if (_ingameScene == null || _ingameScene.IsEnd)
+                return new NonePhase(EPhase.None);
+
             return phaseType switch
             {
                 EPhase.Opening => new OpeningPhase(EPhase.Opening),
                 EPhase.Attack => new AttackPhase(EPhase.Attack),
                 EPhase.Conclude => new ConcludePhase(EPhase.Conclude),
-                _ => null
+                _ => new NonePhase(EPhase.None)
             };
         }
 
@@ -148,7 +172,7 @@ namespace CardWar_v2.GameControl
             _curPhase?.Exit();
             // CurPhase = _phaseDict[nextPhase];
             _curPhase = GetPhase(nextPhase);
-            Debug.Log($"{_curPhase.Type} started.");
+            // Debug.Log($"{_curPhase.Type} started.");
             _curPhase.Enter();
         }
 
@@ -176,35 +200,71 @@ namespace CardWar_v2.GameControl
         #endregion
 
         #region Gameplay Logic
-        // public async void StartGame()
-        public async void StartGame(List<CharacterCard> selfTeam, List<CharacterCard> enemyTeam)
-        {
-            // Debug.Log($"1.Start game with self team: {selfTeam[0].Name}, {selfTeam[1].Name}, {selfTeam[2].Name}");
-            // Debug.Log($" and enemy team: {enemyTeam[0].Name}");
+        private Level _curLevel;
+        private List<CharacterCard> _selfTeam = new();
 
-            SceneNavigator.Instance.OnSceneLoaded.AddListener(async (sk) =>
+        public void SetLevelDetail(Level level)
+        {
+            SceneNavigator.Instance.ChangeScene(EScene.Campaign).ContinueWith(_ =>
+            {
+                var campaignView = FindFirstObjectByType<CampaignView>();
+                campaignView.SetLevelDetail(level);
+            });
+        }
+
+        public async void StartNewFight()
+        {
+            ResumeGame();
+
+            _selfTeam.ForEach(c => c.ResetCharStat());
+            _curLevel.Enemies.ForEach(c => c.ResetCharStat());
+
+            async void SetupMatch(EScene sk)
             {
                 if(sk != EScene.Ingame) return;
+                SceneNavigator.Instance.OnSceneLoaded.RemoveListener(SetupMatch);
 
                 _ingameScene = FindFirstObjectByType<IngameSceneView>();
-                await _ingameScene.InitScene(selfTeam, enemyTeam);
+                await _ingameScene.SetupMatch(_selfTeam, _curLevel);
                 _turnChangeTime = 0;
 
                 await _ingameScene.DrawCard(3);
-                // var selfDrawTask = _ingameScene.DrawCard(3);
-                // await Task.WhenAll(selfDrawTask);
-                ChangeTurn(EPlayerTarget.Ally); 
-            });
+                ChangeTurn(EPlayerTarget.Ally);
+            }
+
+            SceneNavigator.Instance.OnSceneLoaded.AddListener(SetupMatch);
 
             await SceneNavigator.Instance.ChangeScene(EScene.Ingame);
+        }
+
+        public void StartCampaignLevel(Level level, List<CharacterCard> selfTeam)
+        {
+            _selfTeam = selfTeam;
+            _curLevel = level;
+
+            StartNewFight();
+        }
+
+        public void PauseGame()
+        {
+            Time.timeScale = 0;
+        }
+
+        public void ResumeGame()
+        {
+            Time.timeScale = 1;
         }
         #endregion
 
         #region Init For Testing
-        // void Start()
-        // {
-        //     StartGame();
-        // }
+        void Start()
+        {
+            SceneNavigator.Instance.OnSceneLoaded.AddListener(scene =>
+            {
+                if (scene != EScene.Ingame) 
+                    ChangePhase(EPhase.None);
+            });
+        }
 
         void Update()
         {

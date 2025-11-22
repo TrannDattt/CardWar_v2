@@ -18,5 +18,7 @@ namespace CardWar_v2.Enums
         Chill,
         Silence,
         Strengthen,
+        Omnivamp,
+        Frostbite,
     }
 }

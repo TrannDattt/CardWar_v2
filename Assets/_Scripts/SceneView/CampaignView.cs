@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CardWar.Untils;
 using CardWar_v2.ComponentViews;
-using CardWar_v2.Datas;
 using CardWar_v2.Entities;
 using CardWar_v2.Factories;
 using CardWar_v2.GameControl;
+using CardWar_v2.Untils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static CardWar_v2.Factories.IconFactory;
 
 // using CardWar.Views;
 
@@ -34,14 +34,14 @@ namespace CardWar_v2.SceneViews
         [SerializeField] private CharacterListView _charList;
 
         private Level CurLevel => PlayerSessionManager.Instance.CurLevel;
-        private List<CharacterCard> _enemyTeam = new();
+        // private List<CharacterCard> _enemyTeam = new();
         private List<CharacterCard> _selfTeam = new();
 
         private IconFactory _iconFactory => IconFactory.Instance;
 
         private async Task ClearLevelDetail()
         {
-            _enemyTeam.Clear();
+            // _enemyTeam.Clear();
             _selfTeam.Clear();
 
             static async Task ClearIcons(RectTransform list)
@@ -59,8 +59,6 @@ namespace CardWar_v2.SceneViews
             _characters.ForEach(c => c.SetBaseCard(null, true));
         }
 
-        // public void SetLevelDetail()
-        // public async void SetLevelDetail(LevelData data)
         public async void SetLevelDetail(Level level)
         {
             await ClearLevelDetail();
@@ -74,22 +72,24 @@ namespace CardWar_v2.SceneViews
             level.Enemies.ForEach(e =>
             {
                 _iconFactory.CreateNewCharIcon(e, true, _enemyListRt);
-                _enemyTeam.Add(e);
-                Debug.Log($"Add enemy {e.Name} to list");
+                // _enemyTeam.Add(e);
+                // Debug.Log($"Add enemy {e.Name} to list");
             });
 
-            _iconFactory.CreateNewIcon(level.Rewards.Exp, _rewardListRt);
-            _iconFactory.CreateNewIcon(level.Rewards.Gold, _rewardListRt);
-            _iconFactory.CreateNewIcon(level.Rewards.Gem, _rewardListRt);
+            _iconFactory.CreateNewIcon(EIconType.Exp, level.Rewards.Exp, _rewardListRt);
+            _iconFactory.CreateNewIcon(EIconType.Gold, level.Rewards.Gold, _rewardListRt);
+            _iconFactory.CreateNewIcon(EIconType.Gem, level.Rewards.Gem, _rewardListRt);
+            
+            _charList.ShowCharacterIcons(true, true);
+            _fightBtn.onClick.AddListener(() =>
+            {
+                GameplayManager.Instance.StartCampaignLevel(level, _selfTeam);
+            });
         }
 
         void Start()
         {
             _backBtn.onClick.AddListener(async () => await SceneNavigator.Instance.BackToPreviousScene());
-            _fightBtn.onClick.AddListener(() =>
-            {
-                GameplayManager.Instance.StartGame(_selfTeam, _enemyTeam);
-            });
 
             _characters.ForEach(c =>
             {
@@ -104,22 +104,14 @@ namespace CardWar_v2.SceneViews
             {
                 // _characters.ForEach(c => Debug.Log(c.BaseCard.Name));
                 var charIcon = _characters.FirstOrDefault(c => c.BaseCard.Data == (isSelected ? null : i.BaseCard.Data));
-                charIcon.SetBaseCard(isSelected ? i.BaseCard : null, true);
+                charIcon.SetBaseCard(isSelected ? i.BaseCard : null, true, false);
                 if (isSelected) _selfTeam.Add(i.BaseCard);
                 else _selfTeam.Remove(i.BaseCard);
             });
-            // _charList.HideList();
-
-            // PlayerSessionManager.Instance.OnFinishLoadingSession.AddListener(() => 
-            // {
-            //     _charList.ShowCharacterIcons(true, true);
-            //     SetLevelDetail(CurLevel);
-            // });
         }
 
         void OnEnable()
         {
-            _charList.ShowCharacterIcons(true, true);
             SetLevelDetail(CurLevel);
         }
     }
