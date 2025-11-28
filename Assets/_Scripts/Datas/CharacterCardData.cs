@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CardWar.Enums;
 using UnityEditor.Animations;
 using UnityEngine;
+using static CardWar_v2.GameControl.GameAudioManager;
 
 namespace CardWar_v2.Datas
 {
@@ -22,6 +23,14 @@ namespace CardWar_v2.Datas
         public AnimatorController AnimController;
         
         // Audio
+
+        [Serializable]
+        public class Voice
+        {
+            public EVoice Key;
+            public List<AudioClip> Clips;
+        }
+        public List<Voice> VoiceLines;
 
         // Stat
         public float Hp;

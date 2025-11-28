@@ -13,9 +13,8 @@ namespace CardWar_v2.ComponentViews
             Skill2,
             Skill3,
             Die,
+            Selected,
             Upgrade,
-            Win,
-            Lose,
         }
 
         [Serializable]
@@ -29,13 +28,18 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private List<VoiceLine> _voiceLineList;
         private Dictionary<EVoiceLine, List<AudioClip>> _voiceLineDict = new();
 
-        public void PlaySFX(EVoiceLine key)
+        public void PlayVoice(EVoiceLine key)
         {
             if(!_voiceLineDict.ContainsKey(key)) return;
 
             var clips = _voiceLineDict[key];
             var randomClip = clips[UnityEngine.Random.Range(0, clips.Count)];
-            _audio.PlayOneShot(randomClip);
+            PlaySFX(randomClip);
+        }
+
+        public void PlaySFX(AudioClip clip)
+        {
+            _audio.PlayOneShot(clip);
         }
 
         void Awake()

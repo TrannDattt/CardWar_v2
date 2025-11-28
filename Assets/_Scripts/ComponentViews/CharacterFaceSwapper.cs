@@ -8,15 +8,15 @@ namespace CardWar_v2.ComponentViews
     public class CharacterFaceSwapper : MonoBehaviour
     {
         [SerializeField] private List<FaceEmotion> _emotions;
-        [field: SerializeField] public Material FaceMatRef { get; private set; }
+        [field: SerializeField] public List<Material> FaceMatRef { get; private set; }
 
-        private Material _faceMat;
+        private Dictionary<Material, Material> _faceMatDict = new();
         private Dictionary<EEmotion, FaceEmotion> _emotionDict = new();
         private FaceEmotion _curEmotion;
 
-        public void SetFaceMat(Material mat) 
+        public void SetFaceMat(Material reference, Material mat) 
         {
-            _faceMat = mat;
+            _faceMatDict[reference] = mat;
         }
 
         public void ChangeEmotion(EEmotion key)
@@ -27,33 +27,39 @@ namespace CardWar_v2.ComponentViews
                 return;
             }
 
-            if (!_emotionDict.TryGetValue(key, out var faceEmotion) || faceEmotion.Sprite == null)
+            if (!_emotionDict.TryGetValue(key, out var faceEmotion) || faceEmotion.Sprites == null)
             {
                 // Debug.Log($"Emotion {key}'s sprite of character {gameObject.name} is null");
                 return;
             }
 
             _curEmotion = faceEmotion;
-            var sprite = faceEmotion.Sprite;
-            var tex = sprite.texture;
+            var sprites = faceEmotion.Sprites;
 
-            Vector2 tiling = new(
-                sprite.rect.width / tex.width,
-                sprite.rect.height / tex.height
-            );
+            for (int i = 0; i < FaceMatRef.Count; i++)
+            {
+                var faceMat = _faceMatDict[FaceMatRef[i]];
+                var tex = sprites[i].texture;
 
-            Vector2 offset = new(
-                sprite.rect.x / tex.width,
-                sprite.rect.y / tex.height
-            );
+                Vector2 tiling = new(
+                    sprites[i].rect.width / tex.width,
+                    sprites[i].rect.height / tex.height
+                );
 
-            _faceMat.SetVector("_Tiling", tiling);
-            _faceMat.SetVector("_Offset", offset);
+                Vector2 offset = new(
+                    sprites[i].rect.x / tex.width,
+                    sprites[i].rect.y / tex.height
+                );
+
+                faceMat.SetVector("_Tiling", tiling);
+                faceMat.SetVector("_Offset", offset);
+            }
         }
 
-        void Start()
+        void Awake()
         {
             _emotions.ForEach(e => _emotionDict[e.Key] = e);
+            FaceMatRef.ForEach(m => _faceMatDict[m] = new(m));
         }
     }
 
@@ -73,7 +79,7 @@ namespace CardWar_v2.ComponentViews
         }
 
         public EEmotion Key;
-        public Sprite Sprite;
+        public List<Sprite> Sprites;
     }
 }
 

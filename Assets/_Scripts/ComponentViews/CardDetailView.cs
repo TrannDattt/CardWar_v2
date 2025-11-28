@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CardWar_v2.Entities;
 using DG.Tweening;
@@ -30,6 +31,8 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private TextMeshProUGUI _hp;
         [SerializeField] private TextMeshProUGUI _armor;
         [SerializeField] private TextMeshProUGUI _resist;
+        [SerializeField] private RectTransform _effectDetailContent;
+        [SerializeField] private EffectDetailView _effectDetailPrefab;
         private bool _isShownChar;
 
         //TODO: Add a section for active effects on char
@@ -48,7 +51,7 @@ namespace CardWar_v2.ComponentViews
         
         public async Task ShowSkillDetail(SkillCard card)
         {
-            Debug.Log($"2.Show detail of card {card}");
+            // Debug.Log($"2.Show detail of card {card}");
             _skillImage.sprite = card.Image;
             _skillName.SetText(card.Name);
             _skillDes.SetText(card.Des);
@@ -62,10 +65,19 @@ namespace CardWar_v2.ComponentViews
         {
             _charImage.sprite = card.Image;
             _charName.SetText(card.Name);
-            _atk.SetText($"ATK: {card.CurAtk}");
-            _hp.SetText($"HP: {card.CurHp}");
-            _armor.SetText($"Armor: {card.CurArmor}");
-            _resist.SetText($"Resist: {card.CurResist}");
+            _atk.SetText($" : {card.CurAtk}");
+            _hp.SetText($" : {card.CurHp}");
+            _armor.SetText($" : {card.CurArmor}");
+            _resist.SetText($" : {card.CurResist}");
+
+            var lastEffects = _effectDetailContent.GetComponentsInChildren<EffectDetailView>().ToList();
+            lastEffects.ForEach(e => Destroy(e.gameObject));
+            var effects = card.ActiveEffects.Values.ToList();
+            effects.ForEach(e =>
+            {
+                EffectDetailView effectDetail = Instantiate(_effectDetailPrefab, _effectDetailContent);
+                effectDetail.ShowDetail(e);
+            });
 
             if (_isShownSkill) await HideDetailView(EDetailType.Skill);
             if (!_isShownChar) await ShowDetailView(EDetailType.Char);

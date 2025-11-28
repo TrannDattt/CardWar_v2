@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628af7680cc8cf847a5455772d37dfb1, type: 3}
+  m_Name: IK_Skill 1
+  m_EditorClassIdentifier: 
+  Name: Frozen Crown's Toll
+  Image: {fileID: 21300000, guid: 248e2b2d9f438c545a2b051bab182103, type: 3}
+  Description: '- Apply Chill to enemy at the Mid and the Back for 2 turns.
+
+    -
+    Apply Burn to himself for 6 turns.'
+  Skill:
+  - rid: 4516365537867989077
+  - rid: 4516365139864977408
+  - rid: 4516365139864977409
+  references:
+    version: 2
+    RefIds:
+    - rid: 4516365139864977408
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 1.1
+        TargetSide: 1
+        PositionTargets: 0100000002000000
+        Effects:
+        - EffectType: 5
+          Amount: 0
+          Duration: 3
+    - rid: 4516365139864977409
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 04000000
+        Effects:
+        - EffectType: 4
+          Amount: 0
+          Duration: 6
+    - rid: 4516365537867989077
+      type: {class: DoRangeAttack, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 7400000, guid: 89e1f498e1286e245b6ccb7a42a3b372, type: 2}
+        DelayToSkill: 0.9
+        TargetSide: 1
+        PositionTargets: 0100000002000000
+        CasterStatMult:
+          Hp: 0
+          Atk: 0
+          Armor: 0
+          Resist: 0
+        TargetStatMult:
+          Hp: 0
+          Atk: 0
+          Armor: 0
+          Resist: 0
+        Projectile: {fileID: 9159653799447092791, guid: c03f6526b3f8ada489779011a69dc98a, type: 3}
+        OffsetToCaster: {x: 0, y: 0, z: 0}
+        DamageType: 3

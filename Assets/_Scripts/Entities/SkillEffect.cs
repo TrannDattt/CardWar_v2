@@ -1,7 +1,10 @@
 using System.Threading.Tasks;
+using CardWar.Interfaces;
 using CardWar_v2.Enums;
+using CardWar_v2.Factories;
 using UnityEngine;
 using UnityEngine.Events;
+using static CardWar_v2.ComponentViews.FXPlayer;
 
 namespace CardWar_v2.Entities
 {
@@ -9,23 +12,67 @@ namespace CardWar_v2.Entities
     {
         protected CharacterCard _caster;
         protected CharacterCard _target;
+        protected ParticleSystem _onApplyFx;
+        protected ParticleSystem _onActiveFx;
 
         public ESkillEffect EffectType { get; protected set; }
         public int Duration { get; protected set; }
 
         public UnityEvent OnEffectUpdated;
+        public UnityEvent OnDoEffect;
 
-        public SkillEffect(CharacterCard caster, CharacterCard target, int duration)
+        public SkillEffect(ESkillEffect type, CharacterCard caster, CharacterCard target, int duration, Transform targetTranform)
         {
             _caster = caster;
             _target = target;
             Duration = duration;
+            EffectType = type;
+
+            if (EffectType != ESkillEffect.None)
+            {
+                var offset = 3f * Vector3.up;
+
+                var onApplyFx = EffectViewFactory.Instance.EffectDict[EffectType].OnApplyFX;
+                if(onApplyFx != null && _onApplyFx == null)
+                {
+                    _onApplyFx = Object.Instantiate(onApplyFx, targetTranform.position + offset, Quaternion.identity, targetTranform);
+                    foreach (Transform transform in _onApplyFx.gameObject.transform)
+                    {
+                        transform.gameObject.layer = LayerMask.NameToLayer("FX");
+                    }
+                    _onApplyFx.gameObject.SetActive(false);
+                }
+
+                var onActiveFx = EffectViewFactory.Instance.EffectDict[EffectType].OnActiveFX;
+                if(onActiveFx != null && _onActiveFx == null)
+                {
+                    _onActiveFx = Object.Instantiate(onActiveFx, targetTranform.position + offset, Quaternion.identity, targetTranform);
+                    foreach (Transform transform in _onActiveFx.gameObject.transform)
+                    {
+                        transform.gameObject.layer = LayerMask.NameToLayer("FX");
+                    }
+                    _onActiveFx.gameObject.SetActive(false);
+                }
+            }
 
             OnEffectUpdated = new();
+            OnDoEffect = new();
         }
 
-        public virtual void ApplyEffect()
+        private async Task PlayFX(ParticleSystem fx)
         {
+            if (fx == null) return;
+            fx.gameObject.SetActive(true);
+            while (fx.isPlaying)
+            {
+                await Task.Yield();
+            }
+            fx.gameObject.SetActive(false);
+        }
+
+        public virtual async Task ApplyEffect()
+        {
+            await PlayFX(_onApplyFx);
         }
 
         public virtual void OverrideEffect(SkillEffect newEffect)
@@ -35,28 +82,31 @@ namespace CardWar_v2.Entities
 
         public virtual async Task DoEffect()
         {
+            await PlayFX(_onActiveFx);
+
             Duration--;
+            OnDoEffect?.Invoke();
             OnEffectUpdated?.Invoke();
         }
 
         public virtual void RemoveEffect()
         {
-            // TODO: Use factory to remove
+            if (_onApplyFx != null) Object.Destroy(_onApplyFx.gameObject);
+            if (_onActiveFx != null) Object.Destroy(_onActiveFx.gameObject);
         }
 
-        public abstract string GetDescription();
+        public virtual string GetDescription() => $" ({Duration} turn{(Duration > 1 ? "s" : "")}).";
     }
 
     #region Regen
     public class RegenEffect : SkillEffect
     {
-        private float _mult = .01f;
+        private float _mult = .1f;
 
         public float HealAmount => _mult * _target.CurHp;
 
-        public RegenEffect(CharacterCard caster, CharacterCard target, int duration) : base(caster, target, duration)
+        public RegenEffect(ESkillEffect type, CharacterCard caster, CharacterCard target, int duration, Transform targetTranform) : base(type, caster, target, duration,  targetTranform)
         {
-            EffectType = ESkillEffect.Regen;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -68,14 +118,14 @@ namespace CardWar_v2.Entities
 
         public override async Task DoEffect()
         {
-            _target.ChangeHp(HealAmount);
-
             await base.DoEffect();
+
+            _target.ChangeHp(HealAmount);
         }
 
         public override string GetDescription()
         {
-            return $"Regen equals to {_mult * 100}% of your current HP ({HealAmount}) every turn";
+            return $"Regen equals to {_mult * 100}% of your current HP ({HealAmount}) every turn" + base.GetDescription();
         }
     }
     #endregion
@@ -88,9 +138,8 @@ namespace CardWar_v2.Entities
         // Use in battle
         public float DamageAmount => _mult * _caster.CurAtk;
 
-        public PoisonEffect(CharacterCard caster, CharacterCard target, int duration) : base(caster, target, duration)
+        public PoisonEffect(ESkillEffect type, CharacterCard caster, CharacterCard target, int duration, Transform targetTranform) : base(type, caster, target, duration,  targetTranform)
         {
-            EffectType = ESkillEffect.Poison;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -104,14 +153,14 @@ namespace CardWar_v2.Entities
 
         public override async Task DoEffect()
         {
-            _target.ChangeHp(-DamageAmount);
-
             await base.DoEffect();
+
+            _target.TakeDamage(_caster, DamageAmount, EDamageType.Pure, EFXType.Effect);
         }
 
         public override string GetDescription()
         {
-            return $"Take damage equals to {_mult * 100}% of the caster's ATK ({DamageAmount}) every turn. - Caster: {_caster.Name} -";
+            return $"Take damage equals to {_mult * 100}% of the caster's ATK ({DamageAmount}) every turn - Caster: {_caster.Name} -" + base.GetDescription();
         }
     }
     #endregion
@@ -122,10 +171,9 @@ namespace CardWar_v2.Entities
         private float _mult;
         public float VulAmount => _mult;
 
-        public VulnerableEffect(CharacterCard caster, CharacterCard target, int duration, float mult) : base(caster, target, duration)
+        public VulnerableEffect(ESkillEffect type, CharacterCard caster, CharacterCard target, int duration, Transform targetTranform, float mult) : base(type, caster, target, duration,  targetTranform)
         {
             _mult = mult;
-            EffectType = ESkillEffect.Vulnerable;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -139,7 +187,7 @@ namespace CardWar_v2.Entities
 
         public override string GetDescription()
         {
-            return $"Increase incoming damage taken by {VulAmount * 100}%";
+            return $"Increase incoming damage taken by {VulAmount * 100}%" + base.GetDescription();
         }
     }
     #endregion
@@ -150,10 +198,9 @@ namespace CardWar_v2.Entities
         private float _mult;
         public float StrengthAmount => _mult;
 
-        public StrengthenEffect(CharacterCard caster, CharacterCard target, int duration, float mult) : base(caster, target, duration)
+        public StrengthenEffect(ESkillEffect type, CharacterCard caster, CharacterCard target, int duration, Transform targetTranform, float mult) : base(type, caster, target, duration,  targetTranform)
         {
             _mult = mult;
-            EffectType = ESkillEffect.Strengthen;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -167,7 +214,7 @@ namespace CardWar_v2.Entities
 
         public override string GetDescription()
         {
-            return $"Decrease incoming damage taken by {StrengthAmount * 100}%";
+            return $"Decrease incoming damage taken by {StrengthAmount * 100}%" + base.GetDescription();
         }
     }
     #endregion
@@ -175,9 +222,8 @@ namespace CardWar_v2.Entities
     #region Silence
     public class SilenceEffect : SkillEffect
     {
-        public SilenceEffect(CharacterCard caster, CharacterCard target, int duration) : base(caster, target, duration)
+        public SilenceEffect(ESkillEffect type, CharacterCard caster, CharacterCard target, int duration, Transform targetTranform) : base(type, caster, target, duration,  targetTranform)
         {
-            EffectType = ESkillEffect.Silence;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -189,7 +235,7 @@ namespace CardWar_v2.Entities
 
         public override string GetDescription()
         {
-            return $"Cannot use skills this turn";
+            return $"Cannot use skills this turn" + base.GetDescription();
         }
     }
     #endregion
@@ -202,9 +248,8 @@ namespace CardWar_v2.Entities
         // Use in battle
         public float DamageAmount => _mult * _target.CurHp;
 
-        public BurnEffect(CharacterCard caster, CharacterCard target, int duration) : base(caster, target, duration)
+        public BurnEffect(ESkillEffect type, CharacterCard caster, CharacterCard target, int duration, Transform targetTranform) : base(type, caster, target, duration,  targetTranform)
         {
-            EffectType = ESkillEffect.Burn;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -218,14 +263,14 @@ namespace CardWar_v2.Entities
 
         public override async Task DoEffect()
         {
-            _target.ChangeHp(-DamageAmount);
-
             await base.DoEffect();
+
+            _target.TakeDamage(_caster, DamageAmount, EDamageType.Pure, EFXType.Effect);
         }
 
         public override string GetDescription()
         {
-            return $"Take damage equals to {_mult * 100}% of the target's current HP ({DamageAmount}) every turn. - Target: {_target.Name} -";
+            return $"Take damage equals to {_mult * 100}% of the your current HP ({DamageAmount}) every turn" + base.GetDescription();
         }
     }
     #endregion
@@ -234,11 +279,10 @@ namespace CardWar_v2.Entities
     public class ChillEffect : SkillEffect
     {
         private float _mult = .05f;
-        public float ChillAmount => _mult;
+        public float ChillAmount => _mult * Duration;
 
-        public ChillEffect(CharacterCard caster, CharacterCard target, int duration) : base(caster, target, duration)
+        public ChillEffect(ESkillEffect type, CharacterCard caster, CharacterCard target, int duration, Transform targetTranform) : base(type, caster, target, duration,  targetTranform)
         {
-            EffectType = ESkillEffect.Chill;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -252,7 +296,7 @@ namespace CardWar_v2.Entities
 
         public override string GetDescription()
         {
-            return $"Decrease target's ATK by {ChillAmount * 100}%";
+            return $"Decrease your ATK by {ChillAmount * 100}%" + base.GetDescription();
         }
     }
     #endregion
@@ -263,9 +307,8 @@ namespace CardWar_v2.Entities
         private CharStat _targetBaseStat => _target.GetStatAtLevel(_target.Level);
         public float FrostbiteAmount => Mathf.Max(0, (_targetBaseStat.Atk - _target.CurAtk) / _targetBaseStat.Atk) * _targetBaseStat.Hp;
 
-        public FrostbiteEffect(CharacterCard caster, CharacterCard target, int duration) : base(caster, target, duration)
+        public FrostbiteEffect(ESkillEffect type, CharacterCard caster, CharacterCard target, int duration, Transform targetTranform) : base(type, caster, target, duration,  targetTranform)
         {
-            EffectType = ESkillEffect.Frostbite;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -277,14 +320,14 @@ namespace CardWar_v2.Entities
 
         public override async Task DoEffect()
         {
-            _target.ChangeHp(-FrostbiteAmount);
-
             await base.DoEffect();
+
+            _target.TakeDamage(_caster, FrostbiteAmount, EDamageType.Pure, EFXType.Effect);
         }
 
         public override string GetDescription()
         {
-            return $"Take damage equals to the difference percentages between target's base ATK and current ATK * target's Max HP ({FrostbiteAmount}) - Target: {_target.Name} -";
+            return $"Take damage equals to the difference percentages between your base ATK and current ATK * your Max HP ({FrostbiteAmount})" + base.GetDescription();
         }
     }
     #endregion
@@ -295,10 +338,9 @@ namespace CardWar_v2.Entities
         private float _mult;
         public float OmnivampAmount = 0;
 
-        public OmnivampEffect(CharacterCard caster, CharacterCard target, int duration, float mult) : base(caster, target, duration)
+        public OmnivampEffect(ESkillEffect type, CharacterCard caster, CharacterCard target, int duration, Transform targetTranform, float mult) : base(type, caster, target, duration,  targetTranform)
         {
             _mult = mult;
-            EffectType = ESkillEffect.Omnivamp;
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -311,10 +353,33 @@ namespace CardWar_v2.Entities
         }
 
         //TODO: Active omnivamp when dealing damage
+        public override async Task ApplyEffect()
+        {
+            Debug.Log("Apply Omnivamp");
+            await base.ApplyEffect();
+
+            _caster.OnDealDamage.AddListener(DoEffect);
+        }
+
+        public async void DoEffect(float damageDealt)
+        {
+            // Debug.Log($"Caster {_caster.Name} - Omnivamp: {damageDealt * _mult} Hp");
+            await base.DoEffect();
+
+            _caster.ChangeHp(damageDealt * _mult);
+        }
+
+        public override void RemoveEffect()
+        {
+            Debug.Log("Remove Omnivamp");
+            base.RemoveEffect();
+            
+            _caster.OnDealDamage.RemoveListener(DoEffect);
+        }
 
         public override string GetDescription()
         {
-            return $"Heal for {_mult * 100}% of damage dealt";
+            return $"Heal for {_mult * 100}% of damage dealt" + base.GetDescription();
         }
     }
     #endregion

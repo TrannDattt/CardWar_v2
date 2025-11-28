@@ -10,27 +10,13 @@ namespace CardWar_v2.Factories
     {
         [SerializeField] private ShopItemView _itemViewPrefab;
 
-        private Queue<ShopItemView> _itemPool = new();
-
         public ShopItemView CreateNewIcon(ShopItem item, RectTransform parent)
         {
-            if (_itemPool.Count == 0)
-            {
-                var itemView = Instantiate(_itemViewPrefab);
-                itemView.gameObject.SetActive(false);
-                _itemPool.Enqueue(itemView);
-            }
-
-            var pooledItemView = _itemPool.Dequeue();
+            var pooledItemView = Instantiate(_itemViewPrefab, parent);
             pooledItemView.SetItem(item);
             var rt = pooledItemView.GetComponent<RectTransform>();
             rt.SetParent(parent);
             rt.localScale = Vector3.one;
-
-            item.OnItemBought.AddListener(() =>
-            {
-                if (item.StockAmount <= 0) pooledItemView.gameObject.SetActive(false);
-            });
 
             pooledItemView.gameObject.SetActive(true);
             return pooledItemView;
@@ -39,9 +25,10 @@ namespace CardWar_v2.Factories
         public void RecycleItemView(ShopItemView itemView)
         {
             if (itemView == null) return;
-            itemView.transform.SetParent(transform);
+            // itemView.transform.SetParent(transform);
 
-            _itemPool.Enqueue(itemView);
+            // _itemPool.Enqueue(itemView);
+            Destroy(itemView.gameObject);
         }
     }
 }

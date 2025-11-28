@@ -11,6 +11,7 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using static CardWar_v2.ComponentViews.FXPlayer;
 
 namespace CardWar_v2.ComponentViews
 {
@@ -28,6 +29,7 @@ namespace CardWar_v2.ComponentViews
         private List<Renderer> _rends = new();
         private HashSet<Material> _mats = new();
         private CharacterFaceSwapper _faceSwapper;
+        private List<FXPlayer> _fxPlayers;
 
         public float Hp => BaseCard.CurHp;
         public float Atk => BaseCard.CurAtk;
@@ -35,11 +37,19 @@ namespace CardWar_v2.ComponentViews
 
         public UnityEvent<PointerEventData> OnModelClicked;
 
+        #region Components
         public bool CompareMaterial(Material mat, Material reference)
         {
             return mat.shader == reference.shader && mat.name.Contains(reference.name);
         }
 
+        public void PlayFX(EFXType key)
+        {
+            _fxPlayers.ForEach(player => player.PlayFXByKey(key));
+        }
+        #endregion
+
+        #region Card Detail
         public void SetBaseCard(CharacterCard card, EPlayerTarget side)
         {
             if (card == null) Debug.LogWarning("No card was set");
@@ -54,6 +64,7 @@ namespace CardWar_v2.ComponentViews
             _animator.runtimeAnimatorController = card.AnimController;
 
             _faceSwapper = model.GetComponent<CharacterFaceSwapper>();
+            _fxPlayers = GetComponentsInChildren<FXPlayer>().ToList();
 
             _rends.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>());
             _rends.AddRange(GetComponentsInChildren<MeshRenderer>());
@@ -63,14 +74,21 @@ namespace CardWar_v2.ComponentViews
                 foreach (var m in r.materials)
                 {
                     _mats.Add(m);
-                    if (_faceSwapper != null && CompareMaterial(m, _faceSwapper.FaceMatRef))
+                    if (_faceSwapper == null) continue;
+
+                    foreach (var matRef in _faceSwapper.FaceMatRef)
                     {
-                        _faceSwapper.SetFaceMat(m);
-                    }
+                        if(CompareMaterial(m, matRef))
+                        {
+                            _faceSwapper.SetFaceMat(matRef, m);
+                        }}
                 }
             }
 
-            // card.OnCardUpdated.AddListener(UpdateCardDetail);
+            card.OnTakingDamage.AddListener(source => 
+            {
+                if (source == EFXType.Hit) PlayFX(EFXType.Hit);
+            });
             card.OnChangeHp.AddListener(UpdateCardDetail);
             card.OnApplyEffect.AddListener((effect) => ApplyEffect(effect));
 
@@ -97,7 +115,9 @@ namespace CardWar_v2.ComponentViews
             await _healthBar.UpdateBarByValue(Hp, maxHp);
             // Debug.Log($"Hp remain: {Hp}");
         }
+        #endregion
 
+        #region Do Skill
         public void DoSkillAnim(AnimationClip clip)
         {
             //TODO: Do animation: Charge toward target for melee or summon projectile for range
@@ -109,13 +129,13 @@ namespace CardWar_v2.ComponentViews
 
         public async Task UseSkill(SubSkill subSkill, List<CharacterModelView> targets)
         {
-            Debug.Log($"Doing sub-skill {subSkill.GetType()}");
+            // Debug.Log($"Doing sub-skill {subSkill.GetType()}");
             DoSkillAnim(subSkill.Clip);
             var tasks = targets.Where(t => t != null).Select(t => subSkill.DoSkill(this, t));
             await Task.Delay((int)(subSkill.DelayToSkill * 1000));
             await Task.WhenAll(tasks);
             if (subSkill.Clip != null) await WaitForAnimationEnd(_animator, subSkill.Clip.name);
-            Debug.Log($"Finished sub-skill {subSkill.GetType()}");
+            // Debug.Log($"Finished sub-skill {subSkill.GetType()}");
         }
 
         private async Task WaitForAnimationEnd(Animator animator, string clipName)
@@ -139,15 +159,17 @@ namespace CardWar_v2.ComponentViews
             }
         }
 
+        public void ApplyEffect(SkillEffect effect)
+        {
+            EffectViewFactory.Instance.CreateEffectView(effect, _effectBar.GetComponent<RectTransform>());
+        }
+        #endregion
+
+        #region Char Die
         private void SetDissolve(float value)
         {
             foreach (var m in _mats)
                 m.SetFloat("_Dissolve", value);
-        }
-
-        public void ApplyEffect(SkillEffect effect)
-        {
-            EffectViewFactory.Instance.CreateEffectView(effect, _effectBar.GetComponent<RectTransform>());
         }
 
         public async Task DestroyChar(float duration)
@@ -158,12 +180,13 @@ namespace CardWar_v2.ComponentViews
             sequence.OnComplete(() =>
             {
                 SetDissolve(1f);
-                BaseCard.Die();
+                // BaseCard.Die();
                 CardFactory.Instance.RecycleCardModel(this);
             });
 
             await sequence.AsyncWaitForCompletion();
         }
+        #endregion
 
         void OnDestroy()
         {

@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: Marceline
   Image: {fileID: -1827203796, guid: cd6b333434492dc40b29ee0b4a1bf9a5, type: 3}
   SplashArt: {fileID: 1503326498, guid: 7ede6f97f9563864b95f106b679bef23, type: 3}
-  Model: {fileID: 6596773079765604376, guid: ba3b02a616daf5841b3a8c98ffb700f8, type: 3}
+  Model: {fileID: 3311024075713941496, guid: ba3b02a616daf5841b3a8c98ffb700f8, type: 3}
   IsPlayable: 1
   AnimController: {fileID: 9100000, guid: a8df39c35b6061546a430e56e9019a15, type: 2}
   Hp: 300

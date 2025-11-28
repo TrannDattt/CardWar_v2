@@ -71,7 +71,7 @@ namespace CardWar_v2.ComponentViews
                 }
             }
 
-            var arrangedCharList = CharList.Where(c => c.IsPlayable).OrderByDescending(c => c.IsUnlocked);
+            var arrangedCharList = CharList.Where(c => c.IsPlayable).OrderByDescending(c => c.IsUnlocked).ThenBy(c => c.Name);
 
             foreach (var card in arrangedCharList)
             {
@@ -123,7 +123,8 @@ namespace CardWar_v2.ComponentViews
             {
                 var newBorder = new SelectBorderView(_iconSelectBorder, _container);
                 _selectedIconBorders.Add(newBorder);
-                newBorder.Rt.SetSiblingIndex(_container.childCount - 1 - _iconList.Count);
+                newBorder.Rt.SetSiblingIndex(0);
+                // newBorder.Rt.SetSiblingIndex(_container.childCount - 1 - _iconList.Count);
             }
             var selectBorder = _selectedIconBorders.FirstOrDefault(s => !s.IsActive);
 

@@ -10,6 +10,8 @@ using CardWar_v2.GameControl;
 using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Events;
+using static CardWar_v2.ComponentViews.FXPlayer;
+using static CardWar_v2.Datas.CharacterCardData;
 
 namespace CardWar_v2.Entities
 {
@@ -58,16 +60,17 @@ namespace CardWar_v2.Entities
         }
     }
 
-    public class CharacterCard : IDamagable
+    public class CharacterCard : IDamagable, ICanDoDamage
     {
         public CharacterCardData Data { get; private set; }
 
         public ECharacter Character => Data.Character;
-        public string Name => Data.name;
+        public string Name => Data.Name;
         public Sprite Image => Data.Image;
         public Sprite SplashArt => Data.SplashArt;
         public AnimatorController AnimController => Data.AnimController;
         public GameObject Model => Data.Model;
+        public List<Voice> VoiceLines => Data.VoiceLines;
 
         public bool IsPlayable => Data.IsPlayable;
         public bool IsUnlocked { get; private set; }
@@ -76,7 +79,7 @@ namespace CardWar_v2.Entities
         public float CurHp => Data.Hp + Data.HpPerLevel * Level + _bonusHp;
         private float _bonusHp;
 
-        public float CurAtk => Data.Atk + Data.AtkPerLevel * Level * (1 - GetChillDebuffAmount()) + _bonusAtk;
+        public float CurAtk => Mathf.Max(0, (Data.Atk + Data.AtkPerLevel * Level + _bonusAtk) * (1 - GetChillDebuffAmount()));
         private float _bonusAtk;
 
         public float CurArmor => Data.Armor + Data.ArmorPerLevel * Level + _bonusArmor;
@@ -96,6 +99,8 @@ namespace CardWar_v2.Entities
         public UnityEvent<SkillCard> OnUseSkill { get; set; } = new();
         public UnityEvent<SkillEffect> OnApplyEffect { get; set; } = new();
         public UnityEvent OnChangeHp { get; set; } = new();
+        public UnityEvent<EFXType> OnTakingDamage { get; set; } = new();
+        public UnityEvent<float> OnDealDamage { get; set; } = new();
         public UnityEvent OnDeath { get; set; } = new();
 
         public CharacterCard(CharacterCardData data, int level = 1, bool isUnlock = false)
@@ -167,9 +172,9 @@ namespace CardWar_v2.Entities
             OnDeath.RemoveAllListeners();
         }
 
-        public void TakeDamage(float amount, EDamageType type)
+        public void TakeDamage(ICanDoDamage attacker, float amount, EDamageType type, EFXType damageSource)
         {
-            if (_isDeath) return;
+            if (_isDeath || type == EDamageType.None) return;
 
             var dmgReduce = type switch
             {
@@ -186,7 +191,14 @@ namespace CardWar_v2.Entities
                             ? (ActiveEffects[ESkillEffect.Strengthen] as StrengthenEffect).StrengthAmount
                             : 0f;
             
-            ChangeHp((-amount + dmgReduce) * Mathf.Max(0, 1 + vulAmount - strAmount));
+            var finalDamage = Mathf.Max(0, (amount - dmgReduce) * (1 + vulAmount - strAmount));
+
+            Debug.Log($"Vul amount = {vulAmount - strAmount}");
+            Debug.Log($"Target '{Name}' took {finalDamage} damage");
+            ChangeHp(-finalDamage);
+            OnTakingDamage?.Invoke(damageSource);
+
+            if (CurHp <= 0) Die();
         }
 
         private float GetChillDebuffAmount()
@@ -197,11 +209,11 @@ namespace CardWar_v2.Entities
         #endregion
 
         #region Effect Manager
-        public void ApplyEffect(SkillEffect effect)
+        public async Task ApplyEffect(SkillEffect effect)
         {
             if (_isDeath) return;
 
-            Debug.Log(effect.EffectType);
+            // Debug.Log(effect.EffectType);
             Debug.Log($"Applying {effect.EffectType} to {Name}");
             if (ActiveEffects.ContainsKey(effect.EffectType))
             {
@@ -213,7 +225,7 @@ namespace CardWar_v2.Entities
                 OnApplyEffect?.Invoke(effect);
             }
             
-            ActiveEffects[effect.EffectType].ApplyEffect();
+            await ActiveEffects[effect.EffectType].ApplyEffect();
         }
 
         public async Task DoEffects()
@@ -224,13 +236,13 @@ namespace CardWar_v2.Entities
             activeEffects.Reverse();
             foreach (var effect in activeEffects)
             {
+                await effect.DoEffect();
+
                 if (effect.Duration <= 0)
                 {
                     RemoveEffect(effect.EffectType);
                     continue;
                 }
-
-                await effect.DoEffect();
             }
         }
 

@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: Jake
   Image: {fileID: 462387245, guid: 20f2590f20281b544b648b7c90e347cb, type: 3}
   SplashArt: {fileID: -772179202, guid: 7ede6f97f9563864b95f106b679bef23, type: 3}
-  Model: {fileID: 7260707739080610702, guid: 05e55cb5c03949e4f9465f293fc6f2c4, type: 3}
+  Model: {fileID: 7454573618932392308, guid: 1cc368bbd11da3e438b0ce8c4b633b70, type: 3}
   IsPlayable: 1
   AnimController: {fileID: 9100000, guid: afac9b315cbf75e48a2ddeca00a729cf, type: 2}
   Hp: 650

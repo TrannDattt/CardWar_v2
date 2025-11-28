@@ -17,7 +17,6 @@ MonoBehaviour:
   Description: 
   Skill:
   - rid: 3413777266601885836
-  - rid: 3413777334407528448
   references:
     version: 2
     RefIds:
@@ -41,11 +40,3 @@ MonoBehaviour:
         Projectile: {fileID: 8542387179039130532, guid: b8682b7646d938d49911c77830a4f5d1, type: 3}
         OffsetToCaster: {x: 3, y: 2, z: 0}
         DamageType: 1
-    - rid: 3413777334407528448
-      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
-      data:
-        Clip: {fileID: 0}
-        DelayToSkill: 0
-        TargetSide: 0
-        PositionTargets: 
-        Effects: []

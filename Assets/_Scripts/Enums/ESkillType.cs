@@ -20,5 +20,6 @@ namespace CardWar_v2.Enums
         Strengthen,
         Omnivamp,
         Frostbite,
+        Thorns,
     }
 }

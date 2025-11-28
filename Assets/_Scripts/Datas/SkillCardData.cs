@@ -10,6 +10,7 @@ using CardWar_v2.ComponentViews;
 using Demo;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.Events;
 
 namespace CardWar_v2.Datas
 {
@@ -92,9 +93,10 @@ namespace CardWar_v2.Datas
         public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
             // TODO: Spawn projectile with factory
+            if (Projectile == null) return;
             var projectile = UnityEngine.Object.Instantiate(Projectile, casterModel.transform);
             await projectile.FlyToTarget(casterModel.transform.position, OffsetToCaster,
-                                        targetModel.transform.position + OffsetToCaster.y * Vector3.up,
+                                        targetModel.transform.position + 3 * Vector3.up,
                                         () => DoDamage(casterModel, targetModel.BaseCard));
         }
 
@@ -103,8 +105,9 @@ namespace CardWar_v2.Datas
             var caster = casterModel.BaseCard;
             var damage = (caster.GetCurStat() * CasterStatMult + (target as CharacterCard).GetCurStat() * TargetStatMult).Total;
 
-            target.TakeDamage(damage, DamageType);
-            Debug.Log($"Target '{target}' took {damage} projectile damage from Caster '{caster}'");
+            target.TakeDamage(caster, damage, DamageType, FXPlayer.EFXType.Hit);
+            caster.OnDealDamage?.Invoke(damage);
+            // Debug.Log($"Target '{target}' took {damage} projectile damage from Caster '{caster}'");
         }
     }
     #endregion
@@ -115,23 +118,25 @@ namespace CardWar_v2.Datas
     {
         public List<AppliedEffect> Effects;
 
-        private List<SkillEffect> GetSkillEffect(CharacterCard caster, CharacterCard target)
+        private List<SkillEffect> GetSkillEffect(CharacterModelView casterModel, CharacterModelView targetModel)
         {
             var result = new List<SkillEffect>();
+            var caster = casterModel.BaseCard;
+            var target = targetModel.BaseCard;
 
             foreach (var e in Effects)
             {
                 var effect = e.EffectType switch
                 {
-                    ESkillEffect.Poison => new PoisonEffect(caster, target, e.Duration),
-                    ESkillEffect.Regen => new RegenEffect(caster, target, e.Duration),
-                    ESkillEffect.Vulnerable => new VulnerableEffect(caster, target, e.Duration, e.Amount),
-                    ESkillEffect.Strengthen => new StrengthenEffect(caster, target, e.Duration, e.Amount),
-                    ESkillEffect.Silence => new SilenceEffect(caster, target, e.Duration),
-                    ESkillEffect.Burn => new BurnEffect(caster, target, e.Duration),
-                    ESkillEffect.Chill => new ChillEffect(caster, target, e.Duration),
-                    ESkillEffect.Omnivamp => new OmnivampEffect(caster, target, e.Duration, e.Amount),
-                    ESkillEffect.Frostbite => new FrostbiteEffect(caster, target, e.Duration),
+                    ESkillEffect.Poison => new PoisonEffect(e.EffectType, caster, target, e.Duration, targetModel.transform),
+                    ESkillEffect.Regen => new RegenEffect(e.EffectType, caster, target, e.Duration, targetModel.transform),
+                    ESkillEffect.Vulnerable => new VulnerableEffect(e.EffectType, caster, target, e.Duration, targetModel.transform, e.Amount),
+                    ESkillEffect.Strengthen => new StrengthenEffect(e.EffectType, caster, target, e.Duration, targetModel.transform, e.Amount),
+                    ESkillEffect.Silence => new SilenceEffect(e.EffectType, caster, target, e.Duration, targetModel.transform),
+                    ESkillEffect.Burn => new BurnEffect(e.EffectType, caster, target, e.Duration, targetModel.transform),
+                    ESkillEffect.Chill => new ChillEffect(e.EffectType, caster, target, e.Duration, targetModel.transform),
+                    ESkillEffect.Omnivamp => new OmnivampEffect(e.EffectType, caster, target, e.Duration, targetModel.transform, e.Amount),
+                    ESkillEffect.Frostbite => new FrostbiteEffect(e.EffectType, caster, target, e.Duration, targetModel.transform),
                     _ => (SkillEffect)null,
                 };
 
@@ -148,10 +153,11 @@ namespace CardWar_v2.Datas
 
         public override async Task DoSkill(CharacterModelView caster, CharacterModelView target)
         {
-            var effects = GetSkillEffect(caster.BaseCard, target.BaseCard);
-
-            effects.ForEach(e => target.BaseCard.ApplyEffect(e));
-            await Task.CompletedTask;
+            var effects = GetSkillEffect(caster, target);
+            foreach (var e in effects)
+            {
+                await target.BaseCard.ApplyEffect(e);
+            }
         }
 
     //     public override string GenerateDescription(CharacterCard owner)
@@ -221,12 +227,13 @@ namespace CardWar_v2.Datas
             var casterStat = casterModel.BaseCard.GetCurStat();
             var targetStat = targetModel.BaseCard.GetCurStat();
             var damage = (casterStat * CasterStatMult + targetStat * TargetStatMult).Total;
-            await Task.Delay(300);
+            await Task.Delay(150);
 
-            targetModel.BaseCard.TakeDamage(damage, DamageType);
+            targetModel.BaseCard.TakeDamage(casterModel.BaseCard, damage, DamageType, FXPlayer.EFXType.Hit);
+            casterModel.BaseCard.OnDealDamage?.Invoke(damage);
             await casterModel.transform.DOMove(startPos, 1).SetEase(Ease.InCubic).AsyncWaitForCompletion();
 
-            Debug.Log($"Target '{targetModel.BaseCard.Name}' took {damage} damage from Caster '{casterModel.BaseCard.Name}'");
+            // Debug.Log($"Target '{targetModel.BaseCard.Name}' took {damage} damage from Caster '{casterModel.BaseCard.Name}'");
         }
     }
     #endregion
@@ -244,10 +251,10 @@ namespace CardWar_v2.Datas
             var casterStat = casterModel.BaseCard.GetCurStat();
             var targetStat = targetModel.BaseCard.GetCurStat();
 
-            var hpChange = (casterStat * HpMult.CasterStatMult + targetStat + HpMult.TargetStatMult).Total;
-            var atkChange = (casterStat * AtkMult.CasterStatMult + targetStat + AtkMult.TargetStatMult).Total;
-            var amrChange = (casterStat * AmrMult.CasterStatMult + targetStat + AmrMult.TargetStatMult).Total;
-            var resChange = (casterStat * ResMult.CasterStatMult + targetStat + ResMult.TargetStatMult).Total;
+            var hpChange = (casterStat * HpMult.CasterStatMult + targetStat * HpMult.TargetStatMult).Total;
+            var atkChange = (casterStat * AtkMult.CasterStatMult + targetStat * AtkMult.TargetStatMult).Total;
+            var amrChange = (casterStat * AmrMult.CasterStatMult + targetStat * AmrMult.TargetStatMult).Total;
+            var resChange = (casterStat * ResMult.CasterStatMult + targetStat * ResMult.TargetStatMult).Total;
 
             casterModel.BaseCard.ChangeStat(new(hpChange, atkChange, amrChange, resChange));
 
@@ -262,5 +269,51 @@ namespace CardWar_v2.Datas
         public CharStat CasterStatMult;
         public CharStat TargetStatMult;
     }
+    #endregion
+
+    #region Conditional Skill
+    public class ConditionalSkill : SubSkill
+    {
+        [SerializeReference]
+        [SRDemo(typeof(ConditionCheck))]
+        public List<ConditionCheck> Conditions;
+        
+
+
+        public bool TargetHpPercentCheck;
+        [Range(0, 1)] public float TargetHpPercentThreshold;
+
+        public List<SubSkill> TrueSkills;
+        public UnityEvent OnConditionMet = new();
+
+        // public bool CheckCanDoSkill(CharacterCard caster, CharacterCard target)
+        // {
+        //     OnConditionMet?.Invoke();
+        //     // return true;
+        // }
+
+        public override Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    [Serializable]
+    public abstract class ConditionCheck
+    {
+        public abstract bool CheckCondition(CharacterCard caster, CharacterCard target);
+    }
+
+    // [Serializable]
+    // public class EffectCheck : ConditionCheck
+    // {
+    //     public List<ESkillEffect> TargetHasEffects;
+    // }
+
+    // [Serializable]
+    // public class StatCheck : ConditionCheck
+    // {
+    //     [Range(0, 1)] public CharStat StatPercentThreshold;
+    // }
     #endregion
 }

@@ -78,7 +78,7 @@ namespace CardWar_v2.SceneViews
 
             _iconFactory.CreateNewIcon(EIconType.Exp, level.Rewards.Exp, _rewardListRt);
             _iconFactory.CreateNewIcon(EIconType.Gold, level.Rewards.Gold, _rewardListRt);
-            _iconFactory.CreateNewIcon(EIconType.Gem, level.Rewards.Gem, _rewardListRt);
+            if (!level.ClearCheck) _iconFactory.CreateNewIcon(EIconType.Gem, level.Rewards.Gem, _rewardListRt);
             
             _charList.ShowCharacterIcons(true, true);
             _fightBtn.onClick.AddListener(() =>
@@ -89,7 +89,11 @@ namespace CardWar_v2.SceneViews
 
         void Start()
         {
-            _backBtn.onClick.AddListener(async () => await SceneNavigator.Instance.BackToPreviousScene());
+            _backBtn.onClick.AddListener(async () => await SceneNavigator.Instance.ChangeScene(EScene.MainMenu, async () =>
+            {
+                var mainMenuScene = FindFirstObjectByType<MainMenuSceneView>();
+                await mainMenuScene.ChangeTab(MainMenuSceneView.EMenuTab.Fight);
+            }));
 
             _characters.ForEach(c =>
             {
@@ -102,12 +106,14 @@ namespace CardWar_v2.SceneViews
             _charList.SetSelectAmount(3);
             _charList.OnIconClicked.AddListener((i, isSelected) => 
             {
-                // _characters.ForEach(c => Debug.Log(c.BaseCard.Name));
+                // Debug.Log($"{(!isSelected ? "Uns" : "S")}electd card {i.BaseCard.Name}");
                 var charIcon = _characters.FirstOrDefault(c => c.BaseCard.Data == (isSelected ? null : i.BaseCard.Data));
                 charIcon.SetBaseCard(isSelected ? i.BaseCard : null, true, false);
                 if (isSelected) _selfTeam.Add(i.BaseCard);
                 else _selfTeam.Remove(i.BaseCard);
             });
+            
+            GameAudioManager.Instance.PlayBackgroundMusic(GameAudioManager.EBgm.Home);
         }
 
         void OnEnable()

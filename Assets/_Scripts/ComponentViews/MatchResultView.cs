@@ -35,13 +35,13 @@ namespace CardWar_v2.ComponentViews
 
         public async Task ShowResult(Level level, bool isWin, FightLogger logger)
         {
+            // Debug.Log($"Conclude match: {isWin}");
             GameplayManager.Instance.PauseGame();
-            foreach(Transform child in _rewardContainer)
-            {
-                IconFactory.Instance.RecycleIconView(child.GetComponent<IconView>());
-            }
-
-            _nextButton.gameObject.SetActive(isWin);
+            // foreach(Transform child in _rewardContainer)
+            // {
+            //     if (child.TryGetComponent<IconView>(out var icon))
+            //         IconFactory.Instance.RecycleIconView(icon);
+            // }
             
             ShowUI();
 
@@ -59,7 +59,9 @@ namespace CardWar_v2.ComponentViews
 
             if (isWin) 
             {
+                bool isClearBefore = level.ClearCheck;
                 level.ClearLevel(turnConditionCheck, allAliveCheck);
+
                 var expIcon = IconFactory.Instance.CreateNewIcon(IconFactory.EIconType.Exp, level.Rewards.Exp, _rewardContainer);
                 await expIcon.SetIconAlpha(0f);
                 await expIcon.SetIconAlpha(1f, 0.3f);
@@ -70,11 +72,18 @@ namespace CardWar_v2.ComponentViews
                 await goldIcon.SetIconAlpha(1f, 0.3f);
                 // Debug.Log($"Give player {level.Rewards.Gold} Gold");
 
-                var gemIcon = IconFactory.Instance.CreateNewIcon(IconFactory.EIconType.Gem, level.Rewards.Gem, _rewardContainer);
-                await gemIcon.SetIconAlpha(0f);
-                await gemIcon.SetIconAlpha(1f, 0.3f);
-                // Debug.Log($"Give player {level.Rewards.Gem} Gem");
+                if (!isClearBefore)
+                {
+                    var gemIcon = IconFactory.Instance.CreateNewIcon(IconFactory.EIconType.Gem, level.Rewards.Gem, _rewardContainer);
+                    await gemIcon.SetIconAlpha(0f);
+                    await gemIcon.SetIconAlpha(1f, 0.3f);
+                    // Debug.Log($"Give player {level.Rewards.Gem} Gem");
+                }
             }
+
+            _nextButton.gameObject.SetActive(isWin);
+            _homeButton.gameObject.SetActive(true);
+            _retryButton.gameObject.SetActive(true);
         }
 
         public void ShowUI()
@@ -85,6 +94,9 @@ namespace CardWar_v2.ComponentViews
         public void HideUI()
         {
             _rt.gameObject.SetActive(false);
+            _nextButton.gameObject.SetActive(false);
+            _retryButton.gameObject.SetActive(false);
+            _homeButton.gameObject.SetActive(false);
         }
 
         void Start()

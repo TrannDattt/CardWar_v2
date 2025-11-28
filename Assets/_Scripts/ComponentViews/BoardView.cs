@@ -90,10 +90,10 @@ namespace CardWar_v2.ComponentViews
         {
             if (charCard == null) return;
             var region = targetSide == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
-            Debug.Log($"Destroy dead character {charCard.Name} at region {region}");
+            // Debug.Log($"Destroy dead character {charCard.Name} at region {region}");
             var slot = region.GetSlotByCard(charCard);
             if (slot == null) return;
-            Debug.Log($"and at position {slot}");
+            // Debug.Log($"and at position {slot}");
             var cardView = slot.CharInSlot;
 
             slot.RemoveCard(false);

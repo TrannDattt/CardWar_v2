@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8cfe5dd8fca9fe045941e5af247f4b47
+guid: 1242fe28dc8ee5f488f0240c00530b05
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -47,8 +47,8 @@ ModelImporter:
     clipAnimations:
     - serializedVersion: 16
       name: Idle
-      takeName: rig|rigAction
-      internalID: 3374748389425109202
+      takeName: rig|Action
+      internalID: -518154144676478023
       firstFrame: 1
       lastFrame: 25
       wrapMode: 0
@@ -57,7 +57,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -77,7 +77,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Skill 1
       takeName: rig|rigAction
-      internalID: -1497911417332869056
+      internalID: 3374748389425109202
       firstFrame: 26
       lastFrame: 75
       wrapMode: 0
@@ -105,8 +105,8 @@ ModelImporter:
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: Skill 2
-      takeName: rig|rigAction
-      internalID: -5398960325144159360
+      takeName: rig|Action
+      internalID: -1768243478674317146
       firstFrame: 76
       lastFrame: 150
       wrapMode: 0
@@ -134,8 +134,8 @@ ModelImporter:
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: Skill 3
-      takeName: rig|rigAction
-      internalID: -9134896869185069168
+      takeName: rig|Action
+      internalID: 4074780379610402295
       firstFrame: 151
       lastFrame: 225
       wrapMode: 0
@@ -163,8 +163,8 @@ ModelImporter:
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: Die
-      takeName: rig|rigAction
-      internalID: -9122751193049542992
+      takeName: rig|Action
+      internalID: -8307320769355874456
       firstFrame: 226
       lastFrame: 250
       wrapMode: 0

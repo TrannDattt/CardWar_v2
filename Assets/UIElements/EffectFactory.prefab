@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2407164291791116625
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6104015245928320976}
+  - component: {fileID: 819704544930463900}
+  m_Layer: 0
+  m_Name: EffectFactory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6104015245928320976
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2407164291791116625}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &819704544930463900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2407164291791116625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cb102e2112237d40b742b5efe3ba5e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _iconMappings:
+  - EffectType: 1
+    Icon: {fileID: 386943245, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    OnApplyFX: {fileID: 6470223850953089096, guid: a74b2bfe0433a72469fdb3538cd72332, type: 3}
+    OnActiveFX: {fileID: 0}
+  - EffectType: 2
+    Icon: {fileID: -169450226, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    OnApplyFX: {fileID: 1524533970525000386, guid: 1133dff0b5fda2e4295d301899b1582d, type: 3}
+    OnActiveFX: {fileID: 0}
+  - EffectType: 3
+    Icon: {fileID: 995180074, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    OnApplyFX: {fileID: 6470223850953089096, guid: 1e54877675f6e4a46ad7ca7c4d7a5bf6, type: 3}
+    OnActiveFX: {fileID: 0}
+  - EffectType: 4
+    Icon: {fileID: 971938667, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    OnApplyFX: {fileID: 1524533970525000386, guid: d73ad74d98f8a334da43a0d11c7bb1d5, type: 3}
+    OnActiveFX: {fileID: 0}
+  - EffectType: 5
+    Icon: {fileID: -1993894796, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    OnApplyFX: {fileID: 344459658360607702, guid: 607c455b28f4d16409254efd2ab6f174, type: 3}
+    OnActiveFX: {fileID: 0}
+  - EffectType: 6
+    Icon: {fileID: 1659532821, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    OnApplyFX: {fileID: 3337905222051100615, guid: b61a89fa0e5110e4db5baf1174b8d2c7, type: 3}
+    OnActiveFX: {fileID: 0}
+  - EffectType: 7
+    Icon: {fileID: -374878251, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    OnApplyFX: {fileID: 3337905222051100615, guid: 7660b8dc1d5d89141a451f8960177eec, type: 3}
+    OnActiveFX: {fileID: 0}
+  - EffectType: 8
+    Icon: {fileID: 171650554, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    OnApplyFX: {fileID: 6470223850953089096, guid: d48603a6599c6474297bf61f5059baea, type: 3}
+    OnActiveFX: {fileID: 0}
+  - EffectType: 9
+    Icon: {fileID: 21300000, guid: 550aa7d5c0814c4438eeb101a54bf7dd, type: 3}
+    OnApplyFX: {fileID: 3337905222051100615, guid: 19e0cb40889027a499a2493fda4b9611, type: 3}
+    OnActiveFX: {fileID: 0}
+  - EffectType: 10
+    Icon: {fileID: 0}
+    OnApplyFX: {fileID: 0}
+    OnActiveFX: {fileID: 0}
+  _effectViewPrefab: {fileID: 8213708704505645575, guid: 237b53af76ba67641881e2d76d188ab4, type: 3}

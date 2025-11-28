@@ -56,7 +56,7 @@ MonoBehaviour:
         Clip: {fileID: 0}
         DelayToSkill: 0
         TargetSide: 1
-        PositionTargets: 00000000
+        PositionTargets: 05000000
         Effects:
         - EffectType: 2
           Amount: 0

@@ -14,5 +14,6 @@ namespace CardWar_v2.Enums
         Back = 2,
         Random = 3,
         Self = 4,
+        LastTarget = 5,
     }
 }

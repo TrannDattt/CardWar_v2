@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628af7680cc8cf847a5455772d37dfb1, type: 3}
+  m_Name: IK_Skill 3
+  m_EditorClassIdentifier: 
+  Name: Frostbound Aegis
+  Image: {fileID: 21300000, guid: f3d52cdf1a5263a468baba5c36ec352d, type: 3}
+  Description: '- Apply Strengthen to all allies, decrease incoming damage by 10%
+    for 1 turn.
+
+    - Remove all debuff from all allies.
+
+    - Apply Vulnerable
+    to himself, increase incoming damage by 90% for 1 turn.'
+  Skill:
+  - rid: 4516365139864977505
+  - rid: 4516365282946842719
+  references:
+    version: 2
+    RefIds:
+    - rid: 4516365139864977505
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 7400000, guid: c7141e0c17769744a913497750063bbb, type: 2}
+        DelayToSkill: 2
+        TargetSide: 0
+        PositionTargets: 000000000100000002000000
+        Effects:
+        - EffectType: 7
+          Amount: 0.1
+          Duration: 1
+    - rid: 4516365282946842719
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 04000000
+        Effects:
+        - EffectType: 3
+          Amount: 0.9
+          Duration: 1

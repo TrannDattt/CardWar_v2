@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Card
   - Selectable
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - 
   - Card
   - Selector Target
-  - 
+  - FX
   - 
   - 
   - 
@@ -42,6 +43,9 @@ TagManager:
   m_SortingLayers:
   - name: BackgroudnUI
     uniqueID: 1720222993
+    locked: 0
+  - name: FX
+    uniqueID: 1321818993
     locked: 0
   - name: Default
     uniqueID: 0

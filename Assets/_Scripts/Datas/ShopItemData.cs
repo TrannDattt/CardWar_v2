@@ -8,7 +8,7 @@ namespace CardWar_v2.Datas
     public class ShopItemData : ScriptableObject
     {
         public string Id => GetInstanceID().ToString();
-        public ScriptableObject Item;
+        public CharacterCardData Item;
         public EShopItemType Type;
         public int StockAmount;
         public bool UnlimitedAmount;

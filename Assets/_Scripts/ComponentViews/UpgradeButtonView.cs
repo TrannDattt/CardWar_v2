@@ -25,7 +25,6 @@ namespace CardWar_v2.ComponentViews
         public void AddListener(Action callback = null)
         {
             _levelUpBtn.onClick.RemoveAllListeners();
-            Debug.Log("Add listener to level up button");
             _levelUpBtn.onClick.AddListener(() => callback());
         }
     }

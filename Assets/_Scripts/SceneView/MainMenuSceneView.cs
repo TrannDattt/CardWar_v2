@@ -21,6 +21,9 @@ namespace CardWar_v2.SceneViews
             Fight,
             Upgrade,
             Shop,
+            CharDetail,
+            SkillDetail,
+            // None,
         }
 
         [SerializeField] private List<MenuTab> _menuTabs;
@@ -33,13 +36,13 @@ namespace CardWar_v2.SceneViews
         [SerializeField] private float _offsetX;
 
         private EMenuTab _activeTab;
+        // private EMenuTab _activeTab = EMenuTab.None;
         private Player CurPlayer => PlayerSessionManager.Instance.CurPlayer;
 
-        private async Task ChangeTab(EMenuTab tab)
+        public async Task ChangeTab(EMenuTab tab)
         {
-            // Debug.Log($"Changing to tab: {tab}");
             if (_activeTab == tab) return;
-
+            Debug.Log($"Changing to tab: {tab}");
             var activeTab = _menuTabs.Find(t => t.Tab == _activeTab);
             var newTab = _menuTabs.Find(t => t.Tab == tab);
             if (activeTab == null || newTab == null) return;
@@ -79,7 +82,9 @@ namespace CardWar_v2.SceneViews
                 _activeTab = tab;
             });
 
+            // await Task.WhenAll(_navBar.SelectButton(tab), sequence.AsyncWaitForCompletion());
             await sequence.AsyncWaitForCompletion();
+            _navBar.SelectButton(tab);
         }
         
         public void UpdateCurrencyCounter()
@@ -89,16 +94,23 @@ namespace CardWar_v2.SceneViews
             _gemCounter.SetCount(CurPlayer.Gem);
         }
 
-        void Start()
+        async void Start()
         {
-            _activeTab = EMenuTab.Home;
+            // _activeTab = EMenuTab.Home;
             _navBar.NavButtons.ForEach(nb =>
             {
-                nb.Button.onClick.AddListener(async () => await ChangeTab(nb.Tab));
+                nb.Button.onClick.AddListener(async () => 
+                {
+                    await ChangeTab(nb.Tab);
+                });
             });
+
+            await ChangeTab(EMenuTab.Home);
 
             CurPlayer.OnGoldUpdated.AddListener(() => _goldCounter.SetCount(CurPlayer.Gold));
             CurPlayer.OnGemUpdated.AddListener(() => _gemCounter.SetCount(CurPlayer.Gem));
+
+            GameAudioManager.Instance.PlayBackgroundMusic(GameAudioManager.EBgm.Home);
         }
     }
 

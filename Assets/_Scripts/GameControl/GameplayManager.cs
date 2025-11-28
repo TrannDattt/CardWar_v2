@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CardWar_v2.Entities;
 using CardWar_v2.Enums;
 using CardWar_v2.SceneViews;
@@ -203,15 +204,6 @@ namespace CardWar_v2.GameControl
         private Level _curLevel;
         private List<CharacterCard> _selfTeam = new();
 
-        public void SetLevelDetail(Level level)
-        {
-            SceneNavigator.Instance.ChangeScene(EScene.Campaign).ContinueWith(_ =>
-            {
-                var campaignView = FindFirstObjectByType<CampaignView>();
-                campaignView.SetLevelDetail(level);
-            });
-        }
-
         public async void StartNewFight()
         {
             ResumeGame();
@@ -219,11 +211,8 @@ namespace CardWar_v2.GameControl
             _selfTeam.ForEach(c => c.ResetCharStat());
             _curLevel.Enemies.ForEach(c => c.ResetCharStat());
 
-            async void SetupMatch(EScene sk)
+            async void SetupMatch()
             {
-                if(sk != EScene.Ingame) return;
-                SceneNavigator.Instance.OnSceneLoaded.RemoveListener(SetupMatch);
-
                 _ingameScene = FindFirstObjectByType<IngameSceneView>();
                 await _ingameScene.SetupMatch(_selfTeam, _curLevel);
                 _turnChangeTime = 0;
@@ -232,9 +221,7 @@ namespace CardWar_v2.GameControl
                 ChangeTurn(EPlayerTarget.Ally);
             }
 
-            SceneNavigator.Instance.OnSceneLoaded.AddListener(SetupMatch);
-
-            await SceneNavigator.Instance.ChangeScene(EScene.Ingame);
+            await SceneNavigator.Instance.ChangeScene(EScene.Ingame, SetupMatch);
         }
 
         public void StartCampaignLevel(Level level, List<CharacterCard> selfTeam)

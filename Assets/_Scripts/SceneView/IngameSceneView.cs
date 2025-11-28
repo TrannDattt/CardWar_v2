@@ -39,9 +39,6 @@ namespace CardWar_v2.SceneViews
         [SerializeField] private CardDetailView _cardDetailView;
         [SerializeField] private MatchResultView _concludeMatchView;
         
-        [Header("Buttons")]
-        [SerializeField] private Button _restartBtn;
-        
         #region Draw Card
         private async Task DrawCardAnimation(SkillCardView cardView, Action callback = null)
         {
@@ -192,21 +189,46 @@ namespace CardWar_v2.SceneViews
                 
                 if (caster.BaseCard.ActiveEffects.ContainsKey(ESkillEffect.Silence))
                 {
-                    Debug.Log($"Caster '{caster}' is silenced and cannot use skill {skill.Name}");
-                    _skillQueueView.RemoveCard(skillCard, true);
+                    // Debug.Log($"Caster '{caster}' is silenced and cannot use skill {skill.Name}");
+                    var offsetAngleZ = 5f;
+                    // Debug.Log("Shake");
+                    Sequence sequence = DOTween.Sequence();
+
+                    sequence.Append(skillCard.transform.DOLocalRotate(new Vector3(0, 0, offsetAngleZ), .05f, RotateMode.Fast));
+                    sequence.Append(skillCard.transform.DOLocalRotate(new Vector3(0, 0, -offsetAngleZ), .1f, RotateMode.Fast));
+                    sequence.Append(skillCard.transform.DOLocalRotate(new Vector3(0, 0, offsetAngleZ), .1f, RotateMode.Fast));
+                    sequence.Append(skillCard.transform.DOLocalRotate(new Vector3(0, 0, -offsetAngleZ), .1f, RotateMode.Fast));
+                    sequence.Append(skillCard.transform.DOLocalRotate(new Vector3(0, 0, 0f), .05f, RotateMode.Fast));
+                    sequence.AppendInterval(.2f);
+                    sequence.OnComplete(() =>
+                    {
+                        _skillQueueView.RemoveCard(skillCard, true);
+                    });
+
+                    await sequence.AsyncWaitForCompletion();
                     continue;
                 }
 
                 caster.BaseCard.OnUseSkill?.Invoke(skill);
                 // Debug.Log($"Caster '{caster}' using skill {skill.Name}");
+                List<CharacterModelView> targets = new();
                 foreach (var ss in skill.SubSkills)
                 {
                     var targetSide = ss.TargetSide == casterSide ? EPlayerTarget.Ally : EPlayerTarget.Enemy;
-                    var targets = new List<CharacterModelView>();
+                    // var newTargets = new List<CharacterModelView>();
+                    // var pts = ss.PositionTargets;
+
+                    // for (int i = 0; i < pts.Count; i++)
+                    // {
+                    //     if (pts[i] == EPositionTarget.LastTarget)
+                    // }
+                    //TODO: Maybe do something if there are multiple targets
+                    if (!ss.PositionTargets.Contains(EPositionTarget.LastTarget)) targets.Clear();
                     foreach(var pt in ss.PositionTargets)
                     {
+                        if (pt == EPositionTarget.LastTarget) continue;
                         // Debug.Log($"Get target {pt} at position {targetSide}");
-                        bool isFlexTarget = _boardView.GetCharactersInRegion(targetSide).Count >= ss.PositionTargets.Count;
+                        bool isFlexTarget = _boardView.GetCharactersInRegion(targetSide).Count >= targets.Count;
                         if (pt == EPositionTarget.Self) targets.Add(caster);
                         else targets.Add(_boardView.GetCharacterByPos(targetSide, pt, isFlexTarget));
                     }
@@ -219,14 +241,14 @@ namespace CardWar_v2.SceneViews
 
                     await caster.UseSkill(ss, targets);
 
-                    var destroyTask = new List<Task>();
-                    foreach (var t in targets)
-                    {
-                        if (t == null) continue;
-                        if (t.Hp > 0) continue;
-                        destroyTask.Add(DestroyChar(t, targetSide));
-                    }
-                    await Task.WhenAll(destroyTask);
+                    // var destroyTask = new List<Task>();
+                    // foreach (var t in targets)
+                    // {
+                    //     if (t == null) continue;
+                    //     if (t.Hp > 0) continue;
+                    //     destroyTask.Add(DestroyChar(t, targetSide));
+                    // }
+                    // await Task.WhenAll(destroyTask);
                 }
                 _skillQueueView.RemoveCard(skillCard, true);
             }
@@ -256,6 +278,11 @@ namespace CardWar_v2.SceneViews
             charModel.OnModelClicked.AddListener(async (_) =>
             {
                 await _cardDetailView.ShowCharDetail(charModel.BaseCard);
+            });
+
+            charModel.BaseCard.OnDeath.AddListener(async () =>
+            {
+                await DestroyChar(charModel, playerSide);
             });
         }
         #endregion
@@ -336,10 +363,7 @@ namespace CardWar_v2.SceneViews
 
         void Start()
         {
-            _restartBtn.onClick.AddListener(() =>
-            {
-                GameplayManager.Instance.StartNewFight();
-            });
+            GameAudioManager.Instance.PlayBackgroundMusic(GameAudioManager.EBgm.Ingame);
         }
         #endregion
     }

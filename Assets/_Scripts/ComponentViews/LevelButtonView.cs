@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CardWar_v2.Datas;
 using CardWar_v2.GameControl;
+using CardWar_v2.SceneViews;
+using CardWar_v2.Untils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,7 +24,7 @@ namespace CardWar_v2.ComponentViews
 
         public async void Initialize()
         {
-            var level = PlayerSessionManager.Instance.CampaignLevels.Find(l => l.Chapter == ChapterNumber && l.Room == RoomNumber);
+            var level = PlayerSessionManager.Instance.CampaignLevels.FirstOrDefault(l => l.Data.Id == _levelData.Id);
             var levelIndex = PlayerSessionManager.Instance.CampaignLevels.IndexOf(level);
 
             _button.interactable = levelIndex == 0 || PlayerSessionManager.Instance.CampaignLevels[levelIndex - 1].ClearCheck;
@@ -33,9 +36,13 @@ namespace CardWar_v2.ComponentViews
 
             _buttonText.SetText($"{ChapterNumber}-{RoomNumber}");
             _button.onClick.RemoveAllListeners();
-            _button.onClick.AddListener(() =>
+            _button.onClick.AddListener(async () =>
             {
-                GameplayManager.Instance.SetLevelDetail(level);
+                await SceneNavigator.Instance.ChangeScene(EScene.Campaign, () =>
+                {
+                    var campaignView = FindFirstObjectByType<CampaignView>();
+                    campaignView.SetLevelDetail(level);
+                });
             });
         }
     }

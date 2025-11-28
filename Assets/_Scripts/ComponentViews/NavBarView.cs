@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -14,14 +15,23 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private ButtonSelectOverlay _buttonSelectOverlay;
         public List<NavButton> NavButtons;
 
+        public async void SelectButton(EMenuTab key)
+        {
+            var button = NavButtons.FirstOrDefault(b => b.Tab == key).Button;
+            if(button == null) return;
+            await _buttonSelectOverlay.MoveView(button.GetComponent<RectTransform>());
+        }
+
         void Awake()
         {
-            var buttons = NavButtons.Select(nb => nb.Button).ToList();
-            buttons.ForEach(b =>
+            NavButtons.ForEach(b =>
             {
-                b.onClick.AddListener(() => {
-                    _buttonSelectOverlay.MoveView(b.GetComponent<RectTransform>());
-                });
+                if (b.DoAddListener)
+                {
+                    b.Button.onClick.AddListener(async () => {
+                        SelectButton(b.Tab);
+                    });
+                }
             });
         }
     }
@@ -31,6 +41,7 @@ namespace CardWar_v2.ComponentViews
     {
         public EMenuTab Tab;
         public Button Button;
+        public bool DoAddListener;
     }
 }
 

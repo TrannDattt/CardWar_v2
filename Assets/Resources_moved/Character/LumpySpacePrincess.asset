@@ -16,7 +16,7 @@ MonoBehaviour:
   Name: Lumpy Space Princess
   Image: {fileID: -200358015, guid: 189ae4b8a3d276940ada66a1347939e7, type: 3}
   SplashArt: {fileID: -1899915248, guid: 7ede6f97f9563864b95f106b679bef23, type: 3}
-  Model: {fileID: 2808779258161444595, guid: b694c6f6bb4204d458086cac89372066, type: 3}
+  Model: {fileID: 4745841060108885716, guid: 12c998f044a70e04ca4f7ac7abf72297, type: 3}
   IsPlayable: 1
   AnimController: {fileID: 9100000, guid: 7497303ddbd274845a97b4c9fe8c75d5, type: 2}
   Hp: 320

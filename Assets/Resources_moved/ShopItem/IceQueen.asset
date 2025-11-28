@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 866a1ca7a12f6aa4baef30a1bb16b56a, type: 3}
   m_Name: IceQueen
   m_EditorClassIdentifier: 
-  Item: {fileID: 11400000, guid: 1e9973b909d53a44086ef5146b3d42bb, type: 2}
+  Item: {fileID: 11400000, guid: 60b0644e82ea9c1478f2cb89432c9298, type: 2}
   Type: 0
   StockAmount: 1
   UnlimitedAmount: 0

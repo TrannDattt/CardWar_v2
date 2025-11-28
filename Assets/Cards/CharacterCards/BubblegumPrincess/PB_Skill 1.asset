@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628af7680cc8cf847a5455772d37dfb1, type: 3}
+  m_Name: PB_Skill 1
+  m_EditorClassIdentifier: 
+  Name: Sweet Salvation
+  Image: {fileID: 21300000, guid: b9bc1fca5017c0f418c7978c0e2976f0, type: 3}
+  Description: '- Ally at the Front gain HP equal to 20% ATK + 5% target''s HP.
+
+    -
+    If no  ally at the Front, apply Strenthen to allies at the Mid and the Back,
+    decease incoming damage by 30% for 1 turn.'
+  Skill:
+  - rid: 4516365139864977540
+  - rid: 4516365299649609729
+  references:
+    version: 2
+    RefIds:
+    - rid: 4516365139864977540
+      type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 7400000, guid: d7f8a723a933fb3429d97f92d84f1d33, type: 2}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 00000000
+        HpMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0.2
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0.05
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AtkMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AmrMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        ResMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+    - rid: 4516365299649609729
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 0100000002000000
+        Effects:
+        - EffectType: 7
+          Amount: 0.3
+          Duration: 1

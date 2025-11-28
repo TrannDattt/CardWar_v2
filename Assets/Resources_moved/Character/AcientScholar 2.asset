@@ -19,10 +19,10 @@ MonoBehaviour:
   Model: {fileID: 6085310971888360369, guid: ad7928641f86acb499f2fe2bb39f5733, type: 3}
   IsPlayable: 0
   AnimController: {fileID: 9100000, guid: b822659c7aa9c054a966ec258d3e5f5e, type: 2}
-  Hp: 50000
-  Atk: 7000
-  Armor: 10000
-  Resist: 10000
+  Hp: 100
+  Atk: 10
+  Armor: 0
+  Resist: 0
   HpPerLevel: 2
   AtkPerLevel: 0.5
   ArmorPerLevel: 0.1

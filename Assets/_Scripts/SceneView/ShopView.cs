@@ -33,7 +33,8 @@ namespace CardWar_v2.SceneViews
                 curShelf.AddItem(itemView);
                 i.OnItemBought.AddListener(() =>
                 {
-                    if (curShelf.Items.All(i => !i.gameObject.activeInHierarchy)) curShelf.gameObject.SetActive(false);
+                    if (i.StockAmount <= 0) ShopItemFactory.Instance.RecycleItemView(itemView);
+                    if (curShelf.GetComponentsInChildren<ShopItemView>().Length == 0) curShelf.gameObject.SetActive(false);
                 });
 
                 itemView.OnItemClicked.AddListener(() => _itemPurchaseConfirmation.OpenPopup(itemView.CurItem));

@@ -28,6 +28,7 @@ namespace CardWar_v2.Untils
         }
 
         [SerializeField] private List<GameScene> _scenes;
+        [SerializeField] private CanvasGroup _loadingScreen;
 
         private Dictionary<EScene, string> _sceneDict = new();
 
@@ -36,17 +37,36 @@ namespace CardWar_v2.Untils
 
         public UnityEvent<EScene> OnSceneLoaded { get; set; } = new();
 
-        private async Task ChangeScene(string name)
+        private void StartLoading()
         {
-            _curScene = name;
-            // SceneManager.LoadScene(_curScene);
-            var op = SceneManager.LoadSceneAsync(name);
-
-            while (!op.isDone)
-                await Task.Yield();
+            _loadingScreen.alpha = 1;
+            _loadingScreen.blocksRaycasts = true;
         }
 
-        public async Task ChangeScene(EScene key)
+        private void StopLoading()
+        {
+            _loadingScreen.alpha = 0;
+            _loadingScreen.blocksRaycasts = false;
+        }
+
+        private async Task ChangeScene(string name)
+        {
+            StartLoading();
+
+            // var unloadTask = SceneManager.UnloadSceneAsync(_curScene);
+            // while (!unloadTask.isDone)
+            //     await Task.Yield();
+
+            _curScene = name;
+            
+            var loadTask = SceneManager.LoadSceneAsync(_curScene);
+            while (!loadTask.isDone)
+                await Task.Yield();
+
+            StopLoading();
+        }
+
+        public async Task ChangeScene(EScene key, Action callback = null)
         {
             GameplayManager.Instance.ResumeGame();
             if (!_sceneDict.TryGetValue(key, out string s))
@@ -58,6 +78,7 @@ namespace CardWar_v2.Untils
             _preScene = _curScene;
             await ChangeScene(s);
             OnSceneLoaded?.Invoke(key);
+            callback?.Invoke();
         }
 
         public async Task BackToPreviousScene()
@@ -84,6 +105,7 @@ namespace CardWar_v2.Untils
         {
             _curScene = SceneManager.GetActiveScene().name;
             _preScene = "";
+            StopLoading();
         }
     }
 }

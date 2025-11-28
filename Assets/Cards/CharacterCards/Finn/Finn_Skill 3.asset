@@ -42,7 +42,7 @@ MonoBehaviour:
         Clip: {fileID: 7400000, guid: b607fa7509b40764c8259913b4a9571b, type: 2}
         DelayToSkill: 0
         TargetSide: 1
-        PositionTargets: 03000000
+        PositionTargets: 05000000
         CasterStatMult:
           Hp: 0
           Atk: 0.65

@@ -25,7 +25,7 @@ namespace CardWar_v2.SceneViews
         [SerializeField] private FillBarView _userExpBar;
 
         private Player CurPLayer => PlayerSessionManager.Instance.CurPlayer;
-        private List<CharacterCard> CharacterList => PlayerSessionManager.Instance.CharacterList;
+        private List<CharacterCard> CharacterList => PlayerSessionManager.Instance.PlayerableCharacters;
 
         private CharacterCard _selectedChar;
 

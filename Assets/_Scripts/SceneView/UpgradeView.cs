@@ -22,7 +22,6 @@ namespace CardWar_v2.SceneViews
         // private CharacterCard _selectedChar;
 
         private Player CurPlayer => PlayerSessionManager.Instance.CurPlayer;
-        private List<CharacterCard> AllChars => PlayerSessionManager.Instance.CharacterList;
 
         private const int MAX_LEVEL = 10;
 
