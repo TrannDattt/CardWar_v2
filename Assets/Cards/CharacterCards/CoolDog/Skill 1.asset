@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628af7680cc8cf847a5455772d37dfb1, type: 3}
+  m_Name: Skill 1
+  m_EditorClassIdentifier: 
+  Name: Slash
+  Image: {fileID: 21300000, guid: 8b50eed9ece6ef546a9b50f3300c7c8c, type: 3}
+  Description: 
+  Skill:
+  - rid: 7250261063404355669
+  - rid: 7250261063404355670
+  references:
+    version: 2
+    RefIds:
+    - rid: 7250261063404355669
+      type: {class: DoCloseAttack, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 7400000, guid: 5abc344b0196e2540a09040a9ac07bdf, type: 2}
+        DelayToSkill: 0
+        TargetSide: 1
+        PositionTargets: 0000000001000000
+        CasterStatMult:
+          Hp: 0
+          Atk: 1.5
+          Armor: 0
+          Resist: 0
+        TargetStatMult:
+          Hp: 0
+          Atk: 0
+          Armor: 0
+          Resist: 0
+        DamageType: 0
+    - rid: 7250261063404355670
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 1
+        PositionTargets: 05000000
+        Effects:
+        - EffectType: 4
+          Amount: 0
+          Duration: 1

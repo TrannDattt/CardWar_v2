@@ -64,6 +64,6 @@ MonoBehaviour:
           Atk: 0
           Armor: 0
           Resist: 0
-        Projectile: {fileID: 9159653799447092791, guid: c03f6526b3f8ada489779011a69dc98a, type: 3}
+        Projectile: {fileID: 9159653799447092791, guid: d756695fedeb93e4785ddf7f916dc33d, type: 3}
         OffsetToCaster: {x: 0, y: 0, z: 0}
         DamageType: 3

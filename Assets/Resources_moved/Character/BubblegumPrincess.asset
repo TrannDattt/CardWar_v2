@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
   m_Name: BubblegumPrincess
   m_EditorClassIdentifier: 
-  Character: 3
+  _id: 72e3320a-9e43-41ba-ae7b-e10dd90279ef
   Name: Bubblegum Princess
   Image: {fileID: 628811333, guid: 1f6ccd148f4dcba49b56a374de8c76f3, type: 3}
   SplashArt: {fileID: -521155898, guid: 7ede6f97f9563864b95f106b679bef23, type: 3}
   Model: {fileID: 6421598886365021913, guid: 0df6db4317df43f448ed2f4e9269de66, type: 3}
   IsPlayable: 1
   AnimController: {fileID: 9100000, guid: 86caa3a214dd4ba4ea46cf87f64d1113, type: 2}
+  VoiceLines: []
   Hp: 380
   Atk: 35
   Armor: 10

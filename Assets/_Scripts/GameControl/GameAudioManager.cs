@@ -77,6 +77,7 @@ namespace CardWar_v2.GameControl
         [Header("Voice")]
         [SerializeField] private AudioSource _voice;
         private EVoice _curVoice = EVoice.None;
+        private CharacterCard _curChar = null;
         public float VoiceVolumn => _voice.volume;
 
         #region BGM
@@ -103,7 +104,7 @@ namespace CardWar_v2.GameControl
         #endregion
 
         #region SFX
-        private void PlaySFX(AudioClip clip)
+        public void PlaySFX(AudioClip clip)
         {
             _sfx.PlayOneShot(clip);
         }
@@ -124,18 +125,18 @@ namespace CardWar_v2.GameControl
         #endregion
 
         #region Voice
-        private void PlayVoice(AudioClip clip)
+        public void PlayVoice(AudioClip clip)
         {
             _voice.PlayOneShot(clip);
         }
 
-        //TODO: Access char voice dict
         public void PlayVoice(CharacterCard character, EVoice key, bool restart = false)
         {
             var voiceLine = character.VoiceLines.FirstOrDefault(v => v.Key == key);
-            if(voiceLine == null || (_curVoice == key && !restart)) return;
+            if(voiceLine == null || (_curChar == character && _curVoice == key && !restart)) return;
 
             _curVoice = key;
+            _curChar = character;
             var randomClip = voiceLine.Clips[UnityEngine.Random.Range(0, voiceLine.Clips.Count)];
             PlayVoice(randomClip);
         }

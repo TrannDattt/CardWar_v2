@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628af7680cc8cf847a5455772d37dfb1, type: 3}
+  m_Name: Skill 2
+  m_EditorClassIdentifier: 
+  Name: Ice's Fury
+  Image: {fileID: 21300000, guid: 5334152f7d6f6144f925345dcf952eba, type: 3}
+  Description: 
+  Skill:
+  - rid: 7250261063404355671
+  - rid: 7250261063404355672
+  references:
+    version: 2
+    RefIds:
+    - rid: 7250261063404355671
+      type: {class: DoCloseAttack, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 7400000, guid: 398cea6993d9501469d156ea660d7f8c, type: 2}
+        DelayToSkill: 0
+        TargetSide: 1
+        PositionTargets: 0100000002000000
+        CasterStatMult:
+          Hp: 0
+          Atk: 1.2
+          Armor: 0
+          Resist: 0
+        TargetStatMult:
+          Hp: 0
+          Atk: 0
+          Armor: 0
+          Resist: 0
+        DamageType: 0
+    - rid: 7250261063404355672
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 1
+        PositionTargets: 05000000
+        Effects:
+        - EffectType: 3
+          Amount: 0.1
+          Duration: 2

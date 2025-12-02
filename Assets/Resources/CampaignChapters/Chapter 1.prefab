@@ -1180,6 +1180,10 @@ PrefabInstance:
       propertyPath: _levelData
       value: 
       objectReference: {fileID: 11400000, guid: e9c92e925ccce24499b7615bf919aca1, type: 2}
+    - target: {fileID: 413390762363710832, guid: 4aad97927a6c9bb4aaee73d170650cd2, type: 3}
+      propertyPath: _roomNumber
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1906016963213332380, guid: 4aad97927a6c9bb4aaee73d170650cd2, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1329,6 +1333,10 @@ PrefabInstance:
     - target: {fileID: 12767119823815407, guid: 4aad97927a6c9bb4aaee73d170650cd2, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 413390762363710832, guid: 4aad97927a6c9bb4aaee73d170650cd2, type: 3}
+      propertyPath: _roomNumber
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1906016963213332380, guid: 4aad97927a6c9bb4aaee73d170650cd2, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1638,6 +1646,10 @@ PrefabInstance:
       propertyPath: _levelData
       value: 
       objectReference: {fileID: 11400000, guid: 9fa865434af8d264090c43286a9b2af2, type: 2}
+    - target: {fileID: 413390762363710832, guid: 4aad97927a6c9bb4aaee73d170650cd2, type: 3}
+      propertyPath: _roomNumber
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1906016963213332380, guid: 4aad97927a6c9bb4aaee73d170650cd2, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

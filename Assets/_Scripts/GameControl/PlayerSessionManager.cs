@@ -21,35 +21,8 @@ namespace CardWar_v2.GameControl
         public List<ShopItem> ShopItemList { get; private set; } = new();
         public List<Level> CampaignLevels { get; private set; } = new();
         public Level CurLevel => CampaignLevels.FirstOrDefault(l => !l.ClearCheck) ?? CampaignLevels.Last();
-
-        // private Dictionary<ECharacter, CharacterDataJson> _characterDataDict = new();
-
         public UnityEvent OnFinishLoadingSession;
 
-        // ------------------
-        // TODO: TEST
-        public void UpdateName(string newName)
-        {
-            CurPlayer.UpdateName(newName);
-        }
-
-        public void UpdatePlayerExp(int amount)
-        {
-            CurPlayer.UpdatePlayerExp(amount);
-        }
-
-        public void UpdateGold(int amount)
-        {
-            CurPlayer.UpdateGold(amount);
-        }
-
-        public void UpdateGem(int amount)
-        {
-            CurPlayer.UpdateGem(amount);
-        }
-
-        //-------------------
-        // TODO: Save load more properly
         #region Save Data
         public void SavePlayerData()
         {
@@ -101,7 +74,9 @@ namespace CardWar_v2.GameControl
             for (int i = 0; i < charDatas.Count; i++)
             {
                 CharacterCard newChar;
-                if (i >= charJSONs.Count) newChar = new(charDatas[i]);
+                var jsonData = charJSONs.FirstOrDefault(c => c.Id == charDatas[i].Id);
+                // Debug.Log($"{jsonData.Name} with unlock - {jsonData.IsUnlocked}");
+                if (jsonData == null) newChar = new(charDatas[i]);
                 else newChar = new(charDatas[i], charJSONs[i].Level, charJSONs[i].IsUnlocked);
 
                 CharacterList.Add(newChar);
@@ -121,6 +96,7 @@ namespace CardWar_v2.GameControl
             var handle = Addressables.LoadAssetsAsync<ShopItemData>("ShopItems");
             await handle.Task;
             var itemDatas = handle.Result.OrderBy(i => i.Item.Name).ToList();
+            // Debug.Log($"Item count: {itemDatas.Count}");
 
             // var itemJSONs = SessionSaveLoad.LoadFromFile<ShopDataJson>("shop-items").Items;
 
@@ -130,6 +106,7 @@ namespace CardWar_v2.GameControl
                 ShopItem newItem;
                 var charCard = GetCharById(itemDatas[i].Item.Id);
                 if (charCard.IsUnlocked) continue;
+                // Debug.Log($"{itemDatas[i].name} with item data {charCard.Name}");
                 newItem = new(itemDatas[i]);
                 // if (i >= itemJSONs.Count) newItem = new(itemDatas[i]);
                 // else newItem = new(itemDatas[i], itemJSONs[i]);
@@ -157,7 +134,8 @@ namespace CardWar_v2.GameControl
 
             for (int i = 0; i < levelDatas.Count; i++)
             {
-                var (clearCheck, turnConditionCheck, allAliveCheck) = i >= levelsJSON.Count ? (false, false, false) 
+                var jsonData = levelsJSON.FirstOrDefault(l => l.Chapter == levelDatas[i].Chapter && l.Room == levelDatas[i].Room);
+                var (clearCheck, turnConditionCheck, allAliveCheck) = jsonData == null ? (false, false, false) 
                                                                     : (levelsJSON[i].ClearCheck, levelsJSON[i].TurnConditionCheck, levelsJSON[i].AllAliveCheck);
                 Level newLevel = new(levelDatas[i], clearCheck, turnConditionCheck, allAliveCheck);
                 newLevel.OnLevelClear.AddListener(SaveCampaignProgress);

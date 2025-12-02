@@ -13,18 +13,17 @@ namespace CardWar_v2.ComponentViews
 {
     public class LevelButtonView : MonoBehaviour
     {
-        [SerializeField] private LevelData _levelData;
+        [SerializeField] private int _roomNumber;
         [SerializeField] private List<MatchResultStarView> _starImages;
         [SerializeField] private TextMeshProUGUI _buttonText;
         [SerializeField] private Button _button;
         [SerializeField] private Image _lockImage;
 
-        public int RoomNumber => _levelData.Room;
-        public int ChapterNumber => _levelData.Chapter;
-
-        public async void Initialize()
+        public async void Initialize(int chapter)
         {
-            var level = PlayerSessionManager.Instance.CampaignLevels.FirstOrDefault(l => l.Data.Id == _levelData.Id);
+            var level = PlayerSessionManager.Instance.CampaignLevels.FirstOrDefault(l => l.Chapter == chapter && l.Room == _roomNumber);
+            if (level == null) return;
+            // if (level == null) Debug.Log($"Level {chapter}-{_roomNumber} not found");
             var levelIndex = PlayerSessionManager.Instance.CampaignLevels.IndexOf(level);
 
             _button.interactable = levelIndex == 0 || PlayerSessionManager.Instance.CampaignLevels[levelIndex - 1].ClearCheck;
@@ -34,7 +33,7 @@ namespace CardWar_v2.ComponentViews
             await _starImages[1].ShowStarResult(level.ClearCheck && level.TurnConditionCheck, false);
             await _starImages[2].ShowStarResult(level.ClearCheck && level.AllAliveCheck, false);
 
-            _buttonText.SetText($"{ChapterNumber}-{RoomNumber}");
+            _buttonText.SetText($"{chapter}-{_roomNumber}");
             _button.onClick.RemoveAllListeners();
             _button.onClick.AddListener(async () =>
             {

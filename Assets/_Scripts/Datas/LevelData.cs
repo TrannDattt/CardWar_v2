@@ -9,7 +9,6 @@ namespace CardWar_v2.Datas
     [CreateAssetMenu(menuName = "SO/Level")]
     public class LevelData : ScriptableObject
     {
-        public string Id => GetInstanceID().ToString();
         public int Chapter;
         public int Room;
         public List<LevelEnemy> Enemies;

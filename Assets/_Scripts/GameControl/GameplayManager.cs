@@ -34,7 +34,6 @@ namespace CardWar_v2.GameControl
         #endregion
 
         #region Phase Logic
-        //TODO: Phase logic and change phase
         private APhase _curPhase;
         public EPhase CurPhase => _curPhase != null ? _curPhase.Type : EPhase.None;
 
@@ -69,8 +68,6 @@ namespace CardWar_v2.GameControl
             public override async void Enter()
             {
                 // _isFinished = false;
-                //TODO: Use skill that active at opening phase
-
                 if(CurTurn == EPlayerTarget.Enemy)
                 {
                     await IngameScene.AutoSelectCard(3);

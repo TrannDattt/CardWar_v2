@@ -2,8 +2,12 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: BogBum
-  serializedVersion: 8
+  serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -42,45 +46,45 @@ Mesh:
     e02: 0
     e03: 0
     e10: 0
-    e11: -4.371138E-08
+    e11: -0.00000004371138
     e12: -1
     e13: 0
     e20: 0
     e21: 1
-    e22: -4.371138E-08
+    e22: -0.00000004371138
     e23: 0
     e30: 0
     e31: 0
     e32: 0
     e33: 1
-  - e00: 2.732857E-15
+  - e00: 2.732857e-15
     e01: -0.9999999
-    e02: 4.584973E-08
+    e02: 0.00000004584973
     e03: 1.071329
-    e10: -3.258413E-07
-    e11: 4.298412E-08
+    e10: -0.0000003258413
+    e11: 0.00000004298412
     e12: 1
     e13: -0.02200214
     e20: -1
-    e21: -1.45183E-14
-    e22: -3.258413E-07
-    e23: 7.169191E-09
+    e21: -1.45183e-14
+    e22: -0.0000003258413
+    e23: 0.000000007169191
     e30: 0
     e31: 0
     e32: 0
     e33: 1
-  - e00: -8.059603E-08
+  - e00: -0.00000008059603
     e01: -0.9989775
     e02: -0.04521183
     e03: 1.432268
-    e10: -4.766828E-07
+    e10: -0.0000004766828
     e11: -0.04521182
     e12: 0.9989774
     e13: 0.1362428
     e20: -1
-    e21: 1.020653E-07
-    e22: -4.725515E-07
-    e23: -1.803797E-07
+    e21: 0.0000001020653
+    e22: -0.0000004725515
+    e23: -0.0000001803797
     e30: 0
     e31: 0
     e32: 0
@@ -89,13 +93,13 @@ Mesh:
     e01: -0.956528
     e02: -0.2916399
     e03: 1.746653
-    e10: -4.692433E-07
+    e10: -0.0000004692433
     e11: -0.2916398
     e12: 0.9565279
     e13: 0.6071349
     e20: -0.9999998
     e21: -0.0003070212
-    e22: -9.409869E-05
+    e22: -0.00009409869
     e23: 0.0005606264
     e30: 0
     e31: 0
@@ -133,17 +137,17 @@ Mesh:
     e31: 0
     e32: 0
     e33: 1
-  - e00: 2.26383E-07
+  - e00: 0.000000226383
     e01: 0.256986
     e02: -0.9664149
-    e03: 1.311302E-05
-    e10: 8.095343E-08
+    e03: 0.00001311302
+    e10: 0.00000008095343
     e11: 0.966415
     e12: 0.2569861
     e13: -0.01328945
     e20: 0.9999998
-    e21: -1.312807E-07
-    e22: 1.977269E-07
+    e21: -0.0000001312807
+    e22: 0.0000001977269
     e23: -0.4106256
     e30: 0
     e31: 0
@@ -213,17 +217,17 @@ Mesh:
     e31: 0
     e32: 0
     e33: 1
-  - e00: 8.596824E-08
+  - e00: 0.00000008596824
     e01: 0.2569859
     e02: -0.9664149
-    e03: 1.263618E-05
-    e10: -2.364126E-08
+    e03: 0.00001263618
+    e10: -0.00000002364126
     e11: 0.9664148
     e12: 0.2569859
     e13: -0.01329041
     e20: 0.9999997
-    e21: 4.298412E-09
-    e22: 9.456506E-08
+    e21: 0.000000004298412
+    e22: 0.00000009456506
     e23: 0.4106258
     e30: 0
     e31: 0
@@ -245,18 +249,18 @@ Mesh:
     e31: 0
     e32: 0
     e33: 1
-  - e00: 9.456506E-08
+  - e00: 0.00000009456506
     e01: -0.9615216
     e02: -0.2747299
     e03: 2.382608
-    e10: 1.432804E-07
+    e10: 0.0000001432804
     e11: -0.2747299
     e12: 0.9615215
     e13: 0.476113
     e20: -1
-    e21: -1.346836E-07
-    e22: 1.139079E-07
-    e23: 3.501773E-07
+    e21: -0.0000001346836
+    e22: 0.0000001139079
+    e23: 0.0000003501773
     e30: 0
     e31: 0
     e32: 0
@@ -375,15 +379,61 @@ Mesh:
     e33: 1
   m_BoneNameHashes: 16205ca7a78d563b58ceec586ff4b6abf7f32a6b2dee71780145c4b4e7cf445f765f1641f68af455656d1562b6ab66ae73d3ced601d6910f99ea5c891b315f27c89da85c86228499a7c829835dfb8d8bed99f1e3eb5c720b
   m_RootBoneNameHash: 1491914328
+  m_BonesAABB:
+  - m_Min: {x: -0.74371815, y: -0.061341375, z: -0.047162294}
+    m_Max: {x: 0.023603797, y: 0.05319017, z: 0.08968091}
+  - m_Min: {x: Infinity, y: Infinity, z: Infinity}
+    m_Max: {x: -Infinity, y: -Infinity, z: -Infinity}
+  - m_Min: {x: -0.5114074, y: -0.648044, z: -0.5420089}
+    m_Max: {x: 0.058778405, y: 0.43697003, z: 0.520862}
+  - m_Min: {x: -0.6504127, y: -0.57778436, z: -0.54200894}
+    m_Max: {x: 0.16376722, y: 0.5294442, z: 0.5208619}
+  - m_Min: {x: -0.72754943, y: -0.5188289, z: -0.5144287}
+    m_Max: {x: 0.29144883, y: 0.50764954, z: 0.4930824}
+  - m_Min: {x: -0.7372011, y: -0.09231034, z: -0.1048522}
+    m_Max: {x: 0.045928955, y: 0.10411119, z: 0.08626151}
+  - m_Min: {x: -0.1919204, y: -0.020034403, z: -0.0527907}
+    m_Max: {x: 0.015384257, y: 0.039605677, z: 0.06489146}
+  - m_Min: {x: -0.15762478, y: -0.05128771, z: -0.07344082}
+    m_Max: {x: 0.07776935, y: 0.032366425, z: 0.070489585}
+  - m_Min: {x: -0.7368572, y: -0.09239328, z: -0.087192774}
+    m_Max: {x: 0.046272516, y: 0.1040281, z: 0.10392046}
+  - m_Min: {x: -0.71299577, y: -0.11540747, z: -0.14778665}
+    m_Max: {x: -0.12073934, y: 0.13180934, z: 0.1440871}
+  - m_Min: {x: -0.7131206, y: -0.11540577, z: -0.14507589}
+    m_Max: {x: -0.120863914, y: 0.1318111, z: 0.14679784}
+  - m_Min: {x: -0.55304676, y: -0.09065939, z: -0.09456983}
+    m_Max: {x: 0.02925682, y: 0.08899785, z: 0.08814308}
+  - m_Min: {x: -0.15762539, y: -0.051288676, z: -0.07148555}
+    m_Max: {x: 0.077768736, y: 0.032365408, z: 0.07244483}
+  - m_Min: {x: -0.55301267, y: -0.09054139, z: -0.08913836}
+    m_Max: {x: 0.029290855, y: 0.0889716, z: 0.09357467}
+  - m_Min: {x: -1.3138306, y: -0.91046095, z: -1.0402296}
+    m_Max: {x: 0.012305498, y: 1.1684661, z: 1.0190827}
+  - m_Min: {x: -0.5799757, y: -0.040254116, z: -0.045297146}
+    m_Max: {x: 0.8649405, y: 0.08265197, z: 0.07099736}
+  - m_Min: {x: -1.2704309, y: -0.4346274, z: -0.40312588}
+    m_Max: {x: 0.0034588575, y: 0.4394325, z: 0.36076367}
+  - m_Min: {x: -1.2561516, y: -0.03588152, z: -0.042077422}
+    m_Max: {x: -0.00466305, y: 0.019420743, z: 0.027282596}
+  - m_Min: {x: -0.82742643, y: -0.50999737, z: -0.54490995}
+    m_Max: {x: -0.13225746, y: 0.51407146, z: 0.51235783}
+  - m_Min: {x: -0.79715407, y: -0.5099969, z: -0.5449089}
+    m_Max: {x: 0.04016173, y: 0.5140713, z: 0.5123581}
+  - m_Min: {x: -0.7443194, y: -0.06128663, z: -0.09066677}
+    m_Max: {x: 0.023738027, y: 0.05324483, z: 0.04809332}
+  - m_Min: {x: -0.19188124, y: -0.02008754, z: -0.060361803}
+    m_Max: {x: 0.015206635, y: 0.03955254, z: 0.053662777}
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
-  m_KeepVertices: 1
-  m_KeepIndices: 1
+  m_KeepVertices: 0
+  m_KeepIndices: 0
   m_IndexFormat: 0
-  m_IndexBuffer:
-  m_Skin: []
+  m_IndexBuffer: 
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
     - stream: 0
@@ -418,8 +468,32 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 2925
@@ -437,13 +511,13 @@ Mesh:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Weights:
       m_NumItems: 1198
@@ -451,17 +525,17 @@ Mesh:
       m_BitSize: 5
     m_NormalSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_TangentSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_FloatColors:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_BoneIndices:
       m_NumItems: 1198
@@ -476,6 +550,14 @@ Mesh:
     m_Center: {x: -0.2783396, y: 1.841231, z: -0.174266}
     m_Extent: {x: 1.319196, y: 1.856177, z: 1.791436}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
-  m_MeshOptimized: 1
+  m_CookingOptions: 30
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 

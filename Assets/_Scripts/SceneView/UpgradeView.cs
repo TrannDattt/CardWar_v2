@@ -4,6 +4,7 @@ using CardWar_v2.ComponentViews;
 using CardWar_v2.Entities;
 using CardWar_v2.GameControl;
 using UnityEngine;
+using static CardWar_v2.GameControl.GameAudioManager;
 
 // using CardWar.Views;
 
@@ -64,6 +65,7 @@ namespace CardWar_v2.SceneViews
                 return;
             }
 
+            GameAudioManager.Instance.PlaySFX(ESfx.UpgradeCharacter);
             charCard.LevelUp();
             Debug.Log($"Level up character {charCard.Name} to level {charCard.Level}");
             CurPlayer.UpdatePlayerCurrency(-goldCost, -gemCost);

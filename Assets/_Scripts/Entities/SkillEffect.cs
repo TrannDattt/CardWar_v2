@@ -352,7 +352,6 @@ namespace CardWar_v2.Entities
             base.OverrideEffect(newEffect);
         }
 
-        //TODO: Active omnivamp when dealing damage
         public override async Task ApplyEffect()
         {
             Debug.Log("Apply Omnivamp");

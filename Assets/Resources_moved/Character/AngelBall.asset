@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
+  m_Name: AngelBall
+  m_EditorClassIdentifier: 
+  _id: 62f489c9-9c15-4831-b080-651b3822bc48
+  Name: Angel Ball
+  Image: {fileID: 21300000, guid: 131c702a6bd073448a3c34066886c0a9, type: 3}
+  SplashArt: {fileID: 0}
+  Model: {fileID: 5527862056156513650, guid: 8a0a3846fbe836f479702cb26a2c7dc0, type: 3}
+  IsPlayable: 0
+  AnimController: {fileID: 9100000, guid: aa62c7e94fd435d42ab9a0f86a23d50a, type: 2}
+  VoiceLines: []
+  Hp: 400
+  Atk: 4
+  Armor: 4
+  Resist: 4
+  HpPerLevel: 4
+  AtkPerLevel: 4
+  ArmorPerLevel: 4
+  ResistPerLevel: 4
+  SkillCardDatas:
+  - {fileID: 11400000, guid: af36eb6f490bdcc4c8895724382a1a21, type: 2}
+  - {fileID: 11400000, guid: ad7b04c2b8277dc4f96cedace1eec3f0, type: 2}
+  - {fileID: 11400000, guid: 2fa3e4b3e6e63854487eab25b080a25d, type: 2}

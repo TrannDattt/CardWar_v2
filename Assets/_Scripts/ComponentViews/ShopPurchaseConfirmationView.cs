@@ -4,6 +4,7 @@ using CardWar_v2.GameControl;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static CardWar_v2.GameControl.GameAudioManager;
 
 namespace CardWar_v2.ComponentViews
 {
@@ -50,6 +51,8 @@ namespace CardWar_v2.ComponentViews
                 Debug.Log("Not enough resources to buy item");
                 return;
             }
+
+            GameAudioManager.Instance.PlaySFX(ESfx.BuyItem);
             _curItem.BuyItem(Quantity);
             CurPlayer.UpdatePlayerCurrency(-goldCost, -gemCost);
             if (_curItem.StockAmount == 0) ClosePopup();

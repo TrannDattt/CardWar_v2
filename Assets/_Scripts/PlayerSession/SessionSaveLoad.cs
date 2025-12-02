@@ -13,12 +13,19 @@ namespace CardWar_v2.Session
     {
         private static string FolderPath => Application.persistentDataPath + "/userdata/";
 
+#if UNITY_EDITOR
+        private static string EditorFolderPath => Application.persistentDataPath + "/userdata_editor/";
+        private static string BasePath => EditorFolderPath;
+#else
+        private static string BasePath => FolderPath;
+#endif
+
         public static void SaveToFile<T>(T data, string fileName)
         {
-            if (!Directory.Exists(FolderPath))
-                Directory.CreateDirectory(FolderPath);
+            if (!Directory.Exists(BasePath))
+                Directory.CreateDirectory(BasePath);
 
-            string path = Path.Combine(FolderPath, fileName + ".json");
+            string path = Path.Combine(BasePath, fileName + ".json");
             string json = JsonConvert.SerializeObject(data, Formatting.Indented);
             File.WriteAllText(path, json);
             Debug.Log($"✅ Saved {fileName}.json to {path}");
@@ -26,7 +33,7 @@ namespace CardWar_v2.Session
 
         public static T LoadFromFile<T>(string fileName) where T : new()
         {
-            string path = Path.Combine(FolderPath, fileName + ".json");
+            string path = Path.Combine(BasePath, fileName + ".json");
 
             if (File.Exists(path))
             {

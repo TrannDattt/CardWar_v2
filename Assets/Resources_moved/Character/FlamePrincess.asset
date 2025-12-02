@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
   m_Name: FlamePrincess
   m_EditorClassIdentifier: 
-  Character: 5
+  _id: 4b13415d-00bf-4f0a-9bcd-782752830d6c
   Name: Flame Princess
   Image: {fileID: -198477359, guid: 9baa88070efa22b4abfa10a10442ec0d, type: 3}
   SplashArt: {fileID: -2115056947, guid: 7ede6f97f9563864b95f106b679bef23, type: 3}
   Model: {fileID: 6472355896221109898, guid: d42918c77b438484bb35a1e6586b7512, type: 3}
   IsPlayable: 1
   AnimController: {fileID: 9100000, guid: ef4257bfc9a30db419c258b2b440c044, type: 2}
+  VoiceLines: []
   Hp: 290
   Atk: 70
   Armor: 5

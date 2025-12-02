@@ -21,6 +21,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - Characters
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1457792caeb3aa647ba10e3c4421ce35
+    m_Address: Character/SnowNice
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 181b88e8345638946930c0b23cd7ee41
+    m_Address: Character/IceKnight
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 22321c90442f8994babb1cfd7626ff4b
     m_Address: Character/AcientScholar 2
     m_ReadOnly: 0
@@ -35,6 +47,24 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 60b0644e82ea9c1478f2cb89432c9298
     m_Address: Character/IceQueen
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 624e16a7d6d426b43b429804ace7f740
+    m_Address: Character/CoolDog
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6f4ef8637ad96dc44b2824e034f303ca
+    m_Address: Character/AngelBall
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Characters
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d344d2c9a70b8d4ebfc14473c6c43cf
+    m_Address: Character/IcePenguin
     m_ReadOnly: 0
     m_SerializedLabels:
     - Characters

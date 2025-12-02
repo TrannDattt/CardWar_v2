@@ -54,11 +54,6 @@ namespace CardWar_v2.ComponentViews
             // Debug.Log("Pointer exited Character Hall UI");
         }
 
-        void Start()
-        {
-            // TODO: If _selectedChar is null, select the first unlocked character
-        }
-
         void Update()
         {
             if (_isPointerOnUI && Input.GetKeyDown(KeyCode.Mouse0))

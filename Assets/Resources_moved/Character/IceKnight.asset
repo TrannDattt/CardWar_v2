@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
+  m_Name: IceKnight
+  m_EditorClassIdentifier: 
+  _id: 6450b7a8-ee26-4d21-aa6f-79821f99e1ea
+  Name: Ice Knight
+  Image: {fileID: 21300000, guid: 2984b04e22eaef74992324c34969d683, type: 3}
+  SplashArt: {fileID: 0}
+  Model: {fileID: 6124113166298429005, guid: 4c49126d8edb3a7418f30910dea8c073, type: 3}
+  IsPlayable: 0
+  AnimController: {fileID: 9100000, guid: 2cb53ad6caac333438669737f1aef3e5, type: 2}
+  VoiceLines: []
+  Hp: 400
+  Atk: 4
+  Armor: 4
+  Resist: 4
+  HpPerLevel: 4
+  AtkPerLevel: 4
+  ArmorPerLevel: 4
+  ResistPerLevel: 4
+  SkillCardDatas:
+  - {fileID: 11400000, guid: 37e1ff9c7ddef50498387a0051b2b337, type: 2}
+  - {fileID: 11400000, guid: c5cc2b0c0b0d9b6438d6cefdeae68e85, type: 2}

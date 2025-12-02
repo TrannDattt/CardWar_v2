@@ -9,6 +9,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static CardWar_v2.GameControl.GameAudioManager;
 
 namespace CardWar_v2.ComponentViews
 {
@@ -37,11 +38,7 @@ namespace CardWar_v2.ComponentViews
         {
             // Debug.Log($"Conclude match: {isWin}");
             GameplayManager.Instance.PauseGame();
-            // foreach(Transform child in _rewardContainer)
-            // {
-            //     if (child.TryGetComponent<IconView>(out var icon))
-            //         IconFactory.Instance.RecycleIconView(icon);
-            // }
+            GameAudioManager.Instance.PlaySFX(isWin ? ESfx.WinMatch : ESfx.LoseMatch);
             
             ShowUI();
 

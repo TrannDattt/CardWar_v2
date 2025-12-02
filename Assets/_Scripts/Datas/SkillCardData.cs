@@ -92,7 +92,6 @@ namespace CardWar_v2.Datas
 
         public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
-            // TODO: Spawn projectile with factory
             if (Projectile == null) return;
             var projectile = UnityEngine.Object.Instantiate(Projectile, casterModel.transform);
             await projectile.FlyToTarget(casterModel.transform.position, OffsetToCaster,

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
+  m_Name: IcePenguin
+  m_EditorClassIdentifier: 
+  _id: b22af4c0-85f2-4115-8ef9-ea2ebd7119ab
+  Name: Ice Penguin
+  Image: {fileID: 21300000, guid: 3c99d58728cb864479b71f92b21f8499, type: 3}
+  SplashArt: {fileID: 0}
+  Model: {fileID: 4244524894969982340, guid: ea24a2d7920210a46b61a6db08caeb51, type: 3}
+  IsPlayable: 0
+  AnimController: {fileID: 9100000, guid: 6623e2b51c3351040aac0f18ae7eb85e, type: 2}
+  VoiceLines: []
+  Hp: 400
+  Atk: 4
+  Armor: 4
+  Resist: 4
+  HpPerLevel: 4
+  AtkPerLevel: 4
+  ArmorPerLevel: 4
+  ResistPerLevel: 4
+  SkillCardDatas:
+  - {fileID: 11400000, guid: 5bed9a05dd567704084e4c03b266edde, type: 2}
+  - {fileID: 11400000, guid: d17c9c4baeb897f4bb2f3bc16c32c53c, type: 2}
+  - {fileID: 11400000, guid: c7385540bb54b6140846ccae966afa06, type: 2}

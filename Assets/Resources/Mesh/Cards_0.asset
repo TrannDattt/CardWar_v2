@@ -3,10 +3,11 @@
 --- !u!43 &4300000
 Mesh:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: Cards_0
-  serializedVersion: 8
+  serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -154,16 +155,59 @@ Mesh:
     e33: 1
   m_BoneNameHashes: 879f4d16027e7b6f6e9f7fbc5010d1f867862ba14c26b6a23c374c98ee5fb5c5
   m_RootBoneNameHash: 3162480494
+  m_BonesAABB:
+  - m_Min: {x: -0.16108382, y: 0.04472116, z: -0.063370265}
+    m_Max: {x: -0.05295387, y: 0.07574242, z: 0.07062715}
+  - m_Min: {x: -0.21157338, y: -0.13718356, z: -0.07699787}
+    m_Max: {x: -0.03190714, y: 0.04730613, z: 0.07789407}
+  - m_Min: {x: -0.20423745, y: -0.20775682, z: -0.17556465}
+    m_Max: {x: -0.09353099, y: -0.09624004, z: 0.17419131}
+  - m_Min: {x: Infinity, y: Infinity, z: Infinity}
+    m_Max: {x: -Infinity, y: -Infinity, z: -Infinity}
+  - m_Min: {x: -0.1222803, y: -0.08621166, z: -0.04464273}
+    m_Max: {x: -0.0044474714, y: 0.0381154, z: 0.02795609}
+  - m_Min: {x: Infinity, y: Infinity, z: Infinity}
+    m_Max: {x: -Infinity, y: -Infinity, z: -Infinity}
+  - m_Min: {x: -0.11745928, y: -0.07747839, z: -0.019928835}
+    m_Max: {x: -0.016758695, y: 0.038138315, z: 0.040513583}
+  - m_Min: {x: Infinity, y: Infinity, z: Infinity}
+    m_Max: {x: -Infinity, y: -Infinity, z: -Infinity}
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
   m_KeepVertices: 1
   m_KeepIndices: 1
+  m_IndexFormat: 0
   m_IndexBuffer: 
-  m_Skin: []
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     - stream: 0
       offset: 0
       format: 0
@@ -254,6 +298,14 @@ Mesh:
     m_Center: {x: 0.0000004246831, y: -0.00000001490116, z: -0.008063443}
     m_Extent: {x: 0.1748952, y: 0.122611, z: 0.2323379}
   m_MeshUsageFlags: 1
+  m_CookingOptions: 30
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
-  m_MeshOptimized: 1
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 

@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
   m_Name: AcientScholar 2
   m_EditorClassIdentifier: 
-  Character: 0
+  _id: f2789fb6-f3c3-4524-839b-19bcff9b49b8
   Name: Ancient Scholar 3
   Image: {fileID: 21300000, guid: 9ba1ebb24d397414d846e8eec2a9a2dc, type: 3}
   SplashArt: {fileID: 0}
   Model: {fileID: 6085310971888360369, guid: ad7928641f86acb499f2fe2bb39f5733, type: 3}
   IsPlayable: 0
   AnimController: {fileID: 9100000, guid: b822659c7aa9c054a966ec258d3e5f5e, type: 2}
+  VoiceLines: []
   Hp: 100
   Atk: 10
   Armor: 0

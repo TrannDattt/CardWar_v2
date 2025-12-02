@@ -2,8 +2,12 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: ChocoWall_Outline
-  serializedVersion: 8
+  serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -21,97 +25,97 @@ Mesh:
     channels: []
     fullWeights: []
   m_BindPose:
-  - e00: 6.123234E-17
-    e01: -6.123234E-17
+  - e00: 6.123234e-17
+    e01: -6.123234e-17
     e02: -1
-    e03: -1.392262E-29
-    e10: -4.073513E-08
+    e03: -1.392262e-29
+    e10: -0.00000004073513
     e11: -1
-    e12: 6.123234E-17
-    e13: 9.536743E-07
+    e12: 6.123234e-17
+    e13: 0.0000009536743
     e20: -1
-    e21: 4.073513E-08
-    e22: -6.123234E-17
-    e23: 1.885256E-13
+    e21: 0.00000004073513
+    e22: -6.123234e-17
+    e23: 1.885256e-13
     e30: 0
     e31: 0
     e32: 0
     e33: 1
-  - e00: 6.123234E-17
-    e01: -6.123234E-17
+  - e00: 6.123234e-17
+    e01: -6.123234e-17
     e02: -1
     e03: 0
-    e10: -4.132642E-07
+    e10: -0.0000004132642
     e11: -1
-    e12: 6.123232E-17
-    e13: 8.01784E-07
+    e12: 6.123232e-17
+    e13: 0.000000801784
     e20: -1
-    e21: 4.132643E-07
-    e22: -6.123237E-17
-    e23: -3.313487E-13
+    e21: 0.0000004132643
+    e22: -6.123237e-17
+    e23: -3.313487e-13
     e30: 0
     e31: 0
     e32: 0
     e33: 1
-  - e00: 6.123234E-17
-    e01: -6.123234E-17
+  - e00: 6.123234e-17
+    e01: -6.123234e-17
     e02: -1
     e03: 1.023798
-    e10: -4.028111E-07
+    e10: -0.0000004028111
     e11: -1
-    e12: 6.123232E-17
-    e13: 9.38634E-07
+    e12: 6.123232e-17
+    e13: 0.000000938634
     e20: -1
-    e21: 4.028111E-07
-    e22: -6.123236E-17
-    e23: -3.780295E-13
+    e21: 0.0000004028111
+    e22: -6.123236e-17
+    e23: -3.780295e-13
     e30: 0
     e31: 0
     e32: 0
     e33: 1
-  - e00: 6.123234E-17
-    e01: 6.123234E-17
+  - e00: 6.123234e-17
+    e01: 6.123234e-17
     e02: 1
     e03: -2.529197
     e10: -0.7071064
     e11: -0.7071073
-    e12: 8.659561E-17
+    e12: 8.659561e-17
     e13: -1.815235
     e20: 0.7071072
     e21: -0.7071063
-    e22: -5.839572E-23
+    e22: -5.839572e-23
     e23: 1.354566
     e30: 0
     e31: 0
     e32: 0
     e33: 1
-  - e00: 6.123234E-17
-    e01: 6.123234E-17
+  - e00: 6.123234e-17
+    e01: 6.123234e-17
     e02: 1
     e03: -2.524953
-    e10: 7.470422E-07
+    e10: 0.0000007470422
     e11: -1
-    e12: 6.12323E-17
+    e12: 6.12323e-17
     e13: -0.5555401
     e20: 1
-    e21: 7.470422E-07
-    e22: -6.123239E-17
+    e21: 0.0000007470422
+    e22: -6.123239e-17
     e23: 0.9365131
     e30: 0
     e31: 0
     e32: 0
     e33: 1
-  - e00: 6.123234E-17
-    e01: 6.123234E-17
+  - e00: 6.123234e-17
+    e01: 6.123234e-17
     e02: 1
     e03: -2.517689
     e10: -0.7071072
     e11: 0.7071066
-    e12: 3.649733E-23
+    e12: 3.649733e-23
     e13: 1.8851
     e20: -0.7071065
     e21: -0.7071071
-    e22: 8.659561E-17
+    e22: 8.659561e-17
     e23: 1.44644
     e30: 0
     e31: 0
@@ -119,15 +123,29 @@ Mesh:
     e33: 1
   m_BoneNameHashes: 9d8a16ed0cfe4b706ee280074fd10d61badc05ec2cec029b
   m_RootBoneNameHash: 3977677469
+  m_BonesAABB:
+  - m_Min: {x: -0.9020449, y: -0.7638741, z: -2.6653545}
+    m_Max: {x: -0.07302621, y: 0.77573204, z: 2.4271889}
+  - m_Min: {x: -0.07960572, y: -1.7310625, z: -3.7114968}
+    m_Max: {x: 0.012507464, y: 1.446842, z: 3.0193453}
+  - m_Min: {x: -2.1679175, y: -0.6783411, z: -2.5864003}
+    m_Max: {x: 0.17438918, y: 0.67703867, z: 2.3613937}
+  - m_Min: {x: -0.4691577, y: -0.7367964, z: -0.5668837}
+    m_Max: {x: 0.10983944, y: 0.105291724, z: 0.15424097}
+  - m_Min: {x: -0.3859594, y: -1.2075641, z: -0.2405687}
+    m_Max: {x: 0.094344854, y: 0.08859992, z: 0.30553174}
+  - m_Min: {x: -0.4576497, y: -0.13870299, z: -0.57828283}
+    m_Max: {x: 0.2989943, y: 0.8010855, z: 0.36150587}
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
-  m_KeepVertices: 1
-  m_KeepIndices: 1
+  m_KeepVertices: 0
+  m_KeepIndices: 0
   m_IndexFormat: 0
-  m_IndexBuffer:
-  m_Skin: []
+  m_IndexBuffer: 
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
     - stream: 0
@@ -162,8 +180,32 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 2367
@@ -181,13 +223,13 @@ Mesh:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Weights:
       m_NumItems: 1047
@@ -195,17 +237,17 @@ Mesh:
       m_BitSize: 5
     m_NormalSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_TangentSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_FloatColors:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_BoneIndices:
       m_NumItems: 1047
@@ -220,6 +262,14 @@ Mesh:
     m_Center: {x: 0.3460757, y: 0.1427739, z: 1.589295}
     m_Extent: {x: 3.365421, y: 1.589608, z: 1.604628}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
-  m_MeshOptimized: 1
+  m_CookingOptions: 30
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 

@@ -35,8 +35,6 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private EffectDetailView _effectDetailPrefab;
         private bool _isShownChar;
 
-        //TODO: Add a section for active effects on char
-
         [Header("Skill Detail")]
         [SerializeField] private TextMeshProUGUI _skillName;
         [SerializeField] private RectTransform _skillDetail;

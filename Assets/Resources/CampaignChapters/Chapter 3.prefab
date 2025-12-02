@@ -872,6 +872,10 @@ PrefabInstance:
       propertyPath: _levelData
       value: 
       objectReference: {fileID: 11400000, guid: cdfb2e9910d370b449bd8ec50077e789, type: 2}
+    - target: {fileID: 413390762363710832, guid: 4aad97927a6c9bb4aaee73d170650cd2, type: 3}
+      propertyPath: _roomNumber
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1906016963213332380, guid: 4aad97927a6c9bb4aaee73d170650cd2, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

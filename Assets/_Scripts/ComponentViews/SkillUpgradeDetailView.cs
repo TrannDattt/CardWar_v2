@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace CardWar_v2.ComponentViews
 {
-    public class SkillUpgradeDetailView : MonoBehaviour //TODO: Change name pls!!!
+    public class SkillUpgradeDetailView : MonoBehaviour
     {
         [SerializeField] private Image _image;
         [SerializeField] private TextMeshProUGUI _name;

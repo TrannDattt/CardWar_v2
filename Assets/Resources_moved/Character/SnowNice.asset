@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95e1df2963aed1046861880fc401e85d, type: 3}
+  m_Name: SnowNice
+  m_EditorClassIdentifier: 
+  _id: 8813efef-65c6-4bf3-bde1-8d2b2363bd88
+  Name: Snow Nice
+  Image: {fileID: 0}
+  SplashArt: {fileID: 0}
+  Model: {fileID: 7983489931341959476, guid: ae41977ed845f1e41b94dbfed7435c3e, type: 3}
+  IsPlayable: 0
+  AnimController: {fileID: 9100000, guid: f7705b90b4b9678488df9fdc361ede8b, type: 2}
+  VoiceLines: []
+  Hp: 400
+  Atk: 44
+  Armor: 4
+  Resist: 4
+  HpPerLevel: 4
+  AtkPerLevel: 4
+  ArmorPerLevel: 4
+  ResistPerLevel: 4
+  SkillCardDatas:
+  - {fileID: 11400000, guid: 1bc8de02c34c04f48881e1781a781ee6, type: 2}
+  - {fileID: 11400000, guid: ed3d3392dc489db4f91fbd14dca5e164, type: 2}
+  - {fileID: 11400000, guid: dbdca24223853e643913095aced56ce1, type: 2}

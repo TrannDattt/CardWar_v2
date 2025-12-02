@@ -7,11 +7,11 @@ using CardWar.Interfaces;
 using CardWar_v2.Datas;
 using CardWar_v2.Enums;
 using CardWar_v2.GameControl;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Events;
 using static CardWar_v2.ComponentViews.FXPlayer;
 using static CardWar_v2.Datas.CharacterCardData;
+using static CardWar_v2.GameControl.GameAudioManager;
 
 namespace CardWar_v2.Entities
 {
@@ -64,11 +64,10 @@ namespace CardWar_v2.Entities
     {
         public CharacterCardData Data { get; private set; }
 
-        public ECharacter Character => Data.Character;
         public string Name => Data.Name;
         public Sprite Image => Data.Image;
         public Sprite SplashArt => Data.SplashArt;
-        public AnimatorController AnimController => Data.AnimController;
+        public RuntimeAnimatorController AnimController => Data.AnimController;
         public GameObject Model => Data.Model;
         public List<Voice> VoiceLines => Data.VoiceLines;
 
@@ -127,6 +126,22 @@ namespace CardWar_v2.Entities
             SkillCards = new();
             ActiveEffects = new();
             Data.SkillCardDatas?.ForEach(d => SkillCards.Add(new(d, this)));
+
+            OnUseSkill.AddListener((s) => 
+            {
+                GameAudioManager.Instance.PlayVoice(this, 
+                                                    SkillCards.IndexOf(s) switch
+                                                    {
+                                                        0 => EVoice.Skill1,
+                                                        1 => EVoice.Skill2,
+                                                        2 => EVoice.Skill3,
+                                                        _ => EVoice.None
+                                                    },
+                                                    true);
+            });
+
+            OnDeath.AddListener(() => GameAudioManager.Instance.PlayVoice(this, EVoice.Die));
+            OnCardLevelUp.AddListener(() => GameAudioManager.Instance.PlayVoice(this, EVoice.Upgrade));
         }
 
         #region Level & Unlock

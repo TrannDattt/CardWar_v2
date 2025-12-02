@@ -29,7 +29,6 @@ namespace CardWar_v2.ComponentViews
             _cardInHand.Clear();
         }
 
-        // TODO: Fix arrange when draw cards
         public void ArrangeHand(bool excludeLast = false)
         {
             // Debug.Log($"Arrange card");

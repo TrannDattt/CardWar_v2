@@ -18,7 +18,7 @@ namespace CardWar_v2.ComponentViews
         {
             _levelBtns.ForEach(b =>
             {
-                b.Initialize();
+                b.Initialize(ChapterNumber);
             });
 
             NextBtn.gameObject.SetActive(ChapterNumber < PlayerSessionManager.Instance.CampaignLevels[^1].Chapter);

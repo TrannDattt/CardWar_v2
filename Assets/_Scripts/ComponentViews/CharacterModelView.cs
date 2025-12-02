@@ -87,7 +87,13 @@ namespace CardWar_v2.ComponentViews
 
             card.OnTakingDamage.AddListener(source => 
             {
-                if (source == EFXType.Hit) PlayFX(EFXType.Hit);
+                switch (source)
+                { 
+                    case EFXType.Hit: 
+                        PlayFX(EFXType.Hit);
+                        break;
+                    default: break;
+                };
             });
             card.OnChangeHp.AddListener(UpdateCardDetail);
             card.OnApplyEffect.AddListener((effect) => ApplyEffect(effect));
@@ -120,8 +126,6 @@ namespace CardWar_v2.ComponentViews
         #region Do Skill
         public void DoSkillAnim(AnimationClip clip)
         {
-            //TODO: Do animation: Charge toward target for melee or summon projectile for range
-            //      Do damage to target
             if (clip == null) return;
             // Debug.Log($"Do animation {clip.name}");
             _animator.Play(clip.name);

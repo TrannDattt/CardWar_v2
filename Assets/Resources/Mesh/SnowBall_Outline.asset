@@ -2,8 +2,12 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!43 &4300000
 Mesh:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: SnowBall_Outline
-  serializedVersion: 8
+  serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
     firstByte: 0
@@ -21,17 +25,17 @@ Mesh:
     channels: []
     fullWeights: []
   m_BindPose:
-  - e00: 6.123234E-17
-    e01: -6.123234E-17
+  - e00: 6.123234e-17
+    e01: -6.123234e-17
     e02: -1
     e03: 0.179822
-    e10: 5.233538E-07
+    e10: 0.0000005233538
     e11: -1
-    e12: 6.123237E-17
+    e12: 6.123237e-17
     e13: 0.01880607
     e20: -1
-    e21: -5.233538E-07
-    e22: -6.123231E-17
+    e21: -0.0000005233538
+    e22: -6.123231e-17
     e23: 0.0001422824
     e30: 0
     e31: 0
@@ -59,7 +63,7 @@ Mesh:
     e03: 0.8737007
     e10: -0.8947864
     e11: -0.4464949
-    e12: -7.450583E-08
+    e12: -0.00000007450583
     e13: -0.0617845
     e20: -0.01632518
     e21: 0.03271589
@@ -87,15 +91,25 @@ Mesh:
     e33: 1
   m_BoneNameHashes: b5bd6407b8006647946168a902516fde
   m_RootBoneNameHash: 124042677
+  m_BonesAABB:
+  - m_Min: {x: -1.067728, y: -1.0098228, z: -1.0187566}
+    m_Max: {x: 1.420676, y: 1.045604, z: 1.0293726}
+  - m_Min: {x: -0.42080057, y: -0.4514929, z: -0.43660766}
+    m_Max: {x: 0.21177042, y: 0.4475184, z: 0.46162298}
+  - m_Min: {x: -0.2501374, y: -0.2926746, z: -0.27791467}
+    m_Max: {x: 0.14392745, y: 0.26538026, z: 0.2794615}
+  - m_Min: {x: -0.32751673, y: -0.3194101, z: -0.34242016}
+    m_Max: {x: 0.14728522, y: 0.35701197, z: 0.33372432}
+  m_VariableBoneCountWeights:
+    m_Data: 
   m_MeshCompression: 3
   m_IsReadable: 0
-  m_KeepVertices: 1
-  m_KeepIndices: 1
+  m_KeepVertices: 0
+  m_KeepIndices: 0
   m_IndexFormat: 0
-  m_IndexBuffer:
-  m_Skin: []
+  m_IndexBuffer: 
   m_VertexData:
-    m_CurrentChannels: 0
+    serializedVersion: 3
     m_VertexCount: 0
     m_Channels:
     - stream: 0
@@ -130,8 +144,32 @@ Mesh:
       offset: 0
       format: 0
       dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
+    - stream: 0
+      offset: 0
+      format: 0
+      dimension: 0
     m_DataSize: 0
-    _typelessdata:
+    _typelessdata: 
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 2262
@@ -149,13 +187,13 @@ Mesh:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Tangents:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_Weights:
       m_NumItems: 754
@@ -163,17 +201,17 @@ Mesh:
       m_BitSize: 5
     m_NormalSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_TangentSigns:
       m_NumItems: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_FloatColors:
       m_NumItems: 0
       m_Range: 0
       m_Start: 0
-      m_Data:
+      m_Data: 
       m_BitSize: 0
     m_BoneIndices:
       m_NumItems: 754
@@ -188,6 +226,14 @@ Mesh:
     m_Center: {x: -0.005022347, y: -0.01229054, z: 0.003348351}
     m_Extent: {x: 1.024006, y: 1.041229, z: 1.244202}
   m_MeshUsageFlags: 1
-  m_BakedConvexCollisionMesh:
-  m_BakedTriangleCollisionMesh:
-  m_MeshOptimized: 1
+  m_CookingOptions: 30
+  m_BakedConvexCollisionMesh: 
+  m_BakedTriangleCollisionMesh: 
+  'm_MeshMetrics[0]': 1
+  'm_MeshMetrics[1]': 1
+  m_MeshOptimizationFlags: -1
+  m_StreamData:
+    serializedVersion: 2
+    offset: 0
+    size: 0
+    path: 

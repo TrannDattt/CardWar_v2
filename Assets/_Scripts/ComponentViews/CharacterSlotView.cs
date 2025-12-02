@@ -16,7 +16,6 @@ namespace CardWar_v2.ComponentViews
 
         public void PrepareSlot()
         {
-            // OnSlotClicked.RemoveAllListeners();
             RemoveCard(true);
         }
 

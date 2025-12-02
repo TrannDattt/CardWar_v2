@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using CardWar.Enums;
-using UnityEditor.Animations;
 using UnityEngine;
 using static CardWar_v2.GameControl.GameAudioManager;
 
@@ -11,8 +10,19 @@ namespace CardWar_v2.Datas
     public class CharacterCardData : ScriptableObject
     {
         // Info
-        public string Id => GetInstanceID().ToString();
-        public ECharacter Character;
+        [SerializeField] private string _id;
+        public string Id => _id;
+
+        private void OnValidate()
+        {
+            if (string.IsNullOrEmpty(_id))
+            {
+                _id = Guid.NewGuid().ToString();
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(this);
+#endif
+            }
+        }
         public string Name;
         public Sprite Image;
         public Sprite SplashArt;
@@ -20,7 +30,7 @@ namespace CardWar_v2.Datas
         public bool IsPlayable;
 
         // Animation
-        public AnimatorController AnimController;
+        public RuntimeAnimatorController AnimController;
         
         // Audio
 

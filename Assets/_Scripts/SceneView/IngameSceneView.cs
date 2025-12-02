@@ -235,7 +235,6 @@ namespace CardWar_v2.SceneViews
                     // var targets = ss.Targets.Select(pt => _boardView.GetCharacterByPos(targetSide, pt)).ToList();
                     if (targets.Count == 0)
                     {
-                        //TODO: Animation for card if no targets
                         continue;
                     }
 
