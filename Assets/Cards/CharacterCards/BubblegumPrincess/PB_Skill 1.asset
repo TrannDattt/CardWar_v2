@@ -14,28 +14,73 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Sweet Salvation
   Image: {fileID: 21300000, guid: b9bc1fca5017c0f418c7978c0e2976f0, type: 3}
-  Description: '- Ally at the Front gain HP equal to 20% ATK + 5% target''s HP.
+  Description: '- Ally at the Front gain HP equal to 60% ATK + 5% target''s HP.
 
     -
-    If no  ally at the Front, apply Strenthen to allies at the Mid and the Back,
-    decease incoming damage by 30% for 1 turn.'
+    If no ally at the Front, apply Strenthen to allies at the Mid and the Back, decease
+    incoming damage by 30% for 1 turn.'
   Skill:
-  - rid: 4516365139864977540
-  - rid: 4516365299649609729
+  - rid: 7250261160345469062
+  - rid: 7250261160345469054
   references:
     version: 2
     RefIds:
-    - rid: 4516365139864977540
-      type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+    - rid: 7250261160345469054
+      type: {class: ConditionalSkill, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
-        Clip: {fileID: 7400000, guid: d7f8a723a933fb3429d97f92d84f1d33, type: 2}
+        Clip: {fileID: 0}
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 00000000
+        Conditions:
+        - rid: 7250261160345469055
+        TrueSkills:
+        - rid: 7250261160345469056
+    - rid: 7250261160345469055
+      type: {class: CharInSlotCheck, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Region: 0
+        Position: 0
+        checkExist: 0
+    - rid: 7250261160345469056
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 0100000002000000
+        Effects:
+        - EffectType: 7
+          Amount: 0.3
+          Duration: 1
+    - rid: 7250261160345469062
+      type: {class: ConditionalSkill, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 7400000, guid: d7f8a723a933fb3429d97f92d84f1d33, type: 2}
+        DelayToSkill: 0.37
+        TargetSide: 0
+        PositionTargets: 00000000
+        Conditions:
+        - rid: 7250261160345469063
+        TrueSkills:
+        - rid: 7250261160345469064
+    - rid: 7250261160345469063
+      type: {class: CharInSlotCheck, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Region: 0
+        Position: 0
+        checkExist: 1
+    - rid: 7250261160345469064
+      type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 
         HpMult:
           CasterStatMult:
             Hp: 0
-            Atk: 0.2
+            Atk: 0.6
             Armor: 0
             Resist: 0
           TargetStatMult:
@@ -76,14 +121,3 @@ MonoBehaviour:
             Atk: 0
             Armor: 0
             Resist: 0
-    - rid: 4516365299649609729
-      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
-      data:
-        Clip: {fileID: 0}
-        DelayToSkill: 0
-        TargetSide: 0
-        PositionTargets: 0100000002000000
-        Effects:
-        - EffectType: 7
-          Amount: 0.3
-          Duration: 1

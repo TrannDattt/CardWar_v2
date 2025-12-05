@@ -23,6 +23,7 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private Canvas _canvas;
         [SerializeField] private FillBarView _healthBar;
         [SerializeField] private GameObject _effectBar;
+        [SerializeField] private DamageTextPopup _damagePopupPrefab;
 
         private Animator _animator;
 
@@ -58,7 +59,10 @@ namespace CardWar_v2.ComponentViews
             Side = side;
 
             var model = Instantiate(BaseCard.Model, _modelBase.transform);
-            // _canvas.GetComponent<RectTransform>().rotation = Quaternion.Inverse(transform.rotation) * Quaternion.Euler(0, 90, 0);
+            if (_canvas != null) 
+                _canvas.GetComponent<RectTransform>().rotation = Quaternion.Euler(side == EPlayerTarget.Enemy 
+                                                                                    ? new(0, 90, 0) 
+                                                                                    : new(0, -90, 0));
 
             _animator = model.GetComponent<Animator>();
             _animator.runtimeAnimatorController = card.AnimController;
@@ -85,31 +89,27 @@ namespace CardWar_v2.ComponentViews
                 }
             }
 
-            card.OnTakingDamage.AddListener(source => 
-            {
-                switch (source)
-                { 
-                    case EFXType.Hit: 
-                        PlayFX(EFXType.Hit);
-                        break;
-                    default: break;
-                };
-            });
+            card.OnTakingDamage.AddListener(ShowDamageTaken);
             card.OnChangeHp.AddListener(UpdateCardDetail);
             card.OnApplyEffect.AddListener((effect) => ApplyEffect(effect));
 
-            // _healthBar?.SetMaxValue(Hp);
-            if (_effectBar != null)
-            {
-                _effectBar.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 90, 0);
-                foreach (Transform c in _effectBar.transform)
-                {
-                    var effect = c.GetComponent<EffectView>();
-                    EffectViewFactory.Instance.ReturnEffectView(effect);
-                }
-            }
-
             UpdateCardDetail();
+        }
+
+        private void ShowDamageTaken(ICanDoDamage source, float amount)
+        {
+            if (!_damagePopupPrefab) return;
+
+            // Debug.Log("Show popup damage");
+            var dmgPopup = Instantiate(_damagePopupPrefab, _canvas.GetComponent<RectTransform>());
+            List<ESkillEffect> attributeEffects = source switch
+            {
+                CharacterCard character => new() { ESkillEffect.None },
+                SkillEffect effect => new() {effect.EffectType},
+                _ => new()
+            };
+            dmgPopup.Initialize((int)amount, attributeEffects.ToArray());
+            dmgPopup.Pop();
         }
 
         private async void UpdateCardDetail()
@@ -135,7 +135,7 @@ namespace CardWar_v2.ComponentViews
         {
             // Debug.Log($"Doing sub-skill {subSkill.GetType()}");
             DoSkillAnim(subSkill.Clip);
-            var tasks = targets.Where(t => t != null).Select(t => subSkill.DoSkill(this, t));
+            var tasks = targets.Select(t => subSkill.DoSkill(this, t));
             await Task.Delay((int)(subSkill.DelayToSkill * 1000));
             await Task.WhenAll(tasks);
             if (subSkill.Clip != null) await WaitForAnimationEnd(_animator, subSkill.Clip.name);
@@ -199,7 +199,7 @@ namespace CardWar_v2.ComponentViews
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            Debug.Log($"Clicked to character {BaseCard.Name}");
+            // Debug.Log($"Clicked to character {BaseCard.Name}");
             OnModelClicked?.Invoke(eventData);
         }
     }

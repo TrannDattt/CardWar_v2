@@ -20,14 +20,14 @@ MonoBehaviour:
   IsPlayable: 1
   AnimController: {fileID: 9100000, guid: d809a3e214b895a49af22c28d97ad81e, type: 2}
   VoiceLines: []
-  Hp: 400
-  Atk: 35
+  Hp: 350
+  Atk: 55
   Armor: 5
   Resist: 5
-  HpPerLevel: 0
-  AtkPerLevel: 0
-  ArmorPerLevel: 0
-  ResistPerLevel: 0
+  HpPerLevel: 30
+  AtkPerLevel: 7
+  ArmorPerLevel: 0.5
+  ResistPerLevel: 1
   SkillCardDatas:
   - {fileID: 11400000, guid: 88974a6df66c36d4188d3014fcbde7bb, type: 2}
   - {fileID: 11400000, guid: 60db570d66d5f624d975a6cd59d662f7, type: 2}

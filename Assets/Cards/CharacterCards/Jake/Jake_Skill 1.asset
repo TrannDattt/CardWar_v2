@@ -29,7 +29,7 @@ MonoBehaviour:
       type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
         Clip: {fileID: 7400000, guid: b8ea0fd7feec43248953183fea3a3759, type: 2}
-        DelayToSkill: 2
+        DelayToSkill: 0.75
         TargetSide: 0
         PositionTargets: 000000000100000002000000
         Effects:

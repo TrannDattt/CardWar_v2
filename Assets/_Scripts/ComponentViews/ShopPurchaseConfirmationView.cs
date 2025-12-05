@@ -52,7 +52,7 @@ namespace CardWar_v2.ComponentViews
                 return;
             }
 
-            GameAudioManager.Instance.PlaySFX(ESfx.BuyItem);
+            GameAudioManager.Instance.PlaySFX(ESfx.BuyItem, restart: true);
             _curItem.BuyItem(Quantity);
             CurPlayer.UpdatePlayerCurrency(-goldCost, -gemCost);
             if (_curItem.StockAmount == 0) ClosePopup();

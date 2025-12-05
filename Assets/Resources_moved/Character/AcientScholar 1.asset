@@ -20,8 +20,8 @@ MonoBehaviour:
   IsPlayable: 0
   AnimController: {fileID: 9100000, guid: b822659c7aa9c054a966ec258d3e5f5e, type: 2}
   VoiceLines: []
-  Hp: 100
-  Atk: 10
+  Hp: 1
+  Atk: 1
   Armor: 0
   Resist: 0
   HpPerLevel: 2

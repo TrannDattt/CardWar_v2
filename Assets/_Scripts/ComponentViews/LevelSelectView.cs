@@ -27,7 +27,7 @@ namespace CardWar_v2.ComponentViews
 
         void Awake()
         {
-            _levelBtns = new List<LevelButtonView>( _levelButtonParent.GetComponentsInChildren<LevelButtonView>(true) );
+            _levelBtns = new List<LevelButtonView>(_levelButtonParent.GetComponentsInChildren<LevelButtonView>(true));
         }
     }
 }

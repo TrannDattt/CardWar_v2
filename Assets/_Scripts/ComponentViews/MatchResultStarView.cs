@@ -23,9 +23,9 @@ namespace CardWar_v2.ComponentViews
 
         public async Task ShowStarResult(bool isEnable, bool doAnim)
         {
-            _imageRt.anchoredPosition = _disabledTransform.Position;
-            _imageRt.localScale = _disabledTransform.Scale;
-            _starImage.color = Color.clear;
+            // _imageRt.anchoredPosition = _disabledTransform.Position;
+            // _imageRt.localScale = _disabledTransform.Scale;
+            // _starImage.color = Color.clear;
 
             if (!isEnable) return;
 
@@ -45,6 +45,13 @@ namespace CardWar_v2.ComponentViews
             _imageRt.anchoredPosition = _defaultTransform.Position;
             _imageRt.localScale = _defaultTransform.Scale;
             _starImage.color = Color.white;
+        }
+
+        void Start()
+        {
+            _imageRt.anchoredPosition = _disabledTransform.Position;
+            _imageRt.localScale = _disabledTransform.Scale;
+            _starImage.color = Color.clear;
         }
     }
 }

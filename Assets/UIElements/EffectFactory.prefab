@@ -47,42 +47,66 @@ MonoBehaviour:
   _iconMappings:
   - EffectType: 1
     Icon: {fileID: 386943245, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    TextColor: {r: 0.17254902, g: 0.9333334, b: 0.43921572, a: 1}
     OnApplyFX: {fileID: 6470223850953089096, guid: a74b2bfe0433a72469fdb3538cd72332, type: 3}
-    OnActiveFX: {fileID: 0}
+    OnActiveFX: {fileID: 3280519133390621004, guid: 67909caafc03a4249a2692e6623dd030, type: 3}
+    SFX: {fileID: 0}
   - EffectType: 2
     Icon: {fileID: -169450226, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    TextColor: {r: 0.043137256, g: 0.52156866, b: 0.19215688, a: 1}
     OnApplyFX: {fileID: 1524533970525000386, guid: 1133dff0b5fda2e4295d301899b1582d, type: 3}
-    OnActiveFX: {fileID: 0}
+    OnActiveFX: {fileID: 4425129568604114668, guid: bbeeb0ddc21369746aaaae5c5c1c09cf, type: 3}
+    SFX: {fileID: 0}
   - EffectType: 3
     Icon: {fileID: 995180074, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    TextColor: {r: 0.69803923, g: 0.21568629, b: 0.5686275, a: 1}
     OnApplyFX: {fileID: 6470223850953089096, guid: 1e54877675f6e4a46ad7ca7c4d7a5bf6, type: 3}
     OnActiveFX: {fileID: 0}
+    SFX: {fileID: 0}
   - EffectType: 4
     Icon: {fileID: 971938667, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    TextColor: {r: 1, g: 0.34901962, b: 0.10588236, a: 1}
     OnApplyFX: {fileID: 1524533970525000386, guid: d73ad74d98f8a334da43a0d11c7bb1d5, type: 3}
-    OnActiveFX: {fileID: 0}
+    OnActiveFX: {fileID: 4425129568604114668, guid: bd4ec3987e466e34b9b239199beafb99, type: 3}
+    SFX: {fileID: 0}
   - EffectType: 5
     Icon: {fileID: -1993894796, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    TextColor: {r: 0.47450984, g: 0.8117648, b: 1, a: 1}
     OnApplyFX: {fileID: 344459658360607702, guid: 607c455b28f4d16409254efd2ab6f174, type: 3}
     OnActiveFX: {fileID: 0}
+    SFX: {fileID: 0}
   - EffectType: 6
     Icon: {fileID: 1659532821, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    TextColor: {r: 0.5372549, g: 0.34901962, b: 0.8941177, a: 1}
     OnApplyFX: {fileID: 3337905222051100615, guid: b61a89fa0e5110e4db5baf1174b8d2c7, type: 3}
     OnActiveFX: {fileID: 0}
+    SFX: {fileID: 0}
   - EffectType: 7
     Icon: {fileID: -374878251, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    TextColor: {r: 0.82745105, g: 0.8431373, b: 0.10588236, a: 1}
     OnApplyFX: {fileID: 3337905222051100615, guid: 7660b8dc1d5d89141a451f8960177eec, type: 3}
     OnActiveFX: {fileID: 0}
+    SFX: {fileID: 0}
   - EffectType: 8
     Icon: {fileID: 171650554, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    TextColor: {r: 0.8705883, g: 0, b: 0, a: 1}
     OnApplyFX: {fileID: 6470223850953089096, guid: d48603a6599c6474297bf61f5059baea, type: 3}
-    OnActiveFX: {fileID: 0}
+    OnActiveFX: {fileID: 3280519133390621004, guid: 67909caafc03a4249a2692e6623dd030, type: 3}
+    SFX: {fileID: 0}
   - EffectType: 9
     Icon: {fileID: 21300000, guid: 550aa7d5c0814c4438eeb101a54bf7dd, type: 3}
+    TextColor: {r: 0.043137256, g: 0.47450984, b: 0.7137255, a: 1}
     OnApplyFX: {fileID: 3337905222051100615, guid: 19e0cb40889027a499a2493fda4b9611, type: 3}
-    OnActiveFX: {fileID: 0}
-  - EffectType: 10
-    Icon: {fileID: 0}
+    OnActiveFX: {fileID: 4425129568604114668, guid: 804e139954ab9c54f8937ff8ab4d3157, type: 3}
+    SFX: {fileID: 0}
+  - EffectType: 0
+    Icon: {fileID: 1968308064, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
+    TextColor: {r: 0.9058824, g: 0.28627452, b: 0.2784314, a: 1}
     OnApplyFX: {fileID: 0}
     OnActiveFX: {fileID: 0}
+    SFX: {fileID: 0}
   _effectViewPrefab: {fileID: 8213708704505645575, guid: 237b53af76ba67641881e2d76d188ab4, type: 3}
+  <AtkBuffFX>k__BackingField: {fileID: 3280519133390621004, guid: b0506b2105f975f4cbfc1cd15be9e886, type: 3}
+  <HpBuffFX>k__BackingField: {fileID: 3280519133390621004, guid: 67909caafc03a4249a2692e6623dd030, type: 3}
+  <AmrBuffFX>k__BackingField: {fileID: 3280519133390621004, guid: d8bc38e53a7f8fb4c91ac22d0dc7d4aa, type: 3}
+  <ResBuffFX>k__BackingField: {fileID: 3280519133390621004, guid: cbbdc6054b272d143afa80b143461634, type: 3}

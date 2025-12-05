@@ -61,6 +61,23 @@ namespace CardWar_v2.ComponentViews
             return character;
         }
 
+        public CharacterModelView GetUntargetedCharByPos(List<CharacterModelView> targetedChars, EPlayerTarget region, EPositionTarget pos, bool flexPos)
+        {
+            var pr = region == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
+            var targetedSlots = targetedChars.Select(c => pr.GetSlotByCard(c.BaseCard)).Where(s => s != null);
+            List<CharacterSlotView> untargetedSlots = new();
+            foreach (var s in pr.Slots)
+            {
+                if (!targetedSlots.Contains(s)) untargetedSlots.Add(s);
+            }
+
+            var posTarget = pos == EPositionTarget.Random ? untargetedSlots[UnityEngine.Random.Range(0, untargetedSlots.Count)].SlotPos : pos;
+            var character = pr.GetCharByPos(posTarget);
+
+            if (character == null && flexPos) return GetAdditionTarget(region, posTarget);
+            return character;
+        }
+
         private CharacterModelView GetAdditionTarget(EPlayerTarget region, EPositionTarget curPos)
         {
             var pr = region == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;

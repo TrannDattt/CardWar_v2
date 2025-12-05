@@ -17,11 +17,10 @@ MonoBehaviour:
   Description: '- Attack enemy at the Front, deal Physical damage equal to 100% ATK.
 
     -
-    If the attack takes down the enemy, gain ATK equal to 20% his ATK and remove
-    Chill.'
+    If the attack takes down the enemy, gain ATK equal to 20% his ATK.'
   Skill:
   - rid: 4516365123665002592
-  - rid: 4516365139864977503
+  - rid: 7250261160345469006
   references:
     version: 2
     RefIds:
@@ -43,7 +42,21 @@ MonoBehaviour:
           Armor: 0
           Resist: 0
         DamageType: 0
-    - rid: 4516365139864977503
+    - rid: 7250261160345469006
+      type: {class: ConditionalSkill, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 1
+        PositionTargets: 05000000
+        Conditions:
+        - rid: 7250261160345469013
+        TrueSkills:
+        - rid: 7250261160345469014
+    - rid: 7250261160345469013
+      type: {class: KillLastTargetCheck, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data: 
+    - rid: 7250261160345469014
       type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
         Clip: {fileID: 0}

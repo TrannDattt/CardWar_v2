@@ -17,7 +17,7 @@ MonoBehaviour:
   Description: '- Apply Omnivamp, restore HP equal to 50% damage dealt for 1 turn.
 
     -
-    Attack enemy at the Mid, deal Physical damage equal to 90% ATK.
+    Attack enemy at the Mid, deal Physical damage equal to 70% ATK.
 
 '
   Skill:
@@ -35,7 +35,7 @@ MonoBehaviour:
         PositionTargets: 01000000
         CasterStatMult:
           Hp: 0
-          Atk: 0.9
+          Atk: 0.7
           Armor: 0
           Resist: 0
         TargetStatMult:

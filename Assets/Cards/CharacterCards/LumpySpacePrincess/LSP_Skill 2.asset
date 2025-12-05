@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Overdramatic Savior
   Image: {fileID: 21300000, guid: 0229857a5f86c0840aa27461dfac71be, type: 3}
-  Description: '- Apply Strengthen to all allies, decrease incoming damage by 100%
+  Description: '- Apply Strengthen to all allies, decrease incoming damage by 50%
     for 1 turn.
 
     - Apply Poison, Burn and Silence to herself for 3 turns.'
@@ -28,12 +28,12 @@ MonoBehaviour:
       type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
         Clip: {fileID: 7400000, guid: 3df07f6d0935fb241ba42baadab0362b, type: 2}
-        DelayToSkill: 0
+        DelayToSkill: 0.9
         TargetSide: 0
         PositionTargets: 000000000100000002000000
         Effects:
         - EffectType: 7
-          Amount: 1
+          Amount: 0.5
           Duration: 1
     - rid: 4516365139864977529
       type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}

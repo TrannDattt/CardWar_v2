@@ -17,13 +17,9 @@ MonoBehaviour:
   Description: '- Attack all enemy, deal Magical damage equal to 55% ATK.
 
     -
-    Lose 100% RES and 100% AMR.
-
-    - Apply Vulnerable to herself, increase incoming
-    damage by 15% for 1 turn.'
+    Apply Vulnerable to herself, increase incoming damage by 35% for 1 turn.'
   Skill:
   - rid: 4516365139864977509
-  - rid: 4516365139864977510
   - rid: 4516365139864977512
   references:
     version: 2
@@ -48,57 +44,6 @@ MonoBehaviour:
         Projectile: {fileID: 3998243016608106878, guid: 32969342608cb7541938fab7b9aa3d75, type: 3}
         OffsetToCaster: {x: 0, y: 4.75, z: 1.2}
         DamageType: 1
-    - rid: 4516365139864977510
-      type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
-      data:
-        Clip: {fileID: 0}
-        DelayToSkill: 0
-        TargetSide: 0
-        PositionTargets: 04000000
-        HpMult:
-          CasterStatMult:
-            Hp: 0
-            Atk: 0
-            Armor: 0
-            Resist: 0
-          TargetStatMult:
-            Hp: 0
-            Atk: 0
-            Armor: 0
-            Resist: 0
-        AtkMult:
-          CasterStatMult:
-            Hp: 0
-            Atk: 0
-            Armor: 0
-            Resist: 0
-          TargetStatMult:
-            Hp: 0
-            Atk: 0
-            Armor: 0
-            Resist: 0
-        AmrMult:
-          CasterStatMult:
-            Hp: 0
-            Atk: 0
-            Armor: -1
-            Resist: 0
-          TargetStatMult:
-            Hp: 0
-            Atk: 0
-            Armor: 0
-            Resist: 0
-        ResMult:
-          CasterStatMult:
-            Hp: 0
-            Atk: 0
-            Armor: 0
-            Resist: -1
-          TargetStatMult:
-            Hp: 0
-            Atk: 0
-            Armor: 0
-            Resist: 0
     - rid: 4516365139864977512
       type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
@@ -108,5 +53,5 @@ MonoBehaviour:
         PositionTargets: 04000000
         Effects:
         - EffectType: 3
-          Amount: 0.15
+          Amount: 0.35
           Duration: 1

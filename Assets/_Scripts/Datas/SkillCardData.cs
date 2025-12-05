@@ -11,6 +11,7 @@ using Demo;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Events;
+using CardWar_v2.Factories;
 
 namespace CardWar_v2.Datas
 {
@@ -54,45 +55,9 @@ namespace CardWar_v2.Datas
         public Vector3 OffsetToCaster;
         public EDamageType DamageType;
 
-        // public override string GenerateDescription(CharacterCard owner)
-        // {
-        //     bool isSelfApply = PositionTargets.Any(t => t == EPositionTarget.Self);
-        //     var randomTargets = PositionTargets.Where(t => t == EPositionTarget.Random).ToList();
-        //     var normalTargets = PositionTargets.Where(t => t != EPositionTarget.Self && t != EPositionTarget.Random).ToList();
-
-        //     string targetList = "";
-
-        //     if (normalTargets.Count == 1)
-        //     {
-        //         targetList = normalTargets[0].ToString();
-        //     }
-        //     else if (normalTargets.Count > 1)
-        //     {
-        //         targetList = string.Join(", ", $"the {normalTargets.Take(normalTargets.Count - 1)}")
-        //                     + $" and the {normalTargets[^1]}";
-        //     }
-
-        //     if (randomTargets.Count > 0)
-        //     {
-        //         string randomDesc = $"{randomTargets.Count} random target(s)";
-        //         if (!string.IsNullOrEmpty(targetList))
-        //             targetList += $" and {randomDesc}";
-        //         else
-        //             targetList = randomDesc;
-        //     }
-
-        //     if (string.IsNullOrEmpty(targetList))
-        //         targetList = "unknown positions";
-
-        //     return $"Fire projectile(s) to {(isSelfApply ? "yourself and " : "")}" +
-        //         $"{TargetSide} targets at {targetList}, " +
-        //         $"dealing {DamageMult * owner.GetStatAtLevel(owner.Level).Atk} " +
-        //         $"{DamageType} damage to each target.";
-        // }
-
         public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
-            if (Projectile == null) return;
+            if (targetModel == null || Projectile == null) return;
             var projectile = UnityEngine.Object.Instantiate(Projectile, casterModel.transform);
             await projectile.FlyToTarget(casterModel.transform.position, OffsetToCaster,
                                         targetModel.transform.position + 3 * Vector3.up,
@@ -104,7 +69,7 @@ namespace CardWar_v2.Datas
             var caster = casterModel.BaseCard;
             var damage = (caster.GetCurStat() * CasterStatMult + (target as CharacterCard).GetCurStat() * TargetStatMult).Total;
 
-            target.TakeDamage(caster, damage, DamageType, FXPlayer.EFXType.Hit);
+            target.TakeDamage(caster, damage, DamageType);
             caster.OnDealDamage?.Invoke(damage);
             // Debug.Log($"Target '{target}' took {damage} projectile damage from Caster '{caster}'");
         }
@@ -152,50 +117,13 @@ namespace CardWar_v2.Datas
 
         public override async Task DoSkill(CharacterModelView caster, CharacterModelView target)
         {
+            if (target == null) return;
             var effects = GetSkillEffect(caster, target);
             foreach (var e in effects)
             {
                 await target.BaseCard.ApplyEffect(e);
             }
         }
-
-    //     public override string GenerateDescription(CharacterCard owner)
-    //     {
-    //         var effect = GetSkillEffect(owner, null);
-    //         bool isSelfApply = PositionTargets.Any(t => t == EPositionTarget.Self);
-    //         var randomTargets = PositionTargets.Where(t => t == EPositionTarget.Random).ToList();
-    //         var normalTargets = PositionTargets.Where(t => t != EPositionTarget.Self && t != EPositionTarget.Random).ToList();
-
-    //         string targetList = "";
-
-    //         if (normalTargets.Count == 1)
-    //         {
-    //             targetList = normalTargets[0].ToString();
-    //         }
-    //         else if (normalTargets.Count > 1)
-    //         {
-    //             targetList = string.Join(", ", $"the {normalTargets.Take(normalTargets.Count - 1)}")
-    //                         + $" and the {normalTargets[^1]}";
-    //         }
-
-    //         if (randomTargets.Count > 0)
-    //         {
-    //             string randomDesc = $"{randomTargets.Count} random target(s)";
-    //             if (!string.IsNullOrEmpty(targetList))
-    //                 targetList += $" and {randomDesc}";
-    //             else
-    //                 targetList = randomDesc;
-    //         }
-
-    //         if (string.IsNullOrEmpty(targetList))
-    //             targetList = "unknown positions";
-
-    //         // return effect.GetDescription(isSelfApply, TargetSide, targetList, isShowNextLevel);
-    //         return $"Apply {E} to {(isSelfApply ? "yourself and " : "")}" +
-    //             $"{TargetSide} targets at {targetList}, " +
-    //             $"dealing {DamageMult * owner.GetStatAtLevel(owner.Level).Atk} " +
-    //             $"{DamageType} damage to each target.";
-    //     }
     }
 
     [Serializable]
@@ -209,14 +137,18 @@ namespace CardWar_v2.Datas
 
     #region Close Attack
     [Serializable]
-    public class DoCloseAttack : SubSkill
+    public class DoCloseAttack : SubSkill, ICanDoDamage
     {
         public CharStat CasterStatMult;
         public CharStat TargetStatMult;
         public EDamageType DamageType;
 
+        public UnityEvent<float> OnDealDamage { get; set; } = new();
+
         public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
+            if (targetModel == null) return;
+
             var startPos = casterModel.transform.position;
             var dir = targetModel.transform.position - startPos;
             var offset = new Vector3(4f * Mathf.Sign(dir.x), 0, 0);
@@ -228,7 +160,7 @@ namespace CardWar_v2.Datas
             var damage = (casterStat * CasterStatMult + targetStat * TargetStatMult).Total;
             await Task.Delay(150);
 
-            targetModel.BaseCard.TakeDamage(casterModel.BaseCard, damage, DamageType, FXPlayer.EFXType.Hit);
+            targetModel.BaseCard.TakeDamage(casterModel.BaseCard, damage, DamageType);
             casterModel.BaseCard.OnDealDamage?.Invoke(damage);
             await casterModel.transform.DOMove(startPos, 1).SetEase(Ease.InCubic).AsyncWaitForCompletion();
 
@@ -247,6 +179,8 @@ namespace CardWar_v2.Datas
 
         public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
+            if (targetModel == null) return;
+
             var casterStat = casterModel.BaseCard.GetCurStat();
             var targetStat = targetModel.BaseCard.GetCurStat();
 
@@ -255,10 +189,32 @@ namespace CardWar_v2.Datas
             var amrChange = (casterStat * AmrMult.CasterStatMult + targetStat * AmrMult.TargetStatMult).Total;
             var resChange = (casterStat * ResMult.CasterStatMult + targetStat * ResMult.TargetStatMult).Total;
 
-            casterModel.BaseCard.ChangeStat(new(hpChange, atkChange, amrChange, resChange));
+            CharStat statChange = new(hpChange, atkChange, amrChange, resChange);
+            // Debug.Log($"ATK: {statChange.Atk} - HP: {statChange.Hp} - AMR: {statChange.Armor} - RES: {statChange.Resist}");
+            casterModel.BaseCard.ChangeStat(statChange);
+            await PlayFXs(statChange, targetModel.transform);
+        }
 
-            //TODO: Add some animation or effect here
-            await Task.CompletedTask;
+        private async Task PlayFXs(CharStat statChange, Transform target)
+        {
+            async Task PlayFX(ParticleSystem fxRef)
+            {
+                var fx = UnityEngine.Object.Instantiate(fxRef, target);
+                fx.Play();
+                while (fx.isPlaying)
+                {
+                    await Task.Yield();
+                }
+                UnityEngine.Object.Destroy(fx.gameObject);
+            }
+
+            List<Task> tasks = new();
+            if (statChange.Atk > 0) tasks.Add(PlayFX(EffectViewFactory.Instance.AtkBuffFX)); 
+            if (statChange.Hp > 0) tasks.Add(PlayFX(EffectViewFactory.Instance.HpBuffFX)); 
+            if (statChange.Armor > 0) tasks.Add(PlayFX(EffectViewFactory.Instance.AmrBuffFX)); 
+            if (statChange.Resist > 0) tasks.Add(PlayFX(EffectViewFactory.Instance.ResBuffFX));
+
+            await Task.WhenAll(tasks); 
         }
     }
 
@@ -276,24 +232,27 @@ namespace CardWar_v2.Datas
         [SerializeReference]
         [SRDemo(typeof(ConditionCheck))]
         public List<ConditionCheck> Conditions;
-        
 
-
-        public bool TargetHpPercentCheck;
-        [Range(0, 1)] public float TargetHpPercentThreshold;
-
+        [SerializeReference]
+        [SRDemo(typeof(SubSkill))]
         public List<SubSkill> TrueSkills;
-        public UnityEvent OnConditionMet = new();
 
-        // public bool CheckCanDoSkill(CharacterCard caster, CharacterCard target)
-        // {
-        //     OnConditionMet?.Invoke();
-        //     // return true;
-        // }
+        public bool Checked { get; private set; }
 
-        public override Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
+        public bool CheckCanDoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
-            throw new NotImplementedException();
+            // Debug.Log($"Check all conditions: {Conditions.All(c => c.CheckCondition(casterModel.BaseCard, targetModel.BaseCard))}");
+            return Conditions.All(c => c.CheckCondition(casterModel.BaseCard, targetModel.BaseCard));
+        }
+
+        public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
+        {
+            Checked = CheckCanDoSkill(casterModel, targetModel);
+            // foreach(var s in TrueSkills)
+            // {
+            //     Debug.Log($"Do skill: {s.GetType()}");
+            //     await s.DoSkill(casterModel, targetModel);
+            // }
         }
     }
 
@@ -303,16 +262,117 @@ namespace CardWar_v2.Datas
         public abstract bool CheckCondition(CharacterCard caster, CharacterCard target);
     }
 
-    // [Serializable]
-    // public class EffectCheck : ConditionCheck
-    // {
-    //     public List<ESkillEffect> TargetHasEffects;
-    // }
+    [Serializable]
+    public class KillLastTargetCheck : ConditionCheck
+    {
+        public override bool CheckCondition(CharacterCard caster, CharacterCard target)
+        {
+            // Debug.Log($"Target: {target?.Name}");
+            // Debug.Log($"Target's Hp: {target?.GetCurStat().Hp}");
+            // Debug.Log($"Condition check: {target == null || target.GetCurStat().Hp == 0}");
+            return target == null || target.GetCurStat().Hp == 0;
+        }
+    }
 
-    // [Serializable]
-    // public class StatCheck : ConditionCheck
-    // {
-    //     [Range(0, 1)] public CharStat StatPercentThreshold;
-    // }
+    [Serializable]
+    public class CharInSlotCheck : ConditionCheck
+    {
+        public EPlayerTarget Region;
+        public EPositionTarget Position;
+        public bool checkExist;
+
+        public override bool CheckCondition(CharacterCard caster, CharacterCard target)
+        {
+            var board = UnityEngine.Object.FindFirstObjectByType<BoardView>();
+            if (board == null) return false;
+            return board.GetCharacterByPos(Region, Position, false) != null == checkExist;
+        }
+    }
+
+    [Serializable]
+    public class StatCheck : ConditionCheck
+    {
+        [Serializable]
+        public class SC
+        {
+            [Range(0, 1)] public float StatPercentThreshold;
+            public List<ECompareOperator> CheckTypes;
+        }
+
+        public List<SC> CasterHpCheck;
+        public List<SC> CasterAtkCheck;
+        public List<SC> CasterAmrCheck;
+        public List<SC> CasterResCheck;
+
+        public List<SC> TargetHpCheck;
+        public List<SC> TargetAtkCheck;
+        public List<SC> TargetAmrCheck;
+        public List<SC> TargetResCheck;
+
+        private bool CompareStat(float curStat, float baseStat, SC check)
+        {
+            bool result = false;
+            foreach (var cmp in check.CheckTypes)
+            {
+                result |= cmp switch
+                {
+                    ECompareOperator.Greater => (curStat / baseStat) > check.StatPercentThreshold,
+                    ECompareOperator.Equal => (curStat / baseStat) == check.StatPercentThreshold,
+                    ECompareOperator.Less => (curStat / baseStat) < check.StatPercentThreshold,
+                    ECompareOperator.Any => true,
+                    _ => false,
+                };
+            }
+
+            return result;
+        }
+
+        public override bool CheckCondition(CharacterCard caster, CharacterCard target)
+        {
+            var casterBaseStat = caster.GetStatAtLevel(caster.Level);
+            var casterCurStat = caster.GetCurStat();
+            var targetBaseStat = target != null ? target.GetStatAtLevel(target.Level) : new();
+            var targetCurStat = target != null ? target.GetCurStat() : new();
+
+            return CasterHpCheck.All(sc => CompareStat(casterCurStat.Hp, casterBaseStat.Hp, sc))
+                   && CasterAtkCheck.All(sc => CompareStat(casterCurStat.Atk, casterBaseStat.Atk, sc))
+                   && CasterAmrCheck.All(sc => CompareStat(casterCurStat.Armor, casterBaseStat.Armor, sc))
+                   && CasterResCheck.All(sc => CompareStat(casterCurStat.Resist, casterBaseStat.Resist, sc))
+                   && TargetHpCheck.All(sc => CompareStat(targetCurStat.Hp, targetBaseStat.Hp, sc))
+                   && TargetAtkCheck.All(sc => CompareStat(targetCurStat.Atk, targetBaseStat.Atk, sc))
+                   && TargetAmrCheck.All(sc => CompareStat(targetCurStat.Armor, targetBaseStat.Armor, sc))
+                   && TargetResCheck.All(sc => CompareStat(targetCurStat.Resist, targetBaseStat.Resist, sc));
+        }
+    }
+    #endregion
+
+    #region Event Tracking
+    public class EventTrackingSkill : SubSkill
+    {
+        public bool IsAttacking;
+
+        [SerializeReference]
+        [SRDemo(typeof(SubSkill))]
+        public List<SubSkill> TrueSkills;
+
+        public bool Checked { get; private set; }
+
+        private void CheckEvent() => Checked = true;
+
+        public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
+        {
+            Checked = false;
+
+            if (IsAttacking)
+            {
+                void OnDealDamageListerner(float damage)
+                {
+                    CheckEvent();
+                    targetModel.BaseCard.OnDealDamage.RemoveListener(OnDealDamageListerner);
+                }
+                targetModel.BaseCard.OnDealDamage.AddListener(OnDealDamageListerner);
+            }
+        }
+    }
     #endregion
 }

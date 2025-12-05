@@ -9,12 +9,11 @@ namespace CardWar.Interfaces
         public float CurHp { get; }
         public UnityEvent OnChangeHp { get; set; }
         public UnityEvent OnDeath { get; set; }
-        public void TakeDamage(ICanDoDamage attacker, float amount, EDamageType type, EFXType damageSource);
+        public void TakeDamage(ICanDoDamage attacker, float amount, EDamageType type);
         public void Die();
     }
 
     public interface ICanDoDamage
     {
-        public UnityEvent<float> OnDealDamage { get; set; }
     }
 }

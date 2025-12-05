@@ -6,9 +6,9 @@ namespace CardWar_v2.ComponentViews
 {
     public abstract class GameSettingMenuView : MonoBehaviour
     {
-        [SerializeField] private CanvasGroup _canvasGroup;
-        [SerializeField] private Button _raycastBlockBtn;
-        [SerializeField] private Button _closeViewBtn;
+        [SerializeField] protected CanvasGroup _canvasGroup;
+        [SerializeField] protected Button _raycastBlockBtn;
+        [SerializeField] protected Button _closeViewBtn;
 
         public virtual void OpenMenu()
         {

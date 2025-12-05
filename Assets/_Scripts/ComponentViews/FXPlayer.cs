@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CardWar_v2.GameControl;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -19,10 +20,12 @@ namespace CardWar_v2.ComponentViews
         }
 
         [Serializable]
-        public struct FX
+        public class FX
         {
             public EFXType Type;
             public ParticleSystem ParticleSystem;
+            public AudioClip SFX;
+            public bool LoopFX;
         }
 
         [SerializeField] private List<FX> _fxs;
@@ -30,7 +33,7 @@ namespace CardWar_v2.ComponentViews
 
         private ParticleSystem _curFX;
 
-        private Dictionary<EFXType, ParticleSystem> _fxDict = new();
+        private Dictionary<EFXType, FX> _fxDict = new();
 
         public async void PlayFXByKey(EFXType key)
         {
@@ -50,19 +53,24 @@ namespace CardWar_v2.ComponentViews
         {
             if(index < 0 || index >= _fxs.Count) return;
 
-            await PlayFX(_fxs[index].ParticleSystem);
+            await PlayFX(_fxs[index]);
         }
 
-        public async Task PlayFX(ParticleSystem fxRef)
+        public async Task PlayFX(FX fxRef)
         {
-            _curFX = fxRef;
+            _curFX = fxRef.ParticleSystem;
+            if (_curFX == null) return;
+
             var (spawnPos, parent) = _spawnParent == null ? (transform.position, transform) : (_spawnParent.position, _spawnParent);
             _curFX.transform.SetParent(null);
             _curFX.transform.position = spawnPos;
             _curFX.gameObject.SetActive(true);
             _curFX.Play();
 
+            GameAudioManager.Instance.PlaySFX(fxRef.SFX, fxRef.LoopFX);
             await Task.Delay((int)(_curFX.main.duration * 1000));
+            if (fxRef.LoopFX) GameAudioManager.Instance.StopSFX();
+
             if (_spawnParent == null) 
             {
                 Destroy(_curFX.gameObject);
@@ -87,7 +95,7 @@ namespace CardWar_v2.ComponentViews
         {
             _fxs.ForEach(fx => 
             {
-                _fxDict[fx.Type] = fx.ParticleSystem;
+                _fxDict[fx.Type] = fx;
                 fx.ParticleSystem.gameObject.SetActive(false);
             });
         }

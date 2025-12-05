@@ -83,6 +83,8 @@ namespace CardWar_v2.GameControl
         #region BGM
         private void PlayBackgroundMusic(AudioClip clip)
         {
+            if (clip == null) return;
+            
             _bgm.clip = clip;
             _bgm.Play();
         }
@@ -104,19 +106,36 @@ namespace CardWar_v2.GameControl
         #endregion
 
         #region SFX
-        public void PlaySFX(AudioClip clip)
+        public void PlaySFX(AudioClip clip, bool isLoop)
         {
-            _sfx.PlayOneShot(clip);
+            if (clip == null) return;
+
+            _sfx.loop = isLoop;
+
+            if (!isLoop)
+            {
+                _sfx.PlayOneShot(clip);
+                return;
+            }
+
+            _sfx.clip = clip;
+            _sfx.Play();
         }
 
-        public void PlaySFX(ESfx key, bool restart = false)
+        public void StopSFX()
+        {
+            _sfx.loop = false;
+            _sfx.Stop();
+        }
+
+        public void PlaySFX(ESfx key, bool isLoop = false, bool restart = false)
         {
             if(!_sfxDict.ContainsKey(key) || (_curSFX == key && !restart)) return;
 
             _curSFX = key;
             var clips = _sfxDict[key];
             var randomClip = clips[UnityEngine.Random.Range(0, clips.Count)];
-            PlaySFX(randomClip);
+            PlaySFX(randomClip, isLoop);
         }
         public void ChangeSFXVolumn(float value)
         {
@@ -127,6 +146,8 @@ namespace CardWar_v2.GameControl
         #region Voice
         public void PlayVoice(AudioClip clip)
         {
+            if (clip == null) return;
+            
             _voice.PlayOneShot(clip);
         }
 
@@ -140,6 +161,7 @@ namespace CardWar_v2.GameControl
             var randomClip = voiceLine.Clips[UnityEngine.Random.Range(0, voiceLine.Clips.Count)];
             PlayVoice(randomClip);
         }
+
         public void ChangeVoiceVolumn(float value)
         {
             _voice.volume = value;

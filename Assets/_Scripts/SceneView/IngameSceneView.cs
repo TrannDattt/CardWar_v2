@@ -15,6 +15,7 @@ using DG.Tweening;
 using UnityEngine;
 using static UnityEngine.EventSystems.PointerEventData;
 using UnityEngine.UI;
+using CardWar_v2.Datas;
 
 namespace CardWar_v2.SceneViews
 {
@@ -38,6 +39,9 @@ namespace CardWar_v2.SceneViews
 
         [SerializeField] private CardDetailView _cardDetailView;
         [SerializeField] private MatchResultView _concludeMatchView;
+        [SerializeField] private BattleLogView _battleLogView;
+
+        [SerializeField] private Button _logBtn;
         
         #region Draw Card
         private async Task DrawCardAnimation(SkillCardView cardView, Action callback = null)
@@ -80,18 +84,20 @@ namespace CardWar_v2.SceneViews
 
                 drawnCard.OnCardClick.AddListener(async (e) =>
                 {
-                    if (GameplayManager.Instance.CurPhase == EPhase.Opening)
+                    if (e.button == InputButton.Right)
                     {
-                        if (e.button == InputButton.Right)
-                        {
-                            Debug.Log($"1.Show detail of card {drawnCard.BaseCard}");
-                            await _cardDetailView.ShowSkillDetail(drawnCard.BaseCard);
-                        }
-                        else if (e.button == InputButton.Left)
-                        {
+                        // Debug.Log($"1.Show detail of card {drawnCard.BaseCard}");
+                        await _cardDetailView.ShowSkillDetail(drawnCard.BaseCard);
+                    }
+                    
+                    if (GameplayManager.Instance.CurPhase == EPhase.Opening && e.button == InputButton.Left)
+                    // if (GameplayManager.Instance.CurPhase == EPhase.Opening)
+                    {
+                    //     else if (e.button == InputButton.Left)
+                        // {
                             if (drawnCard.GetComponentInParent<HandView>()) SelfPlayCard(drawnCard);
                             else if (drawnCard.GetComponentInParent<SkillQueueView>()) WithdrawCard(drawnCard);
-                        }
+                        // }
                     }
                 });
             }
@@ -179,6 +185,7 @@ namespace CardWar_v2.SceneViews
         {
             // Debug.Log($"Exercuting queue with {_skillQueueView.CardQueue.Count} skills");
             var casterSide = GameplayManager.Instance.CurTurn;
+            List<(CharacterModelView, EventTrackingSkill)> trackingSkills = new();
 
             while (_skillQueueView.CardQueue.Count > 0)
             {
@@ -212,44 +219,85 @@ namespace CardWar_v2.SceneViews
                 caster.BaseCard.OnUseSkill?.Invoke(skill);
                 // Debug.Log($"Caster '{caster}' using skill {skill.Name}");
                 List<CharacterModelView> targets = new();
-                foreach (var ss in skill.SubSkills)
+
+                async Task UseSkill(CharacterModelView caster, SubSkill ss)
                 {
                     var targetSide = ss.TargetSide == casterSide ? EPlayerTarget.Ally : EPlayerTarget.Enemy;
-                    // var newTargets = new List<CharacterModelView>();
-                    // var pts = ss.PositionTargets;
-
-                    // for (int i = 0; i < pts.Count; i++)
-                    // {
-                    //     if (pts[i] == EPositionTarget.LastTarget)
-                    // }
-                    //TODO: Maybe do something if there are multiple targets
                     if (!ss.PositionTargets.Contains(EPositionTarget.LastTarget)) targets.Clear();
+                    
                     foreach(var pt in ss.PositionTargets)
                     {
+                        if (targets.Count == _boardView.GetCharactersInRegion(targetSide).Count) break;
+                        
                         if (pt == EPositionTarget.LastTarget) continue;
+                        bool isFlexTarget = targets.Count <= ss.PositionTargets.Count;
                         // Debug.Log($"Get target {pt} at position {targetSide}");
-                        bool isFlexTarget = _boardView.GetCharactersInRegion(targetSide).Count >= targets.Count;
+                        //TODO: If pt = Front, Mid => it may select Mid, Mid because of no Back
                         if (pt == EPositionTarget.Self) targets.Add(caster);
-                        else targets.Add(_boardView.GetCharacterByPos(targetSide, pt, isFlexTarget));
+                        else targets.Add(_boardView.GetUntargetedCharByPos(targets, targetSide, pt, isFlexTarget));
                     }
                     // var targets = ss.Targets.Select(pt => _boardView.GetCharacterByPos(targetSide, pt)).ToList();
-                    if (targets.Count == 0)
+                    if (targets.Count > 0)
                     {
-                        continue;
+                        await caster.UseSkill(ss, targets);
                     }
+                }
 
-                    await caster.UseSkill(ss, targets);
+                foreach (var ss in skill.SubSkills)
+                {
+                    await UseSkill(caster, ss);
 
-                    // var destroyTask = new List<Task>();
-                    // foreach (var t in targets)
+                    if (ss.GetType() == typeof(ConditionalSkill) && (ss as ConditionalSkill).Checked) 
+                    {
+                        foreach (var ts in (ss as ConditionalSkill).TrueSkills)
+                        {
+                            await UseSkill(caster, ts);
+                        }
+                    }      
+
+                    if (ss.GetType() == typeof(EventTrackingSkill))
+                    {
+                        trackingSkills.Add((caster, ss as EventTrackingSkill));
+                    }              
+                    
+                    // var targetSide = ss.TargetSide == casterSide ? EPlayerTarget.Ally : EPlayerTarget.Enemy;
+                    // if (!ss.PositionTargets.Contains(EPositionTarget.LastTarget)) targets.Clear();
+
+                    // foreach(var pt in ss.PositionTargets)
                     // {
-                    //     if (t == null) continue;
-                    //     if (t.Hp > 0) continue;
-                    //     destroyTask.Add(DestroyChar(t, targetSide));
+                    //     if (targets.Count == _boardView.GetCharactersInRegion(targetSide).Count) break;
+
+                    //     if (pt == EPositionTarget.LastTarget) continue;
+                    //     bool isFlexTarget = targets.Count <= ss.PositionTargets.Count;
+                    //     // Debug.Log($"Get target {pt} at position {targetSide}");
+                    //     //TODO: If pt = Front, Mid => it may select Mid, Mid because of no Back
+                    //     if (pt == EPositionTarget.Self) targets.Add(caster);
+                    //     else targets.Add(_boardView.GetUntargetedCharByPos(targets, targetSide, pt, isFlexTarget));
                     // }
-                    // await Task.WhenAll(destroyTask);
+                    // // var targets = ss.Targets.Select(pt => _boardView.GetCharacterByPos(targetSide, pt)).ToList();
+                    // if (targets.Count == 0)
+                    // {
+                    //     continue;
+                    // }
+
+                    // await caster.UseSkill(ss, targets);
                 }
                 _skillQueueView.RemoveCard(skillCard, true);
+
+                for (int i = trackingSkills.Count - 1; i >= 0; i--)
+                {
+                    var ets = trackingSkills[i];
+
+                    if (!ets.Item2.Checked)
+                        continue;
+
+                    foreach (var ts in ets.Item2.TrueSkills)
+                    {
+                        await UseSkill(ets.Item1, ts);
+                    }
+
+                    trackingSkills.RemoveAt(i);
+                }
             }
         }
 
@@ -348,8 +396,6 @@ namespace CardWar_v2.SceneViews
             _handView.Initialize();
             _skillQueueView.Initialize();
             _boardView.Initialize();
-
-            _fightLogger = new(selfTeam, level);
             _concludeMatchView.HideUI();
 
             var maxIndex = Mathf.Max(selfTeam.Count, enemyTeam.Count) - 1;
@@ -358,11 +404,16 @@ namespace CardWar_v2.SceneViews
                 if (i < selfTeam.Count) await PlayCharCard(selfTeam[i], EPlayerTarget.Ally, (EPositionTarget)i);
                 if (i < enemyTeam.Count) await PlayCharCard(enemyTeam[i], EPlayerTarget.Enemy, (EPositionTarget)i);
             }
+
+            _fightLogger = new(selfTeam, level);
+            _fightLogger.StartTracking();
         }
 
         void Start()
         {
             GameAudioManager.Instance.PlayBackgroundMusic(GameAudioManager.EBgm.Ingame);
+
+            _logBtn.onClick.AddListener(async () => await _battleLogView.OpenMenu(_fightLogger));
         }
         #endregion
     }

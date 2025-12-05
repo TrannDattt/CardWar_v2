@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Wildfire Waltz
   Image: {fileID: 21300000, guid: 395e93ed6f3f4c249b96cf07bd5d1b2e, type: 3}
-  Description: '- Lose HP equal to 90% ATK.
+  Description: '- Lose HP equal to 50% ATK.
 
     - Apply Vulnerable to herself, increase
-    incoming damage by 20% for 1 turn.
+    incoming damage by 50% for 1 turn.
 
     - Attack 2 random enemy, deal Magical
-    damage equal to 80% ATK.'
+    damage equal to 120% ATK.'
   Skill:
   - rid: 4516365282946842718
   - rid: 4516365123665002600
@@ -37,7 +37,7 @@ MonoBehaviour:
         PositionTargets: 04000000
         Effects:
         - EffectType: 3
-          Amount: 0.2
+          Amount: 0.5
           Duration: 1
     - rid: 4516365123665002601
       type: {class: DoRangeAttack, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
@@ -48,7 +48,7 @@ MonoBehaviour:
         PositionTargets: 0300000003000000
         CasterStatMult:
           Hp: 0
-          Atk: 0.8
+          Atk: 1.2
           Armor: 0
           Resist: 0
         TargetStatMult:
@@ -69,7 +69,7 @@ MonoBehaviour:
         HpMult:
           CasterStatMult:
             Hp: 0
-            Atk: -0.9
+            Atk: -0.5
             Armor: 0
             Resist: 0
           TargetStatMult:

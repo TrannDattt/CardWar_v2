@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5246389192283268581}
   - component: {fileID: 2661739537309456773}
   - component: {fileID: 745719142862429759}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,6 +206,7 @@ MonoBehaviour:
   _canvas: {fileID: 5246389192283268581}
   _healthBar: {fileID: 8905122256216961068}
   _effectBar: {fileID: 2293679773972526431}
+  _damagePopupPrefab: {fileID: 4877699638512890204, guid: 0438e3b3072df2f468a74faa3ca0b14e, type: 3}
   OnModelClicked:
     m_PersistentCalls:
       m_Calls: []
@@ -303,7 +304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1342094111344690469, guid: 428af182756c70a40af8f7820c84635c, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -362,7 +363,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1156576191043156955, guid: 5123a3a1d68f94b46ae32d14ededab65, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 2511971310977212575, guid: 5123a3a1d68f94b46ae32d14ededab65, type: 3}
       propertyPath: m_Name
@@ -370,7 +371,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2511971310977212575, guid: 5123a3a1d68f94b46ae32d14ededab65, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 2733480890026653286, guid: 5123a3a1d68f94b46ae32d14ededab65, type: 3}
       propertyPath: m_Type
@@ -398,7 +399,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6975036106551937986, guid: 5123a3a1d68f94b46ae32d14ededab65, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 7116332847111442879, guid: 5123a3a1d68f94b46ae32d14ededab65, type: 3}
       propertyPath: m_Pivot.x
@@ -498,7 +499,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9195600909119684922, guid: 5123a3a1d68f94b46ae32d14ededab65, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

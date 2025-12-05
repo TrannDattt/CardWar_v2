@@ -13,21 +13,24 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private GameObject _modelBase;
         [SerializeField] private float _flyDuration;
         [SerializeField] private float _waitBeforeDestroyDuration;
+        [SerializeField] private AudioClip _projectileSound;
         [SerializeField] private FXPlayer _fxPlayer;
-        [SerializeField] private AudioClip _explodeSound;
 
         public async Task FlyToTarget(Vector3 casterPos, Vector3 offset, Vector3 targetPos, Action callback = null)
         {
             // transform.SetPositionAndRotation(spawnPos, Quaternion.LookRotation(targetPos - spawnPos));
+            if (casterPos != targetPos) transform.LookAt(targetPos);
+            else transform.rotation = Quaternion.identity;
             transform.position = casterPos;
             transform.position += offset;
-            transform.LookAt(targetPos);
+
+            GameAudioManager.Instance.PlaySFX(_projectileSound, true);
 
             var sequence = DOTween.Sequence();
             sequence.Append(transform.DOMove(targetPos, _flyDuration).SetEase(Ease.InExpo));
             sequence.OnComplete(async () =>
             {
-                GameAudioManager.Instance.PlaySFX(_explodeSound);
+                GameAudioManager.Instance.StopSFX();
                 if (_modelBase != null) _modelBase.SetActive(false);
                 callback?.Invoke();
 

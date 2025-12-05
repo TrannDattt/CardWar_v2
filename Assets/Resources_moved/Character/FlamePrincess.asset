@@ -24,10 +24,10 @@ MonoBehaviour:
   Atk: 70
   Armor: 5
   Resist: 5
-  HpPerLevel: 0
-  AtkPerLevel: 0
-  ArmorPerLevel: 0
-  ResistPerLevel: 0
+  HpPerLevel: 30
+  AtkPerLevel: 7
+  ArmorPerLevel: 0.5
+  ResistPerLevel: 1
   SkillCardDatas:
   - {fileID: 11400000, guid: 1fbc41ca2b4507643b97de63651a0247, type: 2}
   - {fileID: 11400000, guid: bc53c6d70116ef449b5ee679c1385cf7, type: 2}

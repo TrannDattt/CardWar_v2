@@ -109,7 +109,11 @@ namespace CardWar_v2.SceneViews
                 // Debug.Log($"{(!isSelected ? "Uns" : "S")}electd card {i.BaseCard.Name}");
                 var charIcon = _characters.FirstOrDefault(c => c.BaseCard.Data == (isSelected ? null : i.BaseCard.Data));
                 charIcon.SetBaseCard(isSelected ? i.BaseCard : null, true, false);
-                if (isSelected) _selfTeam.Add(i.BaseCard);
+                if (isSelected) 
+                {
+                    _selfTeam.Add(i.BaseCard);
+                    GameAudioManager.Instance.PlayVoice(i.BaseCard, GameAudioManager.EVoice.Selected, true);
+                }
                 else _selfTeam.Remove(i.BaseCard);
             });
             

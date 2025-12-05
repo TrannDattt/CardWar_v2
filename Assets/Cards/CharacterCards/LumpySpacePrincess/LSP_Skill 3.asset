@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: The Silent Treatment
   Image: {fileID: 21300000, guid: fac52f0aa1fe79542a446cc2ab05194d, type: 3}
-  Description: '- Apply Silence to enemies at the Mid and the Back for 2 turns.
+  Description: '- Apply Silence to enemies at the Mid and the Back for 1 turns.
 
     -
     Lose HP equal to 5% Max HP.'
@@ -28,13 +28,13 @@ MonoBehaviour:
       type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
         Clip: {fileID: 7400000, guid: 09d21bc3700ba0246894789ec431f397, type: 2}
-        DelayToSkill: 0
+        DelayToSkill: 1.2
         TargetSide: 1
         PositionTargets: 0100000002000000
         Effects:
         - EffectType: 6
           Amount: 0
-          Duration: 2
+          Duration: 1
     - rid: 4516365139864977532
       type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:

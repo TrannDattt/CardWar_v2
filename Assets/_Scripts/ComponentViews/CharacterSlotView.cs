@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace CardWar_v2.ComponentViews
 {
-    [RequireComponent(typeof(SpriteRenderer))]
     public class CharacterSlotView : MonoBehaviour
     {
         [field: SerializeField] public EPositionTarget SlotPos { get; private set; }

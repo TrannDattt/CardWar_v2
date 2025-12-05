@@ -4,7 +4,6 @@ using System.Linq;
 using CardWar_v2.ComponentViews;
 using CardWar_v2.Entities;
 using CardWar_v2.GameControl;
-using CardWar_v2.Session;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +19,12 @@ namespace CardWar_v2.SceneViews
 
         // User Info
         [SerializeField] private Image _userAvatar;
+
         [SerializeField] private TextMeshProUGUI _userName;
+        [SerializeField] private TMP_InputField _userNameEdit;
+        [SerializeField] private Button _editBtn;
+        [SerializeField] private Button _confirmBtn;
+
         [SerializeField] private TextMeshProUGUI _userLevel;
         [SerializeField] private FillBarView _userExpBar;
 
@@ -29,9 +33,24 @@ namespace CardWar_v2.SceneViews
 
         private CharacterCard _selectedChar;
 
-        private void UpdatePlayerName()
+        public void EditName()
+        {
+            _userNameEdit.SetTextWithoutNotify(CurPLayer.Name);
+
+            _userName.enabled = false;
+            _userNameEdit.gameObject.SetActive(true);
+            _editBtn.gameObject.SetActive(false);
+            _confirmBtn.gameObject.SetActive(true);
+        }
+
+        private void UpdateName()
         {
             _userName.SetText(CurPLayer.Name);
+
+            _userName.enabled = true;
+            _userNameEdit.gameObject.SetActive(false);
+            _editBtn.gameObject.SetActive(true);
+            _confirmBtn.gameObject.SetActive(false);
         }
 
         private async void UpdateExpBar(int levelUpTime = 0)
@@ -47,25 +66,12 @@ namespace CardWar_v2.SceneViews
             await _userExpBar.UpdateBarByValue(CurPLayer.Exp, expToNextLevel);
             _userLevel.SetText($"Lv. {CurPLayer.Level}");
         }
-
-        // private void UpdateUserInfo()
-        // {
-        //     // _userAvatar.sprite = PlayerData.Avatar;
-        //     UpdatePlayerName();
-        //     UpdatePlayerExp();
-
-
-        //     _characterHallView.ChangeCharacter(
-        //         _selectedChar
-        //     // CharacterList.FirstOrDefault(c => c.IsUnlocked)
-        //     );
-        // }
-
+        
         public void Initialize()
         {
             _selectedChar = CharacterList.FirstOrDefault(c => c.IsUnlocked && c.Model != null);
 
-            UpdatePlayerName();
+            UpdateName();
             UpdateExpBar();
 
             _characterHallView.ChangeCharacter(
@@ -76,7 +82,13 @@ namespace CardWar_v2.SceneViews
 
         void Start()
         {
-            CurPLayer.OnPlayerNameUpdated.AddListener(() => UpdatePlayerName());
+            _editBtn.onClick.AddListener(EditName);
+            _confirmBtn.onClick.AddListener(() =>
+            {
+                var newName = _userNameEdit.text;
+                PlayerSessionManager.Instance.CurPlayer.UpdateName(newName);
+                UpdateName();
+            });
             CurPLayer.OnPlayerExpUpdated.AddListener((levelUpTime) => UpdateExpBar(levelUpTime));
         }
     }

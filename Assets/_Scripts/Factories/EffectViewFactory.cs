@@ -15,12 +15,20 @@ namespace CardWar_v2.Factories
         {
             public ESkillEffect EffectType;
             public Sprite Icon;
+            public Color TextColor;
             public ParticleSystem OnApplyFX;
             public ParticleSystem OnActiveFX;
+            public AudioClip SFX;
         }
 
         [SerializeField] private List<EffectSetting> _iconMappings;
         [SerializeField] private EffectView _effectViewPrefab;
+
+        //TODO: Make this more organized
+        [field: SerializeField] public ParticleSystem AtkBuffFX { get; private set; }
+        [field: SerializeField] public ParticleSystem HpBuffFX { get; private set; }
+        [field: SerializeField] public ParticleSystem AmrBuffFX { get; private set; }
+        [field: SerializeField] public ParticleSystem ResBuffFX { get; private set; }
 
         public Dictionary<ESkillEffect, EffectSetting> EffectDict { get; private set; } = new();
 

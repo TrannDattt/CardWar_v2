@@ -24,10 +24,10 @@ namespace CardWar_v2.ComponentViews
 
             // ShowView();
             _level.SetText($"Lv. {(!isMaxLevel ? level : "MAX")}");
-            _hp.SetText($" : {stat.Hp}");
-            _atk.SetText($" : {stat.Atk}");
-            _amr.SetText($" : {stat.Armor}");
-            _res.SetText($" : {stat.Resist}");
+            _hp.SetText($" : {(int)stat.Hp}");
+            _atk.SetText($" : {(int)stat.Atk}");
+            _amr.SetText($" : {(int)stat.Armor}");
+            _res.SetText($" : {(int)stat.Resist}");
         }
 
         public void ShowView()

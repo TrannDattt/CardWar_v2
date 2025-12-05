@@ -77,7 +77,7 @@ namespace CardWar_v2.GameControl
                 var jsonData = charJSONs.FirstOrDefault(c => c.Id == charDatas[i].Id);
                 // Debug.Log($"{jsonData.Name} with unlock - {jsonData.IsUnlocked}");
                 if (jsonData == null) newChar = new(charDatas[i]);
-                else newChar = new(charDatas[i], charJSONs[i].Level, charJSONs[i].IsUnlocked);
+                else newChar = new(charDatas[i], jsonData.Level, jsonData.IsUnlocked);
 
                 CharacterList.Add(newChar);
 
@@ -136,7 +136,7 @@ namespace CardWar_v2.GameControl
             {
                 var jsonData = levelsJSON.FirstOrDefault(l => l.Chapter == levelDatas[i].Chapter && l.Room == levelDatas[i].Room);
                 var (clearCheck, turnConditionCheck, allAliveCheck) = jsonData == null ? (false, false, false) 
-                                                                    : (levelsJSON[i].ClearCheck, levelsJSON[i].TurnConditionCheck, levelsJSON[i].AllAliveCheck);
+                                                                    : (jsonData.ClearCheck, jsonData.TurnConditionCheck, jsonData.AllAliveCheck);
                 Level newLevel = new(levelDatas[i], clearCheck, turnConditionCheck, allAliveCheck);
                 newLevel.OnLevelClear.AddListener(SaveCampaignProgress);
                 CampaignLevels.Add(newLevel);

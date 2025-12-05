@@ -197,6 +197,7 @@ namespace CardWar_v2.GameControl
         }
         #endregion
 
+        //TODO: Move to GameManager
         #region Gameplay Logic
         private Level _curLevel;
         private List<CharacterCard> _selfTeam = new();
@@ -216,6 +217,7 @@ namespace CardWar_v2.GameControl
 
                 await _ingameScene.DrawCard(3);
                 ChangeTurn(EPlayerTarget.Ally);
+                OnTurnChanged?.Invoke();
             }
 
             await SceneNavigator.Instance.ChangeScene(EScene.Ingame, SetupMatch);

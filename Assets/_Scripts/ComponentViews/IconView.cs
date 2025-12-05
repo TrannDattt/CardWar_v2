@@ -23,6 +23,7 @@ namespace CardWar_v2.ComponentViews
         {
             icon = icon == null ? _defaultIcon : icon;
             _icon.sprite = icon;
+            if (_amount == null) return;
             _amount.gameObject.SetActive(amount > 1);
             _amount.SetText($"x {amount}");   
         }

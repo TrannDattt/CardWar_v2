@@ -9,7 +9,6 @@ using CardWar_v2.Enums;
 using CardWar_v2.GameControl;
 using UnityEngine;
 using UnityEngine.Events;
-using static CardWar_v2.ComponentViews.FXPlayer;
 using static CardWar_v2.Datas.CharacterCardData;
 using static CardWar_v2.GameControl.GameAudioManager;
 
@@ -98,7 +97,7 @@ namespace CardWar_v2.Entities
         public UnityEvent<SkillCard> OnUseSkill { get; set; } = new();
         public UnityEvent<SkillEffect> OnApplyEffect { get; set; } = new();
         public UnityEvent OnChangeHp { get; set; } = new();
-        public UnityEvent<EFXType> OnTakingDamage { get; set; } = new();
+        public UnityEvent<ICanDoDamage, float> OnTakingDamage { get; set; } = new();
         public UnityEvent<float> OnDealDamage { get; set; } = new();
         public UnityEvent OnDeath { get; set; } = new();
 
@@ -187,7 +186,7 @@ namespace CardWar_v2.Entities
             OnDeath.RemoveAllListeners();
         }
 
-        public void TakeDamage(ICanDoDamage attacker, float amount, EDamageType type, EFXType damageSource)
+        public void TakeDamage(ICanDoDamage attacker, float amount, EDamageType type)
         {
             if (_isDeath || type == EDamageType.None) return;
 
@@ -199,19 +198,19 @@ namespace CardWar_v2.Entities
                 _ => throw new Exception("Invalid damage type")
             };
             
-            var vulAmount = ActiveEffects.ContainsKey(ESkillEffect.Vulnerable) 
+            var vulAmount = (ActiveEffects.ContainsKey(ESkillEffect.Vulnerable) && ActiveEffects[ESkillEffect.Vulnerable].Duration > 0) 
                             ? (ActiveEffects[ESkillEffect.Vulnerable] as VulnerableEffect).VulAmount
                             : 0f;
-            var strAmount = ActiveEffects.ContainsKey(ESkillEffect.Strengthen) 
+            var strAmount = (ActiveEffects.ContainsKey(ESkillEffect.Strengthen) && ActiveEffects[ESkillEffect.Strengthen].Duration > 0)
                             ? (ActiveEffects[ESkillEffect.Strengthen] as StrengthenEffect).StrengthAmount
                             : 0f;
             
             var finalDamage = Mathf.Max(0, (amount - dmgReduce) * (1 + vulAmount - strAmount));
 
-            Debug.Log($"Vul amount = {vulAmount - strAmount}");
-            Debug.Log($"Target '{Name}' took {finalDamage} damage");
+            // Debug.Log($"Vul amount = {vulAmount - strAmount}");
+            // Debug.Log($"Target '{Name}' took {finalDamage} damage");
             ChangeHp(-finalDamage);
-            OnTakingDamage?.Invoke(damageSource);
+            OnTakingDamage?.Invoke(attacker, finalDamage);
 
             if (CurHp <= 0) Die();
         }
@@ -229,7 +228,7 @@ namespace CardWar_v2.Entities
             if (_isDeath) return;
 
             // Debug.Log(effect.EffectType);
-            Debug.Log($"Applying {effect.EffectType} to {Name}");
+            // Debug.Log($"Applying {effect.EffectType} to {Name}");
             if (ActiveEffects.ContainsKey(effect.EffectType))
             {
                 ActiveEffects[effect.EffectType].OverrideEffect(effect);
@@ -237,6 +236,10 @@ namespace CardWar_v2.Entities
             else
             {
                 ActiveEffects.Add(effect.EffectType, effect);
+                effect.OnEffectUpdated.AddListener(() =>
+                {
+                    if (effect.Duration == 0) RemoveEffect(effect.EffectType);
+                });
                 OnApplyEffect?.Invoke(effect);
             }
             
@@ -252,12 +255,6 @@ namespace CardWar_v2.Entities
             foreach (var effect in activeEffects)
             {
                 await effect.DoEffect();
-
-                if (effect.Duration <= 0)
-                {
-                    RemoveEffect(effect.EffectType);
-                    continue;
-                }
             }
         }
 
@@ -274,7 +271,7 @@ namespace CardWar_v2.Entities
         #region Change Stat
         public void ChangeHp(float amount)
         {
-            _bonusHp = Mathf.Clamp(_bonusHp + amount, -GetStatAtLevel(Level).Hp, float.MaxValue);
+            _bonusHp = Mathf.Clamp(_bonusHp + amount, -GetStatAtLevel(Level).Hp, 0);
             OnChangeHp?.Invoke();
         }
 

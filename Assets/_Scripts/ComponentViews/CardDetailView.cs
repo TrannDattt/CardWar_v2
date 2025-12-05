@@ -63,18 +63,21 @@ namespace CardWar_v2.ComponentViews
         {
             _charImage.sprite = card.Image;
             _charName.SetText(card.Name);
-            _atk.SetText($" : {card.CurAtk}");
-            _hp.SetText($" : {card.CurHp}");
-            _armor.SetText($" : {card.CurArmor}");
-            _resist.SetText($" : {card.CurResist}");
+            _atk.SetText($" : {(int)card.CurAtk}");
+            _hp.SetText($" : {(int)card.CurHp}");
+            _armor.SetText($" : {(int)card.CurArmor}");
+            _resist.SetText($" : {(int)card.CurResist}");
 
             var lastEffects = _effectDetailContent.GetComponentsInChildren<EffectDetailView>().ToList();
             lastEffects.ForEach(e => Destroy(e.gameObject));
             var effects = card.ActiveEffects.Values.ToList();
             effects.ForEach(e =>
             {
-                EffectDetailView effectDetail = Instantiate(_effectDetailPrefab, _effectDetailContent);
-                effectDetail.ShowDetail(e);
+                if (e.Duration >= 0)
+                {
+                    EffectDetailView effectDetail = Instantiate(_effectDetailPrefab, _effectDetailContent);
+                    effectDetail.ShowDetail(e);
+                }
             });
 
             if (_isShownSkill) await HideDetailView(EDetailType.Skill);

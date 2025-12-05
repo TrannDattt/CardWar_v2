@@ -65,9 +65,9 @@ namespace CardWar_v2.SceneViews
                 return;
             }
 
-            GameAudioManager.Instance.PlaySFX(ESfx.UpgradeCharacter);
+            GameAudioManager.Instance.PlaySFX(ESfx.UpgradeCharacter, restart: true);
             charCard.LevelUp();
-            Debug.Log($"Level up character {charCard.Name} to level {charCard.Level}");
+            // Debug.Log($"Level up character {charCard.Name} to level {charCard.Level}");
             CurPlayer.UpdatePlayerCurrency(-goldCost, -gemCost);
 
             //TODO: Do some animation ??

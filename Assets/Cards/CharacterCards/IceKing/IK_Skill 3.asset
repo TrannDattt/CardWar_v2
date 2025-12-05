@@ -22,6 +22,7 @@ MonoBehaviour:
     - Apply Vulnerable
     to himself, increase incoming damage by 90% for 1 turn.'
   Skill:
+  - rid: 7250261107771703383
   - rid: 4516365139864977505
   - rid: 4516365282946842719
   references:
@@ -30,8 +31,8 @@ MonoBehaviour:
     - rid: 4516365139864977505
       type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
-        Clip: {fileID: 7400000, guid: c7141e0c17769744a913497750063bbb, type: 2}
-        DelayToSkill: 2
+        Clip: {fileID: 0}
+        DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 000000000100000002000000
         Effects:
@@ -49,3 +50,23 @@ MonoBehaviour:
         - EffectType: 3
           Amount: 0.9
           Duration: 1
+    - rid: 7250261107771703383
+      type: {class: DoRangeAttack, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 7400000, guid: 81011164cb171284bba68867aa24f4dd, type: 2}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 000000000100000002000000
+        CasterStatMult:
+          Hp: 0
+          Atk: 0
+          Armor: 0
+          Resist: 0
+        TargetStatMult:
+          Hp: 0
+          Atk: 0
+          Armor: 0
+          Resist: 0
+        Projectile: {fileID: 463311253706277884, guid: 20649755f66cd4b40a2deadbf5fd86aa, type: 3}
+        OffsetToCaster: {x: 0, y: 0, z: 0}
+        DamageType: 3

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Focused Inferno
   Image: {fileID: 21300000, guid: 548396b291352ac459521fb520c0702e, type: 3}
-  Description: '- Apply Burn to enemy at the Front for 4 turns.
+  Description: '- Apply Burn to enemy at the Front for 3 turns.
 
     - Apply Vulnerable
     to that same enemy, increase incoming damage by 50% in 1 turn.'
@@ -34,7 +34,7 @@ MonoBehaviour:
         Effects:
         - EffectType: 4
           Amount: 0
-          Duration: 4
+          Duration: 3
         - EffectType: 3
           Amount: 0.5
           Duration: 1

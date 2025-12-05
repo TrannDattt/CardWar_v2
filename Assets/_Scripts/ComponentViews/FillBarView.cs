@@ -23,7 +23,8 @@ namespace CardWar_v2.ComponentViews
             };
 
             _bar.color = barColor;
-            _barOverlay.color = new(barColor.r, barColor.g, barColor.b, .8f);
+            _barOverlay.color = new(1, 1, 1, .8f);
+            // _barOverlay.color = new(barColor.r, barColor.g, barColor.b, .8f);
         }
 
         public void SetFillValue(float value)
@@ -57,11 +58,12 @@ namespace CardWar_v2.ComponentViews
             var overlayFillAmount = _barOverlay.fillAmount;
 
             var sequence = DOTween.Sequence();
-            sequence.Append(DOTween.To(() => overlayFillAmount, x => _barOverlay.fillAmount = x, fillAmount, .1f).SetEase(Ease.InQuart));
-            sequence.AppendInterval(.2f);
+            // sequence.Append(DOTween.To(() => overlayFillAmount, x => _barOverlay.fillAmount = x, fillAmount, .1f).SetEase(Ease.InQuart));
+            // sequence.AppendInterval(.2f);
             sequence.Append(DOTween.To(() => barFillAmount, x => _bar.fillAmount = x, fillAmount, .3f).SetEase(Ease.InQuad));
 
             await sequence.AsyncWaitForCompletion();
+            _barOverlay.fillAmount = _bar.fillAmount;
         }
 
         private async Task DecreaseFill(float fillAmount)
