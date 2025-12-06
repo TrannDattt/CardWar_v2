@@ -14,9 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Chapter: 2
   Room: 4
-  Enemies: []
+  Enemies:
+  - Data: {fileID: 11400000, guid: 1457792caeb3aa647ba10e3c4421ce35, type: 2}
+    Level: 5
+  - Data: {fileID: 11400000, guid: 6f4ef8637ad96dc44b2824e034f303ca, type: 2}
+    Level: 5
+  - Data: {fileID: 11400000, guid: 6f4ef8637ad96dc44b2824e034f303ca, type: 2}
+    Level: 5
   Rewards:
-    Exp: 0
-    Gold: 0
+    Exp: 100
+    Gold: 500
     Gem: 0
-  TurnConditionCheck: 0
+  TurnConditionCheck: 10

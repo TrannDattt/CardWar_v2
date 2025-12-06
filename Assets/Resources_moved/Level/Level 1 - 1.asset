@@ -15,12 +15,10 @@ MonoBehaviour:
   Chapter: 1
   Room: 1
   Enemies:
-  - Data: {fileID: 11400000, guid: d4cf8d336d45dd24e8203e80b6471698, type: 2}
-    Level: 1
-  - Data: {fileID: 11400000, guid: 6f4ef8637ad96dc44b2824e034f303ca, type: 2}
+  - Data: {fileID: 11400000, guid: 7d344d2c9a70b8d4ebfc14473c6c43cf, type: 2}
     Level: 1
   Rewards:
-    Exp: 50
-    Gold: 100
+    Exp: 100
+    Gold: 500
     Gem: 0
-  TurnConditionCheck: 0
+  TurnConditionCheck: 10

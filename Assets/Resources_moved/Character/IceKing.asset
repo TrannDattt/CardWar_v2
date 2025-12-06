@@ -19,7 +19,29 @@ MonoBehaviour:
   Model: {fileID: 854190758862163480, guid: 360ca18a37f54ad4da6758cf4caf58ef, type: 3}
   IsPlayable: 1
   AnimController: {fileID: 9100000, guid: 7943e3af1a8c82042a6a1ab6fa5268c2, type: 2}
-  VoiceLines: []
+  VoiceLines:
+  - Key: 1
+    Clips:
+    - {fileID: 8300000, guid: 6ef8a129fa4eed74d9c49a11932e6af8, type: 3}
+  - Key: 2
+    Clips:
+    - {fileID: 8300000, guid: afd69f5a8e2da7b428ba0837f3bd5dd0, type: 3}
+  - Key: 3
+    Clips:
+    - {fileID: 8300000, guid: efcebc4f813a37947a54c22066b7ed3d, type: 3}
+  - Key: 4
+    Clips:
+    - {fileID: 8300000, guid: ac67f38cb6d7510438ed15402a660f97, type: 3}
+    - {fileID: 8300000, guid: 91a3eac528236894a916e7851391607b, type: 3}
+  - Key: 5
+    Clips:
+    - {fileID: 8300000, guid: c1c3fdfb5a1fa84418ce91942b13575d, type: 3}
+    - {fileID: 8300000, guid: 9b4115eee88fc15449b248576b4896f2, type: 3}
+    - {fileID: 8300000, guid: 18522672b93f6ad4891b39ba4ac9be54, type: 3}
+  - Key: 6
+    Clips:
+    - {fileID: 8300000, guid: 83933e63c4e181a4cb0a661abeb82cfd, type: 3}
+    - {fileID: 8300000, guid: 11f50830eb9c88c47b714f737fca864f, type: 3}
   Hp: 820
   Atk: 0
   Armor: 30

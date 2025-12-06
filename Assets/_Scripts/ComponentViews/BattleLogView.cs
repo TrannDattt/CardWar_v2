@@ -19,6 +19,7 @@ namespace CardWar_v2.ComponentViews
         {
             base.OpenMenu();
 
+            GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.OpenPaper);
             await DOTween.To(() => 0f,
                             y => _container.sizeDelta = new(_container.sizeDelta.x, y),
                             _preferredHeight,
@@ -29,6 +30,7 @@ namespace CardWar_v2.ComponentViews
 
         public async Task CloseMenu(bool doAnim)
         {
+            GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.ClosePaper);
             if (doAnim) await DOTween.To(() => _container.sizeDelta.y,
                             y => _container.sizeDelta = new(_container.sizeDelta.x, y),
                             0f,

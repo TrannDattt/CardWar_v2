@@ -27,6 +27,7 @@ namespace CardWar_v2.SceneViews
             if (chapter < 1 || chapter > PlayerSessionManager.Instance.CampaignLevels[^1].Chapter) return;
 
             var viewSize = _chapterViewParent.rect.width;
+            GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.ClosePaper);
             await DOTween.To(() => _chapterViewParent.sizeDelta.x,
                        x => _chapterViewParent.sizeDelta = new(x, _chapterViewParent.sizeDelta.y),
                        0f,
@@ -41,6 +42,7 @@ namespace CardWar_v2.SceneViews
             _nextBtn = _curChapterView.NextBtn;
             _preBtn = _curChapterView.PreBtn;
 
+            GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.OpenPaper);
             await DOTween.To(() => 0f,
                        x => _chapterViewParent.sizeDelta = new(x, _chapterViewParent.sizeDelta.y),
                        viewSize,

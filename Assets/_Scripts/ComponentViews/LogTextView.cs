@@ -18,8 +18,8 @@ namespace CardWar_v2.ComponentViews
         {
             RecordTurn = actionRecord.Turn;
 
-            var bgColor = _background.color;
-            _background.color = new(bgColor.r, bgColor.g, bgColor.b, RecordTurn % 2 == 0 ? .5f : .3f);
+            // var bgColor = _background.color;
+            // _background.color = new(bgColor.r, bgColor.g, bgColor.b, RecordTurn % 2 == 0 ? .5f : .3f);
 
             _text.SetText(actionRecord.GetActionSummary());
             _text.ForceMeshUpdate();

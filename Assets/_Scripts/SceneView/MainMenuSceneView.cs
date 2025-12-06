@@ -42,7 +42,7 @@ namespace CardWar_v2.SceneViews
         public async Task ChangeTab(EMenuTab tab)
         {
             if (_activeTab == tab) return;
-            Debug.Log($"Changing to tab: {tab}");
+            // Debug.Log($"Changing to tab: {tab}");
             var activeTab = _menuTabs.Find(t => t.Tab == _activeTab);
             var newTab = _menuTabs.Find(t => t.Tab == tab);
             if (activeTab == null || newTab == null) return;

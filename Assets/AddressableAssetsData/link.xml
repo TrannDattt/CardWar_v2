@@ -1,0 +1,70 @@
+<linker>
+  <assembly fullname="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="CardWar_v2.ComponentViews.CharacterFaceSwapper" preserve="all" />
+    <type fullname="CardWar_v2.ComponentViews.FXPlayer" preserve="all" />
+    <type fullname="CardWar_v2.ComponentViews.ProjectileView" preserve="all" />
+    <type fullname="CardWar_v2.Datas.CharacterCardData" preserve="all" />
+    <type fullname="CardWar_v2.Datas.LevelData" preserve="all" />
+    <type fullname="CardWar_v2.Datas.ShopItemData" preserve="all" />
+    <type fullname="CardWar_v2.Datas.SkillCardData" preserve="all" />
+    <type fullname="CardWar_v2.Datas.LevelEnemy" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.Datas.Reward" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.ComponentViews.FXPlayer/FX" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.ComponentViews.FaceEmotion" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.Datas.ApplyEffect" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.Datas.ChangeStat" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.Datas.CharInSlotCheck" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.Datas.CharacterCardData/Voice" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.Datas.ConditionalSkill" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.Datas.DoCloseAttack" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.Datas.DoRangeAttack" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.Datas.EventTrackingSkill" preserve="nothing" serialized="true" />
+    <type fullname="CardWar_v2.Datas.KillLastTargetCheck" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="CFXRRuntime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="CartoonFX.CFXR_Effect" preserve="all" />
+    <type fullname="CartoonFX.CFXR_ParticleText" preserve="all" />
+    <type fullname="CartoonFX.CFXR_ParticleTextFontAsset" preserve="all" />
+    <type fullname="CartoonFX.CFXR_Effect/AnimatedLight" preserve="nothing" serialized="true" />
+    <type fullname="CartoonFX.CFXR_Effect/CameraShake" preserve="nothing" serialized="true" />
+    <type fullname="CartoonFX.CFXR_ParticleTextFontAsset/Kerning" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
+  </assembly>
+  <assembly fullname="Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.Rendering.Universal.UniversalAdditionalLightData" preserve="all" />
+  </assembly>
+  <assembly fullname="Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.BundledAssetProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.InstanceProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.SceneProvider" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.AnimationClip" preserve="all" />
+    <type fullname="UnityEngine.Animator" preserve="all" />
+    <type fullname="UnityEngine.RuntimeAnimatorController" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.AudioClip" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.GameObject" preserve="all" />
+    <type fullname="UnityEngine.Light" preserve="all" />
+    <type fullname="UnityEngine.Material" preserve="all" />
+    <type fullname="UnityEngine.Mesh" preserve="all" />
+    <type fullname="UnityEngine.MeshFilter" preserve="all" />
+    <type fullname="UnityEngine.MeshRenderer" preserve="all" />
+    <type fullname="UnityEngine.Object" preserve="all" />
+    <type fullname="UnityEngine.Shader" preserve="all" />
+    <type fullname="UnityEngine.SkinnedMeshRenderer" preserve="all" />
+    <type fullname="UnityEngine.Sprite" preserve="all" />
+    <type fullname="UnityEngine.Texture2D" preserve="all" />
+    <type fullname="UnityEngine.Transform" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.ParticleSystem" preserve="all" />
+    <type fullname="UnityEngine.ParticleSystemRenderer" preserve="all" />
+  </assembly>
+</linker>

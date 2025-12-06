@@ -128,6 +128,7 @@ namespace CardWar_v2.Entities
 
             OnUseSkill.AddListener((s) => 
             {
+                if (ActiveEffects.ContainsKey(ESkillEffect.Silence)) return;
                 GameAudioManager.Instance.PlayVoice(this, 
                                                     SkillCards.IndexOf(s) switch
                                                     {

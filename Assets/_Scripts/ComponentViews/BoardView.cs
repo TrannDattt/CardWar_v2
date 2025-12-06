@@ -114,7 +114,7 @@ namespace CardWar_v2.ComponentViews
             var cardView = slot.CharInSlot;
 
             slot.RemoveCard(false);
-            await cardView.DestroyChar(1);
+            await cardView.DestroyChar(3);
         }
     }
 

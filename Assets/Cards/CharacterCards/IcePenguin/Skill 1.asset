@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: GO Penguinnn!!!
   Image: {fileID: 21300000, guid: d504caa0239f1cd44801f8bf1c00387f, type: 3}
-  Description: 
+  Description: '- Attack enemy at the Front, deal Physical damage equal to 150% ATK.'
   Skill:
   - rid: 7250261063404355673
   references:

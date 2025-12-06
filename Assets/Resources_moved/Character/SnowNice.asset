@@ -14,20 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: 8813efef-65c6-4bf3-bde1-8d2b2363bd88
   Name: Snow Nice
-  Image: {fileID: 0}
+  Image: {fileID: 21300000, guid: a39b7061b890a5343b51596f5b4e6f79, type: 3}
   SplashArt: {fileID: 0}
   Model: {fileID: 7983489931341959476, guid: ae41977ed845f1e41b94dbfed7435c3e, type: 3}
   IsPlayable: 0
   AnimController: {fileID: 9100000, guid: f7705b90b4b9678488df9fdc361ede8b, type: 2}
   VoiceLines: []
-  Hp: 400
-  Atk: 44
-  Armor: 4
-  Resist: 4
-  HpPerLevel: 4
-  AtkPerLevel: 4
-  ArmorPerLevel: 4
-  ResistPerLevel: 4
+  Hp: 500
+  Atk: 0
+  Armor: 0
+  Resist: 0
+  HpPerLevel: 100
+  AtkPerLevel: 0
+  ArmorPerLevel: 0
+  ResistPerLevel: 0
   SkillCardDatas:
   - {fileID: 11400000, guid: 1bc8de02c34c04f48881e1781a781ee6, type: 2}
   - {fileID: 11400000, guid: ed3d3392dc489db4f91fbd14dca5e164, type: 2}

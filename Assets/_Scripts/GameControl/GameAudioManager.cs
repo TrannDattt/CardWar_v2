@@ -31,6 +31,11 @@ namespace CardWar_v2.GameControl
             BuyItem,
             WinMatch,
             LoseMatch,
+            ClosePaper,
+            OpenPaper,
+            PopEffect,
+            HitEffect,
+            MagicEffect,
             None,
         }
 
@@ -91,7 +96,7 @@ namespace CardWar_v2.GameControl
 
         public void PlayBackgroundMusic(EBgm key, bool restart = false)
         {
-            if(!_bgmDict.ContainsKey(key) || (_curBGM == key && !restart)) return;
+            if(!_bgmDict.ContainsKey(key) || (_curBGM == key && !restart) || _bgmDict[key].Count == 0) return;
 
             _curBGM = key;
             var clips = _bgmDict[key];
@@ -130,13 +135,17 @@ namespace CardWar_v2.GameControl
 
         public void PlaySFX(ESfx key, bool isLoop = false, bool restart = false)
         {
-            if(!_sfxDict.ContainsKey(key) || (_curSFX == key && !restart)) return;
+            Debug.Log($"1. Play SFX: {key}");
+            Debug.Log($"{_sfxDict.ContainsKey(key)} || {_curSFX == key && !restart} || _sfxDict[key].Count == 0");
+            if(!_sfxDict.ContainsKey(key) || (_curSFX == key && !restart) || _sfxDict[key].Count == 0) return;
 
+            Debug.Log($"2. Play SFX: {key}");
             _curSFX = key;
             var clips = _sfxDict[key];
             var randomClip = clips[UnityEngine.Random.Range(0, clips.Count)];
             PlaySFX(randomClip, isLoop);
         }
+
         public void ChangeSFXVolumn(float value)
         {
             _sfx.volume = value;

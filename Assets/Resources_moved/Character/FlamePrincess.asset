@@ -19,7 +19,27 @@ MonoBehaviour:
   Model: {fileID: 6472355896221109898, guid: d42918c77b438484bb35a1e6586b7512, type: 3}
   IsPlayable: 1
   AnimController: {fileID: 9100000, guid: ef4257bfc9a30db419c258b2b440c044, type: 2}
-  VoiceLines: []
+  VoiceLines:
+  - Key: 1
+    Clips:
+    - {fileID: 8300000, guid: ff0ff0e2ad38e9847bd88636a92424b2, type: 3}
+  - Key: 2
+    Clips:
+    - {fileID: 8300000, guid: 83cf1ba03c72d7d4988b3517ac3dcc1b, type: 3}
+  - Key: 3
+    Clips:
+    - {fileID: 8300000, guid: 2c1e391526f7c514c9f48cadc39de92d, type: 3}
+  - Key: 4
+    Clips:
+    - {fileID: 8300000, guid: 402f6cb27d000bb41b668d2b5cd853bd, type: 3}
+  - Key: 5
+    Clips:
+    - {fileID: 8300000, guid: 3d3a0b2b538caa3438e64774af723096, type: 3}
+    - {fileID: 8300000, guid: 4d7e59dad332de14a838eed999a774be, type: 3}
+  - Key: 6
+    Clips:
+    - {fileID: 8300000, guid: 77f92fccd26a1b044838ca4ea253ecf4, type: 3}
+    - {fileID: 8300000, guid: ce43af3b7f6e67b40b10d5c47e1e274c, type: 3}
   Hp: 290
   Atk: 70
   Armor: 5

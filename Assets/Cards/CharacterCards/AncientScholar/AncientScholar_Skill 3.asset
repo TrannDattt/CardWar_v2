@@ -14,9 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Atk3
   Image: {fileID: 21300000, guid: fa924f91238d8c6488c9fc73c61d7677, type: 3}
-  Description: 
+  Description: '- Attack enemy at the Back, deal Magical damage equal to 100% ATK.
+
+    -
+    Apply Burn to that same target for 3 turns.'
   Skill:
   - rid: 3413777266601885837
+  - rid: 7250261189438472192
   references:
     version: 2
     RefIds:
@@ -40,3 +44,14 @@ MonoBehaviour:
         Projectile: {fileID: 8542387179039130532, guid: b8682b7646d938d49911c77830a4f5d1, type: 3}
         OffsetToCaster: {x: 3, y: 2, z: 0}
         DamageType: 1
+    - rid: 7250261189438472192
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 1
+        PositionTargets: 05000000
+        Effects:
+        - EffectType: 4
+          Amount: 0
+          Duration: 3

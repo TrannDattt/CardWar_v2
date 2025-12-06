@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Quick Attack
   Image: {fileID: 21300000, guid: 79447b9e6b4176f47a0fe1a0233f62e7, type: 3}
-  Description: 
+  Description: '- Attack enemy at the Back, deal Magical damage equal to 100% ATK.'
   Skill:
   - rid: 7250261063404355668
   references:
@@ -37,4 +37,4 @@ MonoBehaviour:
           Atk: 0
           Armor: 0
           Resist: 0
-        DamageType: 0
+        DamageType: 1

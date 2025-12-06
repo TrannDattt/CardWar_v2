@@ -16,5 +16,5 @@ MonoBehaviour:
   Type: 0
   StockAmount: 1
   UnlimitedAmount: 0
-  GoldCost: 0
+  GoldCost: 500
   GemCost: 0

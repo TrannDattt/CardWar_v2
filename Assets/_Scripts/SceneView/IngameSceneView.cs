@@ -193,6 +193,8 @@ namespace CardWar_v2.SceneViews
                 var skillCard = _skillQueueView.CardQueue[0];
                 var skill = skillCard.BaseCard;
                 var caster = _boardView.GetCharacterByCard(casterSide, skill.Owner);
+
+                caster.BaseCard.OnUseSkill?.Invoke(skill);
                 
                 if (caster.BaseCard.ActiveEffects.ContainsKey(ESkillEffect.Silence))
                 {
@@ -215,8 +217,6 @@ namespace CardWar_v2.SceneViews
                     await sequence.AsyncWaitForCompletion();
                     continue;
                 }
-
-                caster.BaseCard.OnUseSkill?.Invoke(skill);
                 // Debug.Log($"Caster '{caster}' using skill {skill.Name}");
                 List<CharacterModelView> targets = new();
 

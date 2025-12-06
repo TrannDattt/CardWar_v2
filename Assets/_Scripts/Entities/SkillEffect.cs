@@ -86,6 +86,7 @@ namespace CardWar_v2.Entities
 
         public virtual async Task ApplyEffect()
         {
+            GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.PopEffect, restart: true);
             await PlayFX(_onApplyFx);
         }
 
@@ -339,7 +340,7 @@ namespace CardWar_v2.Entities
         public override void OverrideEffect(SkillEffect newEffect)
         {
             var chillEffect = (ChillEffect)newEffect;
-            _mult += chillEffect._mult;
+            // _mult += chillEffect._mult;
             Duration = chillEffect.Duration;
 
             base.OverrideEffect(newEffect);

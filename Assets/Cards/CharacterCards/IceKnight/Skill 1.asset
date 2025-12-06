@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Ice's Fury
   Image: {fileID: 21300000, guid: 5334152f7d6f6144f925345dcf952eba, type: 3}
-  Description: 
+  Description: '- Attack enemies at the Front and Mid, deal Physical damage equal
+    to 120% ATK.
+
+    - Appply Vulnerable to those same targets, increase incoming
+    damage by 10% for 2 turns.'
   Skill:
   - rid: 7250261063404355671
   - rid: 7250261063404355672

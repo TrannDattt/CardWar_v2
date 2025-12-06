@@ -81,8 +81,8 @@ MonoBehaviour:
   _modelBase: {fileID: 0}
   _flyDuration: 0
   _waitBeforeDestroyDuration: 1
+  _projectileSound: {fileID: 0}
   _fxPlayer: {fileID: 9199284676356826441}
-  _explodeSound: {fileID: 0}
 --- !u!114 &9199284676356826441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,6 +98,8 @@ MonoBehaviour:
   _fxs:
   - Type: 1
     ParticleSystem: {fileID: 5443030680297563629}
+    SFX: {fileID: 8300000, guid: 1c1a85839506a244690f88017a36e309, type: 3}
+    LoopFX: 0
   _spawnParent: {fileID: 3005242614012028659}
 --- !u!1001 &4243038948396685600
 PrefabInstance:

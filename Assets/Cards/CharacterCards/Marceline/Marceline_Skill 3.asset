@@ -24,13 +24,14 @@ MonoBehaviour:
   Skill:
   - rid: 4516365434921156741
   - rid: 7250261160345469069
+  - rid: 7250261160345469075
   references:
     version: 2
     RefIds:
     - rid: 4516365434921156741
       type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
       data:
-        Clip: {fileID: 0}
+        Clip: {fileID: 7400000, guid: e099cad95de3a424db60dbc2cc3f1994, type: 2}
         DelayToSkill: 0
         TargetSide: 0
         PositionTargets: 04000000
@@ -129,3 +130,76 @@ MonoBehaviour:
             Atk: 0
             Armor: 0
             Resist: 0
+    - rid: 7250261160345469075
+      type: {class: EventTrackingSkill, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 04000000
+        IsAttacking: 1
+        TrueSkills:
+        - rid: 7250261160345469077
+        - rid: 7250261160345469078
+    - rid: 7250261160345469077
+      type: {class: ChangeStat, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 04000000
+        HpMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AtkMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0.5
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        AmrMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+        ResMult:
+          CasterStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+          TargetStatMult:
+            Hp: 0
+            Atk: 0
+            Armor: 0
+            Resist: 0
+    - rid: 7250261160345469078
+      type: {class: ApplyEffect, ns: CardWar_v2.Datas, asm: Assembly-CSharp}
+      data:
+        Clip: {fileID: 0}
+        DelayToSkill: 0
+        TargetSide: 0
+        PositionTargets: 04000000
+        Effects:
+        - EffectType: 3
+          Amount: 0.7
+          Duration: 1

@@ -4775,6 +4775,7 @@ MonoBehaviour:
   _modelBase: {fileID: 7430930150357622879}
   _flyDuration: 1
   _waitBeforeDestroyDuration: 1
+  _projectileSound: {fileID: 8300000, guid: 1c1a85839506a244690f88017a36e309, type: 3}
   _fxPlayer: {fileID: 7037936805974994693}
 --- !u!199 &3677032176709390169
 ParticleSystemRenderer:
@@ -4868,6 +4869,8 @@ MonoBehaviour:
   _fxs:
   - Type: 1
     ParticleSystem: {fileID: 8956589605572060136}
+    SFX: {fileID: 8300000, guid: ad69a5df6030a4d4bb607f242d80b602, type: 3}
+    LoopFX: 0
   _spawnParent: {fileID: 5008067477780678605}
 --- !u!1 &9021172885821568502
 GameObject:
@@ -4894,7 +4897,7 @@ Transform:
   m_GameObject: {fileID: 9021172885821568502}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -5.02, z: 0}
+  m_LocalPosition: {x: 0, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

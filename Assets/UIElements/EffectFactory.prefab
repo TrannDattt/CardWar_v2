@@ -50,7 +50,7 @@ MonoBehaviour:
     TextColor: {r: 0.17254902, g: 0.9333334, b: 0.43921572, a: 1}
     OnApplyFX: {fileID: 6470223850953089096, guid: a74b2bfe0433a72469fdb3538cd72332, type: 3}
     OnActiveFX: {fileID: 3280519133390621004, guid: 67909caafc03a4249a2692e6623dd030, type: 3}
-    SFX: {fileID: 0}
+    SFX: {fileID: 8300000, guid: 0e6d43a4bb920e440a4fe1b353d0ce31, type: 3}
   - EffectType: 2
     Icon: {fileID: -169450226, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
     TextColor: {r: 0.043137256, g: 0.52156866, b: 0.19215688, a: 1}
@@ -68,7 +68,7 @@ MonoBehaviour:
     TextColor: {r: 1, g: 0.34901962, b: 0.10588236, a: 1}
     OnApplyFX: {fileID: 1524533970525000386, guid: d73ad74d98f8a334da43a0d11c7bb1d5, type: 3}
     OnActiveFX: {fileID: 4425129568604114668, guid: bd4ec3987e466e34b9b239199beafb99, type: 3}
-    SFX: {fileID: 0}
+    SFX: {fileID: 8300000, guid: ad69a5df6030a4d4bb607f242d80b602, type: 3}
   - EffectType: 5
     Icon: {fileID: -1993894796, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
     TextColor: {r: 0.47450984, g: 0.8117648, b: 1, a: 1}
@@ -80,7 +80,7 @@ MonoBehaviour:
     TextColor: {r: 0.5372549, g: 0.34901962, b: 0.8941177, a: 1}
     OnApplyFX: {fileID: 3337905222051100615, guid: b61a89fa0e5110e4db5baf1174b8d2c7, type: 3}
     OnActiveFX: {fileID: 0}
-    SFX: {fileID: 0}
+    SFX: {fileID: 8300000, guid: a3c9beec795025343bce6aef8db824b0, type: 3}
   - EffectType: 7
     Icon: {fileID: -374878251, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
     TextColor: {r: 0.82745105, g: 0.8431373, b: 0.10588236, a: 1}
@@ -98,7 +98,7 @@ MonoBehaviour:
     TextColor: {r: 0.043137256, g: 0.47450984, b: 0.7137255, a: 1}
     OnApplyFX: {fileID: 3337905222051100615, guid: 19e0cb40889027a499a2493fda4b9611, type: 3}
     OnActiveFX: {fileID: 4425129568604114668, guid: 804e139954ab9c54f8937ff8ab4d3157, type: 3}
-    SFX: {fileID: 0}
+    SFX: {fileID: 8300000, guid: aa82d599abff25c4ab25baecf8b0ffad, type: 3}
   - EffectType: 0
     Icon: {fileID: 1968308064, guid: 25ad85b78b4410e419a10ca35004ee23, type: 3}
     TextColor: {r: 0.9058824, g: 0.28627452, b: 0.2784314, a: 1}

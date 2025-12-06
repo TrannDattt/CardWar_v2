@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using CardWar_v2.GameControl;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -40,6 +41,7 @@ namespace CardWar_v2.ComponentViews
 
         public virtual void OnPointerClick(PointerEventData eventData)
         {
+            GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.IconClick, restart: true);
             OnIconClicked?.Invoke();
         }
 

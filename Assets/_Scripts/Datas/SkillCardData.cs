@@ -12,6 +12,7 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Events;
 using CardWar_v2.Factories;
+using CardWar_v2.GameControl;
 
 namespace CardWar_v2.Datas
 {
@@ -158,9 +159,11 @@ namespace CardWar_v2.Datas
             var casterStat = casterModel.BaseCard.GetCurStat();
             var targetStat = targetModel.BaseCard.GetCurStat();
             var damage = (casterStat * CasterStatMult + targetStat * TargetStatMult).Total;
-            await Task.Delay(150);
 
+            GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.HitEffect, restart: true);
             targetModel.BaseCard.TakeDamage(casterModel.BaseCard, damage, DamageType);
+            await Task.Delay(150);
+            
             casterModel.BaseCard.OnDealDamage?.Invoke(damage);
             await casterModel.transform.DOMove(startPos, 1).SetEase(Ease.InCubic).AsyncWaitForCompletion();
 
@@ -192,6 +195,7 @@ namespace CardWar_v2.Datas
             CharStat statChange = new(hpChange, atkChange, amrChange, resChange);
             // Debug.Log($"ATK: {statChange.Atk} - HP: {statChange.Hp} - AMR: {statChange.Armor} - RES: {statChange.Resist}");
             casterModel.BaseCard.ChangeStat(statChange);
+            GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.MagicEffect, restart: true);
             await PlayFXs(statChange, targetModel.transform);
         }
 

@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: Slash
   Image: {fileID: 21300000, guid: 8b50eed9ece6ef546a9b50f3300c7c8c, type: 3}
-  Description: 
+  Description: '- Attack enemies at the Front and Mid, deal Physical damage equal
+    to 150% ATK.
+
+    - Apply Burn to those same targets for 2 turns.'
   Skill:
   - rid: 7250261063404355669
   - rid: 7250261063404355670
@@ -49,4 +52,4 @@ MonoBehaviour:
         Effects:
         - EffectType: 4
           Amount: 0
-          Duration: 1
+          Duration: 2
