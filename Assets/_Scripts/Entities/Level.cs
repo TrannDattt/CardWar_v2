@@ -41,11 +41,11 @@ namespace CardWar_v2.Entities
 
         public void ClearLevel(bool turnConditionCheck, bool allAliveCheck)
         {
-            if(!ClearCheck)
-            {
+            // if(!ClearCheck)
+            // {
                 PlayerSessionManager.Instance.CurPlayer.UpdatePlayerExp(Rewards.Exp);
                 PlayerSessionManager.Instance.CurPlayer.UpdatePlayerCurrency(Rewards.Gold, Rewards.Gem);
-            }
+            // }
 
             ClearCheck = true;
             TurnConditionCheck = turnConditionCheck;
