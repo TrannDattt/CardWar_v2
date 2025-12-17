@@ -1,4 +1,5 @@
 // using CardWar.Factories;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,21 +18,25 @@ namespace CardWar_v2.SceneViews
     {
         [SerializeField] private RectTransform _chapterViewParent;
         [SerializeField] private List<LevelSelectView> _chapterViews;
+        [SerializeField] private int _mapWidth;
 
         private LevelSelectView _curChapterView;
         private Button _nextBtn;
         private Button _preBtn;
 
-        public async Task ChangeChapterView(int chapter)
+        public IEnumerator ChangeChapterView(int chapter)
         {
-            if (chapter < 1 || chapter > PlayerSessionManager.Instance.CampaignLevels[^1].Chapter) return;
+            if (chapter < 1 || chapter > PlayerSessionManager.Instance.CampaignLevels[^1].Chapter) yield break;
 
-            var viewSize = _chapterViewParent.rect.width;
             GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.ClosePaper);
-            await DOTween.To(() => _chapterViewParent.sizeDelta.x,
-                       x => _chapterViewParent.sizeDelta = new(x, _chapterViewParent.sizeDelta.y),
-                       0f,
-                       .5f).SetEase(Ease.InOutQuad).AsyncWaitForCompletion();
+            yield return DOTween.To(() => _chapterViewParent.sizeDelta.x,
+                                    x => _chapterViewParent.sizeDelta = new(x, _chapterViewParent.sizeDelta.y),
+                                    0f,
+                                    .5f).SetEase(Ease.InOutQuad).WaitForCompletion();
+            // await DOTween.To(() => _chapterViewParent.sizeDelta.x,
+            //            x => _chapterViewParent.sizeDelta = new(x, _chapterViewParent.sizeDelta.y),
+            //            0f,
+            //            .5f).SetEase(Ease.InOutQuad).AsyncWaitForCompletion();
 
             if (_curChapterView) Destroy(_curChapterView.gameObject);
             // Debug.Log($"Open chapter {chapter}");
@@ -43,25 +48,31 @@ namespace CardWar_v2.SceneViews
             _preBtn = _curChapterView.PreBtn;
 
             GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.OpenPaper);
-            await DOTween.To(() => 0f,
-                       x => _chapterViewParent.sizeDelta = new(x, _chapterViewParent.sizeDelta.y),
-                       viewSize,
-                       .5f).SetEase(Ease.InOutQuad).AsyncWaitForCompletion();
+            yield return DOTween.To(() => 0f,
+                                    x => _chapterViewParent.sizeDelta = new(x, _chapterViewParent.sizeDelta.y),
+                                    _mapWidth,
+                                    .5f).SetEase(Ease.InOutQuad).WaitForCompletion();
+            // await DOTween.To(() => 0f,
+            //            x => _chapterViewParent.sizeDelta = new(x, _chapterViewParent.sizeDelta.y),
+            //            viewSize,
+            //            .5f).SetEase(Ease.InOutQuad).AsyncWaitForCompletion();
 
             _nextBtn.onClick.RemoveAllListeners();
-            _nextBtn.onClick.AddListener(async () => await ChangeChapterView(chapter + 1));
+            _nextBtn.onClick.AddListener(() => StartCoroutine(ChangeChapterView(chapter + 1)));
+            // _nextBtn.onClick.AddListener(async () => await ChangeChapterView(chapter + 1));
             _preBtn.onClick.RemoveAllListeners();
-            _preBtn.onClick.AddListener(async () => await ChangeChapterView(chapter - 1));
+            _preBtn.onClick.AddListener(() => StartCoroutine(ChangeChapterView(chapter - 1)));
+            // _preBtn.onClick.AddListener(async () => await ChangeChapterView(chapter - 1));
         }
 
-        public async void Initialize()
+        public void Initialize()
         {
-            if (PlayerSessionManager.Instance.CampaignLevels.Count > 0) await ChangeChapterView(1);
+            if (PlayerSessionManager.Instance.CampaignLevels.Count > 0) StartCoroutine(ChangeChapterView(1));
         }
 
-        async void OnEnable()
+        void OnEnable()
         {
-            if (PlayerSessionManager.Instance.CampaignLevels.Count > 0) await ChangeChapterView(1);
+            if (PlayerSessionManager.Instance.CampaignLevels.Count > 0) StartCoroutine(ChangeChapterView(1));
         }
     }
 }
