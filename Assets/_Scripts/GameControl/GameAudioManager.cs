@@ -135,11 +135,11 @@ namespace CardWar_v2.GameControl
 
         public void PlaySFX(ESfx key, bool isLoop = false, bool restart = false)
         {
-            Debug.Log($"1. Play SFX: {key}");
-            Debug.Log($"{_sfxDict.ContainsKey(key)} || {_curSFX == key && !restart} || _sfxDict[key].Count == 0");
+            // Debug.Log($"1. Play SFX: {key}");
+            // Debug.Log($"{_sfxDict.ContainsKey(key)} || {_curSFX == key && !restart} || _sfxDict[key].Count == 0");
             if(!_sfxDict.ContainsKey(key) || (_curSFX == key && !restart) || _sfxDict[key].Count == 0) return;
 
-            Debug.Log($"2. Play SFX: {key}");
+            // Debug.Log($"2. Play SFX: {key}");
             _curSFX = key;
             var clips = _sfxDict[key];
             var randomClip = clips[UnityEngine.Random.Range(0, clips.Count)];

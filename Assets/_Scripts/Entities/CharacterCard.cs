@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -224,9 +225,9 @@ namespace CardWar_v2.Entities
         #endregion
 
         #region Effect Manager
-        public async Task ApplyEffect(SkillEffect effect)
+        public IEnumerator ApplyEffect(SkillEffect effect)
         {
-            if (_isDeath) return;
+            if (_isDeath) yield break;
 
             // Debug.Log(effect.EffectType);
             // Debug.Log($"Applying {effect.EffectType} to {Name}");
@@ -244,18 +245,18 @@ namespace CardWar_v2.Entities
                 OnApplyEffect?.Invoke(effect);
             }
             
-            await ActiveEffects[effect.EffectType].ApplyEffect();
+            yield return ActiveEffects[effect.EffectType].ApplyEffect();
         }
 
-        public async Task DoEffects()
+        public IEnumerator DoEffects()
         {
-            if (_isDeath || ActiveEffects.Count == 0) return;
+            if (_isDeath || ActiveEffects.Count == 0) yield break;
 
             var activeEffects = new List<SkillEffect>(ActiveEffects.Values.ToList());
             activeEffects.Reverse();
             foreach (var effect in activeEffects)
             {
-                await effect.DoEffect();
+                yield return effect.DoEffect();
             }
         }
 

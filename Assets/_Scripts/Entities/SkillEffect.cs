@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CardWar.Interfaces;
@@ -73,21 +74,21 @@ namespace CardWar_v2.Entities
             });
         }
 
-        private async Task PlayFX(ParticleSystem fx)
+        private IEnumerator PlayFX(ParticleSystem fx)
         {
-            if (fx == null) return;
+            if (fx == null) yield break;
             fx.gameObject.SetActive(true);
             while (fx != null && fx.isPlaying)
             {
-                await Task.Yield();
+                yield return null;
             }
             if (fx != null) fx.gameObject.SetActive(false);
         }
 
-        public virtual async Task ApplyEffect()
+        public virtual IEnumerator ApplyEffect()
         {
             GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.PopEffect, restart: true);
-            await PlayFX(_onApplyFx);
+            yield return PlayFX(_onApplyFx);
         }
 
         public virtual void OverrideEffect(SkillEffect newEffect)
@@ -95,10 +96,10 @@ namespace CardWar_v2.Entities
             OnEffectUpdated?.Invoke();
         }
 
-        public virtual async Task DoEffect()
+        public virtual IEnumerator DoEffect()
         {
             if (_sfx != null) GameAudioManager.Instance.PlaySFX(_sfx, false);
-            await PlayFX(_onActiveFx);
+            yield return PlayFX(_onActiveFx);
 
             OnDoEffect?.Invoke();
             // Duration--;
@@ -132,9 +133,9 @@ namespace CardWar_v2.Entities
             base.OverrideEffect(newEffect);
         }
 
-        public override async Task DoEffect()
+        public override IEnumerator DoEffect()
         {
-            await base.DoEffect();
+            yield return base.DoEffect();
 
             _target.TakeDamage(this, -HealAmount, EDamageType.Pure);
         }
@@ -169,9 +170,9 @@ namespace CardWar_v2.Entities
             base.OverrideEffect(newEffect);
         }
 
-        public override async Task DoEffect()
+        public override IEnumerator DoEffect()
         {
-            await base.DoEffect();
+            yield return base.DoEffect();
 
             _target.TakeDamage(this, DamageAmount, EDamageType.Pure);
         }
@@ -196,11 +197,11 @@ namespace CardWar_v2.Entities
             _mult = mult;
         }
 
-        public override async Task ApplyEffect()
+        public override IEnumerator ApplyEffect()
         {
-            _target.OnTakingDamage.AddListener(async (_, _) => await DoEffect());
+            _target.OnTakingDamage.AddListener((_, _) => DoEffect());
 
-            await base.ApplyEffect();
+            yield return base.ApplyEffect();
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -231,11 +232,11 @@ namespace CardWar_v2.Entities
             _mult = mult;
         }
 
-        public override async Task ApplyEffect()
+        public override IEnumerator ApplyEffect()
         {
-            _target.OnTakingDamage.AddListener(async (_, _) => await DoEffect());
+            _target.OnTakingDamage.AddListener((_, _) => DoEffect());
 
-            await base.ApplyEffect();
+            yield return base.ApplyEffect();
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -262,11 +263,11 @@ namespace CardWar_v2.Entities
         {
         }
 
-        public override async Task ApplyEffect()
+        public override IEnumerator ApplyEffect()
         {
-            _target.OnUseSkill.AddListener(async (_) => await DoEffect());
+            _target.OnUseSkill.AddListener((_) => DoEffect());
 
-            await base.ApplyEffect();
+            yield return base.ApplyEffect();
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -304,9 +305,9 @@ namespace CardWar_v2.Entities
             base.OverrideEffect(newEffect);
         }
 
-        public override async Task DoEffect()
+        public override IEnumerator DoEffect()
         {
-            await base.DoEffect();
+            yield return base.DoEffect();
 
             _target.TakeDamage(this, DamageAmount, EDamageType.Pure);
         }
@@ -330,11 +331,11 @@ namespace CardWar_v2.Entities
         {
         }
 
-        public override async Task ApplyEffect()
+        public override IEnumerator ApplyEffect()
         {
-            _target.OnDealDamage.AddListener(async (_) => await DoEffect());
+            _target.OnDealDamage.AddListener((_) => DoEffect());
 
-            await base.ApplyEffect();
+            yield return base.ApplyEffect();
         }
 
         public override void OverrideEffect(SkillEffect newEffect)
@@ -371,9 +372,9 @@ namespace CardWar_v2.Entities
             base.OverrideEffect(newEffect);
         }
 
-        public override async Task DoEffect()
+        public override IEnumerator DoEffect()
         {
-            await base.DoEffect();
+            yield return base.DoEffect();
 
             _target.TakeDamage(this, FrostbiteAmount, EDamageType.Pure);
         }
@@ -407,18 +408,23 @@ namespace CardWar_v2.Entities
             base.OverrideEffect(newEffect);
         }
 
-        public override async Task ApplyEffect()
+        public override IEnumerator ApplyEffect()
         {
             Debug.Log("Apply Omnivamp");
-            await base.ApplyEffect();
+            yield return base.ApplyEffect();
 
-            _caster.OnDealDamage.AddListener(DoEffect);
+            _caster.OnDealDamage.AddListener(OnDealDamageListener);
         }
 
-        public async void DoEffect(float damageDealt)
+        private void OnDealDamageListener(float damageDealt)
+        {
+            GameplayManager.Instance.StartCoroutine(DoEffect(damageDealt));
+        }
+
+        public IEnumerator DoEffect(float damageDealt)
         {
             // Debug.Log($"Caster {_caster.Name} - Omnivamp: {damageDealt * _mult} Hp");
-            await base.DoEffect();
+            yield return base.DoEffect();
 
             _caster.ChangeHp(damageDealt * _mult);
         }
@@ -428,7 +434,7 @@ namespace CardWar_v2.Entities
             Debug.Log("Remove Omnivamp");
             base.RemoveEffect();
             
-            _caster.OnDealDamage.RemoveListener(DoEffect);
+            _caster.OnDealDamage.RemoveListener(OnDealDamageListener);
         }
 
         public override string GetDescription()

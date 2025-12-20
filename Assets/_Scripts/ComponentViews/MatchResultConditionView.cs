@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
@@ -19,7 +20,7 @@ namespace CardWar_v2.ComponentViews
 
         private float _checkOffsetX;
 
-        public async Task CheckCondiction(string text, bool isMet, bool doAnim)
+        public IEnumerator CheckCondiction(string text, bool isMet, bool doAnim)
         {
             HideCondition();
             _conditionText.SetText(text);
@@ -38,15 +39,15 @@ namespace CardWar_v2.ComponentViews
                     sequence.Append(_conditionText.DOColor(_metColor, 0.2f).SetEase(Ease.InOutQuad));
                     sequence.Join(_iconCheckbox.DOColor(_metColor, 0.2f).SetEase(Ease.InOutQuad));
                 }
-                await sequence.AsyncWaitForCompletion();
+                yield return sequence.WaitForCompletion();
 
-                return;
+                yield break;
             }
 
             _canvasGroup.alpha = 1f;
             _checkIconRt.anchoredPosition = new Vector2(0f, _checkIconRt.anchoredPosition.y);
             _checkIconMaskRt.anchoredPosition = new Vector2(0f, _checkIconMaskRt.anchoredPosition.y);
-            if (!isMet) return;
+            if (!isMet) yield break;
 
             _conditionText.color = _metColor;
             _iconCheckbox.color = _metColor;

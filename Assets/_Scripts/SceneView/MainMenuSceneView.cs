@@ -1,5 +1,6 @@
 // using CardWar.Factories;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CardWar_v2.ComponentViews;
@@ -39,7 +40,7 @@ namespace CardWar_v2.SceneViews
         // private EMenuTab _activeTab = EMenuTab.None;
         private Player CurPlayer => PlayerSessionManager.Instance.CurPlayer;
 
-        public async Task ChangeTab(EMenuTab tab)
+        public void ChangeTab(EMenuTab tab)
         {
             if (_activeTab == tab) return;
             // Debug.Log($"Changing to tab: {tab}");
@@ -81,10 +82,9 @@ namespace CardWar_v2.SceneViews
             {
                 _activeTab = tab;
             });
-
             // await Task.WhenAll(_navBar.SelectButton(tab), sequence.AsyncWaitForCompletion());
-            await sequence.AsyncWaitForCompletion();
-            _navBar.SelectButton(tab);
+            sequence.WaitForCompletion();
+            StartCoroutine(_navBar.SelectButton(tab));
         }
         
         public void UpdateCurrencyCounter()
@@ -94,18 +94,18 @@ namespace CardWar_v2.SceneViews
             _gemCounter.SetCount(CurPlayer.Gem);
         }
 
-        async void Start()
+        void Start()
         {
             // _activeTab = EMenuTab.Home;
             _navBar.NavButtons.ForEach(nb =>
             {
-                nb.Button.onClick.AddListener(async () => 
+                nb.Button.onClick.AddListener(() => 
                 {
-                    await ChangeTab(nb.Tab);
+                    ChangeTab(nb.Tab);
                 });
             });
 
-            await ChangeTab(EMenuTab.Home);
+            ChangeTab(EMenuTab.Home);
 
             CurPlayer.OnGoldUpdated.AddListener(() => _goldCounter.SetCount(CurPlayer.Gold));
             CurPlayer.OnGemUpdated.AddListener(() => _gemCounter.SetCount(CurPlayer.Gem));

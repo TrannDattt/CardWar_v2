@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,11 +16,11 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private ButtonSelectOverlay _buttonSelectOverlay;
         public List<NavButton> NavButtons;
 
-        public async void SelectButton(EMenuTab key)
+        public IEnumerator SelectButton(EMenuTab key)
         {
             var button = NavButtons.FirstOrDefault(b => b.Tab == key).Button;
-            if(button == null) return;
-            await _buttonSelectOverlay.MoveView(button.GetComponent<RectTransform>());
+            if(button == null) yield break;
+            yield return _buttonSelectOverlay.MoveView(button.GetComponent<RectTransform>());
         }
 
         void Awake()
@@ -28,8 +29,8 @@ namespace CardWar_v2.ComponentViews
             {
                 if (b.DoAddListener)
                 {
-                    b.Button.onClick.AddListener(async () => {
-                        SelectButton(b.Tab);
+                    b.Button.onClick.AddListener(() => {
+                        StartCoroutine(SelectButton(b.Tab));
                     });
                 }
             });

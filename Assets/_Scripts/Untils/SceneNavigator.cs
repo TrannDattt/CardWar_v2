@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -62,6 +63,8 @@ namespace CardWar_v2.Untils
             var loadTask = SceneManager.LoadSceneAsync(_curScene);
             while (!loadTask.isDone)
                 await Task.Yield();
+
+            await Task.Yield();
 
             StopLoading();
         }

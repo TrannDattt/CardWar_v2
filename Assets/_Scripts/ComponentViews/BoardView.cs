@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -103,18 +104,18 @@ namespace CardWar_v2.ComponentViews
             return pr.Slots.Select(s => s.CharInSlot).Where(c => c != null).ToList();
         }
 
-        public async Task DestroyDeadChar(CharacterCard charCard, EPlayerTarget targetSide)
+        public IEnumerator DestroyDeadChar(CharacterCard charCard, EPlayerTarget targetSide)
         {
-            if (charCard == null) return;
+            if (charCard == null) yield break;
             var region = targetSide == EPlayerTarget.Ally ? _selfRegion : _enemyRegion;
             // Debug.Log($"Destroy dead character {charCard.Name} at region {region}");
             var slot = region.GetSlotByCard(charCard);
-            if (slot == null) return;
+            if (slot == null) yield break;
             // Debug.Log($"and at position {slot}");
             var cardView = slot.CharInSlot;
 
             slot.RemoveCard(false);
-            await cardView.DestroyChar(3);
+            yield return cardView.DestroyChar(3);
         }
     }
 

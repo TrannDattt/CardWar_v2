@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
@@ -21,13 +22,13 @@ namespace CardWar_v2.ComponentViews
 
         private RectTransform _imageRt => _starImage.rectTransform;
 
-        public async Task ShowStarResult(bool isEnable, bool doAnim)
+        public IEnumerator ShowStarResult(bool isEnable, bool doAnim)
         {
             _imageRt.anchoredPosition = _disabledTransform.Position;
             _imageRt.localScale = _disabledTransform.Scale;
             _starImage.color = Color.clear;
 
-            if (!isEnable) return;
+            if (!isEnable) yield break;
 
             if (doAnim)
             {
@@ -37,9 +38,9 @@ namespace CardWar_v2.ComponentViews
                 sequence.Append(_imageRt.DOAnchorPos(_defaultTransform.Position, 0.3f).SetEase(Ease.InOutQuad));
                 sequence.Join(_imageRt.DOScale(_defaultTransform.Scale, 0.5f).SetEase(Ease.InOutQuad));
                 sequence.Join(_starImage.DOColor(Color.white, 0.5f).SetEase(Ease.InOutQuad));
-                await sequence.AsyncWaitForCompletion();
+                yield return sequence.WaitForCompletion();
 
-                return;
+                yield break;
             }
 
             _imageRt.anchoredPosition = _defaultTransform.Position;

@@ -53,7 +53,7 @@ namespace CardWar_v2.SceneViews
                 ChangeSelectedChar(newChar);
             });
 
-            Debug.Log($"Show character {newChar} info at level {newChar.Level}");
+            // Debug.Log($"Show character {newChar} info at level {newChar.Level}");
         }
 
         private void LevelUpCharacter(CharacterCard charCard, int goldCost, int gemCost)

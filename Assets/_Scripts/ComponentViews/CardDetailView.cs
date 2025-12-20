@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,19 +48,19 @@ namespace CardWar_v2.ComponentViews
         //     return subSkill.GenerateDescription(owner, false);
         // }
         
-        public async Task ShowSkillDetail(SkillCard card)
+        public IEnumerator ShowSkillDetail(SkillCard card)
         {
             // Debug.Log($"2.Show detail of card {card}");
             _skillImage.sprite = card.Image;
             _skillName.SetText(card.Name);
             _skillDes.SetText(card.Des);
 
-            if (_isShownChar) await HideDetailView(EDetailType.Char);
-            if (!_isShownSkill) await ShowDetailView(EDetailType.Skill);
+            if (_isShownChar) yield return HideDetailView(EDetailType.Char);
+            if (!_isShownSkill) yield return ShowDetailView(EDetailType.Skill);
             // await ShowDetailView(EDetailType.Skill);
         }
 
-        public async Task ShowCharDetail(CharacterCard card)
+        public IEnumerator ShowCharDetail(CharacterCard card)
         {
             _charImage.sprite = card.Image;
             _charName.SetText(card.Name);
@@ -80,12 +81,12 @@ namespace CardWar_v2.ComponentViews
                 }
             });
 
-            if (_isShownSkill) await HideDetailView(EDetailType.Skill);
-            if (!_isShownChar) await ShowDetailView(EDetailType.Char);
+            if (_isShownSkill) yield return HideDetailView(EDetailType.Skill);
+            if (!_isShownChar) yield return ShowDetailView(EDetailType.Char);
             // await ShowDetailView(EDetailType.Char);
         }
 
-        private async Task ShowDetailView(EDetailType type)
+        private IEnumerator ShowDetailView(EDetailType type)
         {
             var view = type == EDetailType.Char ? _charDetail : _skillDetail;
             if (type == EDetailType.Char) _isShownChar = true;
@@ -95,10 +96,10 @@ namespace CardWar_v2.ComponentViews
 
             sequence.Append(view.DOAnchorPos(Vector2.zero, .5f).SetEase(Ease.OutBack, overshoot: 1f));
 
-            await sequence.AsyncWaitForCompletion();
+            yield return sequence.WaitForCompletion();
         }
 
-        private async Task HideDetailView(EDetailType type)
+        private IEnumerator HideDetailView(EDetailType type)
         {
             var view = type == EDetailType.Char ? _charDetail : _skillDetail;
             if (type == EDetailType.Char) _isShownChar = false;
@@ -110,20 +111,13 @@ namespace CardWar_v2.ComponentViews
 
             sequence.Append(view.DOAnchorPos(viewPos, .5f).SetEase(Ease.InOutQuad));
 
-            await sequence.AsyncWaitForCompletion();
+            yield return sequence.WaitForCompletion();
         }
 
-        public async Task HideAllDetailView()
+        public IEnumerator HideAllDetailView()
         {
-            if (!_isShownChar && !_isShownSkill) return;
-
-            var tasks = new List<Task>
-            {
-                HideDetailView(EDetailType.Char),
-                HideDetailView(EDetailType.Skill)
-            };
-
-            await Task.WhenAll(tasks);
+            if (_isShownSkill) yield return HideDetailView(EDetailType.Skill);
+            if (_isShownChar) yield return HideDetailView(EDetailType.Char);
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -150,11 +144,11 @@ namespace CardWar_v2.ComponentViews
             _isShownSkill = false;
         }
 
-        async void Update()
+        void Update()
         {
             if (Input.GetKeyDown(KeyCode.Mouse0) && (_isShownChar || _isShownSkill) && !_isPointerOnUI)
             {
-                await HideAllDetailView();
+                StartCoroutine(HideAllDetailView());
             }
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -131,26 +132,26 @@ namespace CardWar_v2.ComponentViews
             _animator.Play(clip.name);
         }
 
-        public async Task UseSkill(SubSkill subSkill, List<CharacterModelView> targets)
+        public IEnumerator UseSkill(SubSkill subSkill, List<CharacterModelView> targets)
         {
             // Debug.Log($"Doing sub-skill {subSkill.GetType()}");
             DoSkillAnim(subSkill.Clip);
             var tasks = targets.Select(t => subSkill.DoSkill(this, t));
-            await Task.Delay((int)(subSkill.DelayToSkill * 1000));
-            await Task.WhenAll(tasks);
-            if (subSkill.Clip != null) await WaitForAnimationEnd(_animator, subSkill.Clip.name);
+            yield return new WaitForSeconds(subSkill.DelayToSkill);
+            yield return tasks;
+            if (subSkill.Clip != null) yield return WaitForAnimationEnd(_animator, subSkill.Clip.name);
             // Debug.Log($"Finished sub-skill {subSkill.GetType()}");
         }
 
-        private async Task WaitForAnimationEnd(Animator animator, string clipName)
+        private IEnumerator WaitForAnimationEnd(Animator animator, string clipName)
         {
-            if (animator == null) return;
+            if (animator == null) yield break;
 
             AnimatorClipInfo[] clipInfos = animator.GetCurrentAnimatorClipInfo(0);
-            if (clipInfos[0].clip.name != clipName) return;
+            if (clipInfos[0].clip.name != clipName) yield break;
             while (clipInfos.Length == 0)
             {
-                await Task.Yield();
+                yield return null;
                 clipInfos = animator.GetCurrentAnimatorClipInfo(0);
             }
 
@@ -158,7 +159,7 @@ namespace CardWar_v2.ComponentViews
 
             while (stateInfo.normalizedTime < 1f)
             {
-                await Task.Yield();
+                yield return null;
                 stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             }
         }
@@ -176,7 +177,7 @@ namespace CardWar_v2.ComponentViews
                 m.SetFloat("_Dissolve", value);
         }
 
-        public async Task DestroyChar(float duration)
+        public IEnumerator DestroyChar(float duration)
         {
             _animator.Play("Die");
             var sequence = DOTween.Sequence();
@@ -188,7 +189,7 @@ namespace CardWar_v2.ComponentViews
                 CardFactory.Instance.RecycleCardModel(this);
             });
 
-            await sequence.AsyncWaitForCompletion();
+            yield return sequence.WaitForCompletion();
         }
         #endregion
 

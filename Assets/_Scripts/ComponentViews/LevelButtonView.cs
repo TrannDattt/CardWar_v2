@@ -1,7 +1,9 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CardWar_v2.Datas;
+using CardWar_v2.Entities;
 using CardWar_v2.GameControl;
 using CardWar_v2.SceneViews;
 using CardWar_v2.Untils;
@@ -19,7 +21,7 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private Button _button;
         [SerializeField] private Image _lockImage;
 
-        public async void Initialize(int chapter)
+        public void Initialize(int chapter)
         {
             var level = PlayerSessionManager.Instance.CampaignLevels.FirstOrDefault(l => l.Chapter == chapter && l.Room == _roomNumber);
             if (level == null) return;
@@ -29,14 +31,15 @@ namespace CardWar_v2.ComponentViews
             _button.interactable = levelIndex == 0 || PlayerSessionManager.Instance.CampaignLevels[levelIndex - 1].ClearCheck;
             _lockImage.gameObject.SetActive(!_button.interactable);
 
-            await _starImages[0].ShowStarResult(level.ClearCheck, false);
-            await _starImages[1].ShowStarResult(level.ClearCheck && level.TurnConditionCheck, false);
-            await _starImages[2].ShowStarResult(level.ClearCheck && level.AllAliveCheck, false);
+            StartCoroutine(_starImages[0].ShowStarResult(level.ClearCheck, false));
+            StartCoroutine(_starImages[1].ShowStarResult(level.ClearCheck && level.TurnConditionCheck, false));
+            StartCoroutine(_starImages[2].ShowStarResult(level.ClearCheck && level.AllAliveCheck, false));
 
             _buttonText.SetText($"{chapter}-{_roomNumber}");
             _button.onClick.RemoveAllListeners();
             _button.onClick.AddListener(async () =>
             {
+                Debug.Log($"Open level {chapter}-{_roomNumber}");
                 await SceneNavigator.Instance.ChangeScene(EScene.Campaign, () =>
                 {
                     var campaignView = FindFirstObjectByType<CampaignView>();
@@ -44,6 +47,8 @@ namespace CardWar_v2.ComponentViews
                 });
             });
         }
+
+        
     }
 }
 

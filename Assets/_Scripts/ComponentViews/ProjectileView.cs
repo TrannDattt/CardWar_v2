@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Threading.Tasks;
 using CardWar.Interfaces;
 using CardWar_v2.GameControl;
@@ -16,7 +17,7 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private AudioClip _projectileSound;
         [SerializeField] private FXPlayer _fxPlayer;
 
-        public async Task FlyToTarget(Vector3 casterPos, Vector3 offset, Vector3 targetPos, Action callback = null)
+        public IEnumerator FlyToTarget(Vector3 casterPos, Vector3 offset, Vector3 targetPos, Action callback = null)
         {
             // transform.SetPositionAndRotation(spawnPos, Quaternion.LookRotation(targetPos - spawnPos));
             if (casterPos != targetPos) transform.LookAt(targetPos);
@@ -39,7 +40,7 @@ namespace CardWar_v2.ComponentViews
                 Destroy(gameObject);
             });
 
-            await sequence.AsyncWaitForCompletion();
+            yield return sequence.WaitForCompletion();
         }
     }
 }

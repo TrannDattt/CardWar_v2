@@ -13,6 +13,8 @@ using DG.Tweening;
 using UnityEngine.Events;
 using CardWar_v2.Factories;
 using CardWar_v2.GameControl;
+using System.Collections;
+using Unity.VisualScripting;
 
 namespace CardWar_v2.Datas
 {
@@ -41,7 +43,7 @@ namespace CardWar_v2.Datas
         public EPlayerTarget TargetSide;
         public List<EPositionTarget> PositionTargets;
 
-        public abstract Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel);
+        public abstract IEnumerator DoSkill(CharacterModelView casterModel, CharacterModelView targetModel);
         // public abstract string GenerateDescription(CharacterCard owner);
     }
     #endregion
@@ -56,11 +58,11 @@ namespace CardWar_v2.Datas
         public Vector3 OffsetToCaster;
         public EDamageType DamageType;
 
-        public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
+        public override IEnumerator DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
-            if (targetModel == null || Projectile == null) return;
+            if (targetModel == null || Projectile == null) yield break;
             var projectile = UnityEngine.Object.Instantiate(Projectile, casterModel.transform);
-            await projectile.FlyToTarget(casterModel.transform.position, OffsetToCaster,
+            yield return projectile.FlyToTarget(casterModel.transform.position, OffsetToCaster,
                                         targetModel.transform.position + 3 * Vector3.up,
                                         () => DoDamage(casterModel, targetModel.BaseCard));
         }
@@ -116,13 +118,13 @@ namespace CardWar_v2.Datas
             return result;
         }
 
-        public override async Task DoSkill(CharacterModelView caster, CharacterModelView target)
+        public override IEnumerator DoSkill(CharacterModelView caster, CharacterModelView target)
         {
-            if (target == null) return;
+            if (target == null) yield break;
             var effects = GetSkillEffect(caster, target);
             foreach (var e in effects)
             {
-                await target.BaseCard.ApplyEffect(e);
+                yield return target.BaseCard.ApplyEffect(e);
             }
         }
     }
@@ -146,15 +148,15 @@ namespace CardWar_v2.Datas
 
         public UnityEvent<float> OnDealDamage { get; set; } = new();
 
-        public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
+        public override IEnumerator DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
-            if (targetModel == null) return;
+            if (targetModel == null) yield break;
 
             var startPos = casterModel.transform.position;
             var dir = targetModel.transform.position - startPos;
             var offset = new Vector3(4f * Mathf.Sign(dir.x), 0, 0);
             var targetPos = targetModel.transform.position - offset;
-            await casterModel.transform.DOMove(targetPos, 1).SetEase(Ease.InCubic).AsyncWaitForCompletion();
+            yield return casterModel.transform.DOMove(targetPos, 1).SetEase(Ease.InCubic).WaitForCompletion();
 
             var casterStat = casterModel.BaseCard.GetCurStat();
             var targetStat = targetModel.BaseCard.GetCurStat();
@@ -162,10 +164,10 @@ namespace CardWar_v2.Datas
 
             GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.HitEffect, restart: true);
             targetModel.BaseCard.TakeDamage(casterModel.BaseCard, damage, DamageType);
-            await Task.Delay(150);
+            yield return new WaitForSeconds(.15f);
             
             casterModel.BaseCard.OnDealDamage?.Invoke(damage);
-            await casterModel.transform.DOMove(startPos, 1).SetEase(Ease.InCubic).AsyncWaitForCompletion();
+            yield return casterModel.transform.DOMove(startPos, 1).SetEase(Ease.InCubic).WaitForCompletion();
 
             // Debug.Log($"Target '{targetModel.BaseCard.Name}' took {damage} damage from Caster '{casterModel.BaseCard.Name}'");
         }
@@ -180,9 +182,9 @@ namespace CardWar_v2.Datas
         public StatMult AmrMult;
         public StatMult ResMult;
 
-        public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
+        public override IEnumerator DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
-            if (targetModel == null) return;
+            if (targetModel == null) yield break;
 
             var casterStat = casterModel.BaseCard.GetCurStat();
             var targetStat = targetModel.BaseCard.GetCurStat();
@@ -196,29 +198,27 @@ namespace CardWar_v2.Datas
             // Debug.Log($"ATK: {statChange.Atk} - HP: {statChange.Hp} - AMR: {statChange.Armor} - RES: {statChange.Resist}");
             casterModel.BaseCard.ChangeStat(statChange);
             GameAudioManager.Instance.PlaySFX(GameAudioManager.ESfx.MagicEffect, restart: true);
-            await PlayFXs(statChange, targetModel.transform);
+            yield return PlayFXs(statChange, targetModel.transform);
         }
 
-        private async Task PlayFXs(CharStat statChange, Transform target)
+        private IEnumerator PlayFXs(CharStat statChange, Transform target)
         {
-            async Task PlayFX(ParticleSystem fxRef)
+            IEnumerator PlayFX(ParticleSystem fxRef)
             {
                 var fx = UnityEngine.Object.Instantiate(fxRef, target);
                 fx.Play();
                 while (fx.isPlaying)
                 {
-                    await Task.Yield();
+                    yield return null;
                 }
                 UnityEngine.Object.Destroy(fx.gameObject);
             }
 
             List<Task> tasks = new();
-            if (statChange.Atk > 0) tasks.Add(PlayFX(EffectViewFactory.Instance.AtkBuffFX)); 
-            if (statChange.Hp > 0) tasks.Add(PlayFX(EffectViewFactory.Instance.HpBuffFX)); 
-            if (statChange.Armor > 0) tasks.Add(PlayFX(EffectViewFactory.Instance.AmrBuffFX)); 
-            if (statChange.Resist > 0) tasks.Add(PlayFX(EffectViewFactory.Instance.ResBuffFX));
-
-            await Task.WhenAll(tasks); 
+            if (statChange.Atk > 0) yield return PlayFX(EffectViewFactory.Instance.AtkBuffFX); 
+            if (statChange.Hp > 0) yield return PlayFX(EffectViewFactory.Instance.HpBuffFX); 
+            if (statChange.Armor > 0) yield return PlayFX(EffectViewFactory.Instance.AmrBuffFX); 
+            if (statChange.Resist > 0) yield return PlayFX(EffectViewFactory.Instance.ResBuffFX);
         }
     }
 
@@ -249,9 +249,10 @@ namespace CardWar_v2.Datas
             return Conditions.All(c => c.CheckCondition(casterModel.BaseCard, targetModel.BaseCard));
         }
 
-        public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
+        public override IEnumerator DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
             Checked = CheckCanDoSkill(casterModel, targetModel);
+            yield return null;
             // foreach(var s in TrueSkills)
             // {
             //     Debug.Log($"Do skill: {s.GetType()}");
@@ -289,7 +290,7 @@ namespace CardWar_v2.Datas
         {
             var board = UnityEngine.Object.FindFirstObjectByType<BoardView>();
             if (board == null) return false;
-            return board.GetCharacterByPos(Region, Position, false) != null == checkExist;
+            return board.GetCharacterByPos(Region, Position, false) == checkExist;
         }
     }
 
@@ -363,7 +364,7 @@ namespace CardWar_v2.Datas
 
         private void CheckEvent() => Checked = true;
 
-        public override async Task DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
+        public override IEnumerator DoSkill(CharacterModelView casterModel, CharacterModelView targetModel)
         {
             Checked = false;
 
@@ -376,6 +377,8 @@ namespace CardWar_v2.Datas
                 }
                 targetModel.BaseCard.OnDealDamage.AddListener(OnDealDamageListerner);
             }
+
+            yield return null;
         }
     }
     #endregion

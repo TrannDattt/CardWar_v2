@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Threading.Tasks;
 using CardWar_v2.GameControl;
 using DG.Tweening;
@@ -34,9 +35,9 @@ namespace CardWar_v2.ComponentViews
             OnIconClicked.RemoveAllListeners();
         }
 
-        public async Task SetIconAlpha(float alpha, float transitionTime = 0f)
+        public IEnumerator SetIconAlpha(float alpha, float transitionTime = 0f)
         {
-            await _canvasGroup.DOFade(alpha, transitionTime).SetEase(Ease.InOutQuad).SetUpdate(true).AsyncWaitForCompletion();
+            yield return _canvasGroup.DOFade(alpha, transitionTime).SetEase(Ease.InOutQuad).SetUpdate(true).WaitForCompletion();
         }
 
         public virtual void OnPointerClick(PointerEventData eventData)

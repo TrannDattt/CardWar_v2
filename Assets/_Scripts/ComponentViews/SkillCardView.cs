@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CardWar_v2.Entities;
@@ -60,7 +61,7 @@ namespace CardWar_v2.ComponentViews
                 m.SetFloat("_Dissolve", value);
         }
 
-        public async Task DestroySkill(float duration)
+        public IEnumerator DestroySkill(float duration)
         {
             var sequence = DOTween.Sequence();
             sequence.Append(transform.DORotate(new Vector3(0, 0, -30), .3f).SetEase(Ease.InOutQuad));
@@ -71,7 +72,7 @@ namespace CardWar_v2.ComponentViews
                 CardFactory.Instance.RecycleCardView(this);
             });
 
-            await sequence.AsyncWaitForCompletion();
+            yield return sequence.AsyncWaitForCompletion();
         }
 
         public void OnPointerClick(PointerEventData eventData)

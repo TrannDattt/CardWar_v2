@@ -29,21 +29,27 @@ namespace CardWar_v2.ComponentViews
             _cardInHand.Clear();
         }
 
-        public void ArrangeHand(bool excludeLast = false)
+        public void ArrangeHand()
         {
-            // Debug.Log($"Arrange card");
+            // Debug.Log($"Start arrange card");
             int cardCount = _cardInHand.Count;
             if (cardCount == 0) return;
-            // var firstPos = transform.position + new Vector3((-cardCount) / 2 * _spaceX, 0, (-cardCount) / 2 * _spaceZ);
+            // if (cardCount == 0) yield break;
             var firstPos = transform.position + (-cardCount) / 2 * _space;
 
-            _cardInHand[0].transform.DOMove(firstPos, .2f).SetEase(Ease.InOutQuad);
-            for (int i = 1; i < cardCount; i++)
+            var sequence = DOTween.Sequence();
+            for (int i = 0; i < cardCount; i++)
             {
-                // if (i == cardCount - 1 && excludeLast) continue;
                 var cardPos = firstPos + i * _space;
-                _cardInHand[i].transform.DOMove(cardPos, .2f).SetEase(Ease.InOutQuad);
+                // _cardInHand[i].transform.DOKill();
+                // _cardInHand[i].transform.DOMove(cardPos, .2f).SetEase(Ease.InOutQuad);
+                // sequence.Join(_cardInHand[i].transform.DOMove(cardPos, .2f).SetEase(Ease.InOutQuad));
+                _cardInHand[i].transform.position = cardPos;
             }
+            // Debug.Log($"Finish arrange card");
+
+            // yield return null;
+            // yield return sequence.WaitForCompletion();
         }
 
         public Vector3 GetCardPos(int index = default)
@@ -59,48 +65,22 @@ namespace CardWar_v2.ComponentViews
         {
             _cardInHand.Add(cardView);
             cardView.transform.SetParent(_content);
-
-            // cardView.OnCardDrop.AddListener(async () =>
-            // {
-            //     if (CheckCardInHandRange(cardView))
-            //     {
-            //         _selectedCard = null;
-            //         if (_cardInHand.Contains(cardView)) return;
-            //         Debug.Log($"Insert card {cardView.BaseCard} to index {_selectedCardIndex}");
-            //         _cardInHand.Insert(_selectedCardIndex, cardView);
-            //         ArrangeHand();
-            //     }
-            //     else
-            //     {
-            //         IngameSceneView.Instance.SelfPlayCard(cardView);
-            //     }
-            // });
-
-            // cardView.OnCardGrab.AddListener(async () =>
-            // {
-            //     _selectedCard = cardView;
-            //     _selectedCardIndex = _cardInHand.IndexOf(cardView);
-            //     _cardInHand.Remove(cardView);
-            //     ArrangeHand();
-            // });
-
-            ArrangeHand(true);
+            ArrangeHand();
         }
 
         public void RemoveCard(SkillCardView cardView)
         {
             if (!_cardInHand.Contains(cardView) && _selectedCard != cardView) return;
             _cardInHand.Remove(cardView);
-
             ArrangeHand();
         }
 
-        public async Task RemoveDeadCards(CharacterCard charCard)
+        public IEnumerator RemoveDeadCards(CharacterCard charCard)
         {
             var deadCards = _cardInHand.Where(sc => sc.BaseCard.Owner == charCard).ToList();
             foreach(var c in deadCards)
             {
-                await c.DestroySkill(1);
+                yield return c.DestroySkill(1);
                 RemoveCard(c);
             }
         }

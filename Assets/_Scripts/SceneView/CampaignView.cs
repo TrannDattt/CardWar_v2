@@ -1,4 +1,5 @@
 // using CardWar.Factories;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,12 +40,12 @@ namespace CardWar_v2.SceneViews
 
         private IconFactory _iconFactory => IconFactory.Instance;
 
-        private async Task ClearLevelDetail()
+        private void ClearLevelDetail()
         {
             // _enemyTeam.Clear();
             _selfTeam.Clear();
 
-            static async Task ClearIcons(RectTransform list)
+            static void ClearIcons(RectTransform list)
             {
                 foreach (RectTransform rt in list)
                 {
@@ -53,21 +54,18 @@ namespace CardWar_v2.SceneViews
                 }
             }
 
-            await ClearIcons(_enemyListRt);
-            await ClearIcons(_rewardListRt);
+            ClearIcons(_enemyListRt);
+            ClearIcons(_rewardListRt);
 
             _characters.ForEach(c => c.SetBaseCard(null, true));
         }
 
-        public async void SetLevelDetail(Level level)
+        public void SetLevelDetail(Level level = null)
         {
-            await ClearLevelDetail();
+            ClearLevelDetail();
 
-            if (level == null) return;
-
-            // Level level = new(data);
-            // var level = CurLevel;
-
+            level ??= CurLevel;
+            Debug.Log($"Set detail: Level {level.Chapter} - {level.Room}");
             _name.SetText($"Level {level.Chapter} - {level.Room}");
             level.Enemies.ForEach(e =>
             {
@@ -89,10 +87,10 @@ namespace CardWar_v2.SceneViews
 
         void Start()
         {
-            _backBtn.onClick.AddListener(async () => await SceneNavigator.Instance.ChangeScene(EScene.MainMenu, async () =>
+            _backBtn.onClick.AddListener(async () => await SceneNavigator.Instance.ChangeScene(EScene.MainMenu, () =>
             {
                 var mainMenuScene = FindFirstObjectByType<MainMenuSceneView>();
-                await mainMenuScene.ChangeTab(MainMenuSceneView.EMenuTab.Fight);
+                mainMenuScene.ChangeTab(MainMenuSceneView.EMenuTab.Fight);
             }));
 
             _characters.ForEach(c =>
@@ -118,11 +116,6 @@ namespace CardWar_v2.SceneViews
             });
             
             GameAudioManager.Instance.PlayBackgroundMusic(GameAudioManager.EBgm.Home);
-        }
-
-        void OnEnable()
-        {
-            SetLevelDetail(CurLevel);
         }
     }
 }

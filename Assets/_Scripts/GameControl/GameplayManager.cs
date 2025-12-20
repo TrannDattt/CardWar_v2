@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CardWar_v2.Entities;
@@ -18,18 +19,18 @@ namespace CardWar_v2.GameControl
         private int _turnChangeTime;
         public UnityEvent OnTurnChanged { get; private set; } = new();
 
-        private void ChangeTurn(EPlayerTarget nextTurn) {
+        private IEnumerator ChangeTurn(EPlayerTarget nextTurn) {
             CurTurn = nextTurn;
             _turnChangeTime++;
             // Debug.Log($"It's {CurTurn}'s turn now.");
 
-            ChangePhase(EPhase.Opening);
+            yield return ChangePhase(EPhase.Opening);
         }
 
-        public void ChangeToNextTurn()
+        public IEnumerator ChangeToNextTurn()
         {
             var nextTurn = CurTurn == EPlayerTarget.Ally ? EPlayerTarget.Enemy : EPlayerTarget.Ally;
-            ChangeTurn(nextTurn);
+            yield return ChangeTurn(nextTurn);
         }
         #endregion
 
@@ -49,9 +50,17 @@ namespace CardWar_v2.GameControl
                 Type = phaseType;
                 _isFinished = false;
             }
-            public abstract void Enter();
-            public abstract void Do();
-            public abstract void Exit();
+            public abstract IEnumerator Enter();
+
+            public virtual void Do() 
+            {
+                if (_isFinished) Exit();
+            }
+
+            public virtual IEnumerator Exit()
+            {
+                yield return Instance.ChangeToNextPhase();
+            }
         }
 
         private class OpeningPhase : APhase
@@ -62,23 +71,26 @@ namespace CardWar_v2.GameControl
 
             public override void Do()
             {
-                if (IngameScene.CheckQueueFull()) Instance.ChangeToNextPhase();
+                if (!_isFinished && IngameScene.CheckQueueFull()) _isFinished = true;
+
+                base.Do();
             }
 
-            public override async void Enter()
+            public override IEnumerator Enter()
             {
                 // _isFinished = false;
                 if(CurTurn == EPlayerTarget.Enemy)
                 {
-                    await IngameScene.AutoSelectCard(3);
-                    return;
+                    yield return IngameScene.AutoSelectCard(3);
+                    yield break;
                 }
 
-                await IngameScene.DrawCard(3);
+                yield return IngameScene.DrawCard(3);
             }
 
-            public override void Exit()
+            public override IEnumerator Exit()
             {
+                yield return base.Exit();
             }
         }
 
@@ -90,17 +102,19 @@ namespace CardWar_v2.GameControl
 
             public override void Do()
             {
+                base.Do();
             }
 
-            public override async void Enter()
+            public override IEnumerator Enter()
             {
-                await IngameScene.ExercuteSkillQueue();
+                yield return IngameScene.ExercuteSkillQueue();
 
-                Instance.ChangeToNextPhase();
+                _isFinished = true;
             }
 
-            public override void Exit()
+            public override IEnumerator Exit()
             {
+                yield return base.Exit();
             }
         }
 
@@ -112,23 +126,24 @@ namespace CardWar_v2.GameControl
 
             public override void Do()
             {
+                base.Do();
             }
 
-            public override async void Enter()
+            public override IEnumerator Enter()
             {
                 if (Instance._turnChangeTime % 2 == 0)
                 {
-                    await IngameScene.DoEffectsOnChars(CurTurn);
+                    yield return IngameScene.DoEffectsOnChars(CurTurn);
 
                     Instance.OnTurnChanged?.Invoke();
                 }
                     
-                Instance.ChangeToNextPhase();
+                _isFinished = true;
             }
 
-            public override void Exit()
+            public override IEnumerator Exit()
             {
-                // Instance.ChangeToNextTurn();
+                yield return base.Exit();
             }
         }
 
@@ -140,14 +155,17 @@ namespace CardWar_v2.GameControl
 
             public override void Do()
             {
+                base.Do();
             }
 
-            public override void Enter()
+            public override IEnumerator Enter()
             {
+                yield return null;
             }
 
-            public override void Exit()
+            public override IEnumerator Exit()
             {
+                yield return base.Exit();
             }
         }
 
@@ -165,21 +183,21 @@ namespace CardWar_v2.GameControl
             };
         }
 
-        private void ChangePhase(EPhase nextPhase)
+        private IEnumerator ChangePhase(EPhase nextPhase)
         {
-            _curPhase?.Exit();
+            yield return _curPhase?.Exit();
             // CurPhase = _phaseDict[nextPhase];
             _curPhase = GetPhase(nextPhase);
             // Debug.Log($"{_curPhase.Type} started.");
-            _curPhase.Enter();
+            yield return _curPhase.Enter();
         }
 
-        public void ChangeToNextPhase()
+        public IEnumerator ChangeToNextPhase()
         {
             if (_curPhase.Type == EPhase.Conclude) 
             {
-                ChangeToNextTurn();
-                return;
+                yield return ChangeToNextTurn();
+                yield break;
             }
 
             var nextPhase = _curPhase.Type switch
@@ -189,11 +207,7 @@ namespace CardWar_v2.GameControl
                 // EPhase.Conclude => EPhase.Opening,
                 _ => EPhase.None
             };
-
-            // var nextPhase = _curPhase++;
-            // if (nextPhase == EPhase.None) nextPhase++;
-
-            ChangePhase(nextPhase);
+            yield return ChangePhase(nextPhase);
         }
         #endregion
 
@@ -209,25 +223,27 @@ namespace CardWar_v2.GameControl
             _selfTeam.ForEach(c => c.ResetCharStat());
             _curLevel.Enemies.ForEach(c => c.ResetCharStat());
 
-            async void SetupMatch()
+            IEnumerator SetupMatch()
             {
                 _ingameScene = FindFirstObjectByType<IngameSceneView>();
-                await _ingameScene.SetupMatch(_selfTeam, _curLevel);
+                // Debug.Log("Set up match");
+                yield return _ingameScene.SetupMatch(_selfTeam, _curLevel);
                 _turnChangeTime = 0;
 
-                await _ingameScene.DrawCard(3);
-                ChangeTurn(EPlayerTarget.Ally);
+                // Debug.Log("Draw cards");
+                yield return _ingameScene.DrawCard(3);
+                Debug.Log("Change turn");
+                yield return ChangeTurn(EPlayerTarget.Ally);
                 OnTurnChanged?.Invoke();
             }
 
-            await SceneNavigator.Instance.ChangeScene(EScene.Ingame, SetupMatch);
+            await SceneNavigator.Instance.ChangeScene(EScene.Ingame, () => StartCoroutine(SetupMatch()));
         }
 
         public void StartCampaignLevel(Level level, List<CharacterCard> selfTeam)
         {
             _selfTeam = selfTeam;
             _curLevel = level;
-
             StartNewFight();
         }
 
@@ -247,8 +263,8 @@ namespace CardWar_v2.GameControl
         {
             SceneNavigator.Instance.OnSceneLoaded.AddListener(scene =>
             {
-                if (scene != EScene.Ingame) 
-                    ChangePhase(EPhase.None);
+                if (scene != EScene.Ingame)
+                    StartCoroutine(ChangePhase(EPhase.None));
             });
         }
 
