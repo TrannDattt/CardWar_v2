@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CardWar_v2.Entities;
 using CardWar_v2.Factories;
 using CardWar_v2.GameControl;
+using CardWar_v2.SceneViews;
 using CardWar_v2.Untils;
 using DG.Tweening;
 using TMPro;
@@ -34,8 +35,11 @@ namespace CardWar_v2.ComponentViews
         [SerializeField] private Button _retryButton;
         [SerializeField] private Button _homeButton;
 
+        private Level _level;
+
         public async Task ShowResult(Level level, bool isWin, FightLogger logger)
         {
+            _level = level;
             // Debug.Log($"Conclude match: {isWin}");
             GameplayManager.Instance.PauseGame();
             GameAudioManager.Instance.PlaySFX(isWin ? ESfx.WinMatch : ESfx.LoseMatch);
@@ -43,7 +47,7 @@ namespace CardWar_v2.ComponentViews
             ShowUI();
 
             _resultText.SetText(isWin ? "Victory!" : "Defeat");
-            bool turnConditionCheck = logger.TurnCount <= level.Data.TurnConditionCheck;
+            bool turnConditionCheck = logger.TurnCount <= _level.Data.TurnConditionCheck;
             bool allAliveCheck = logger.AllyRecords.TrueForAll(r => !r.IsDead);
 
             await _stars[0].ShowStarResult(isWin, true);
@@ -51,30 +55,30 @@ namespace CardWar_v2.ComponentViews
             await _stars[2].ShowStarResult(isWin && allAliveCheck, true);
 
             await _clearCondition.CheckCondiction("Defeat all enemies", isWin, true);
-            await _timeCondition.CheckCondiction($"Clear within {level.Data.TurnConditionCheck} turns", isWin && turnConditionCheck, true);
+            await _timeCondition.CheckCondiction($"Clear within {_level.Data.TurnConditionCheck} turns", isWin && turnConditionCheck, true);
             await _surviveCondition.CheckCondiction("All allies are alive", allAliveCheck, true);
 
             if (isWin) 
             {
-                bool isClearBefore = level.ClearCheck;
-                level.ClearLevel(turnConditionCheck, allAliveCheck);
+                bool isClearBefore = _level.ClearCheck;
+                _level.ClearLevel(turnConditionCheck, allAliveCheck);
 
-                var expIcon = IconFactory.Instance.CreateNewIcon(IconFactory.EIconType.Exp, level.Rewards.Exp, _rewardContainer);
+                var expIcon = IconFactory.Instance.CreateNewIcon(IconFactory.EIconType.Exp, _level.Rewards.Exp, _rewardContainer);
                 await expIcon.SetIconAlpha(0f);
                 await expIcon.SetIconAlpha(1f, 0.3f);
-                // Debug.Log($"Give player {level.Rewards.Exp} EXP");
+                // Debug.Log($"Give player {_level.Rewards.Exp} EXP");
 
-                var goldIcon = IconFactory.Instance.CreateNewIcon(IconFactory.EIconType.Gold, level.Rewards.Gold, _rewardContainer);
+                var goldIcon = IconFactory.Instance.CreateNewIcon(IconFactory.EIconType.Gold, _level.Rewards.Gold, _rewardContainer);
                 await goldIcon.SetIconAlpha(0f);
                 await goldIcon.SetIconAlpha(1f, 0.3f);
-                // Debug.Log($"Give player {level.Rewards.Gold} Gold");
+                // Debug.Log($"Give player {_level.Rewards.Gold} Gold");
 
                 if (!isClearBefore)
                 {
-                    var gemIcon = IconFactory.Instance.CreateNewIcon(IconFactory.EIconType.Gem, level.Rewards.Gem, _rewardContainer);
+                    var gemIcon = IconFactory.Instance.CreateNewIcon(IconFactory.EIconType.Gem, _level.Rewards.Gem, _rewardContainer);
                     await gemIcon.SetIconAlpha(0f);
                     await gemIcon.SetIconAlpha(1f, 0.3f);
-                    // Debug.Log($"Give player {level.Rewards.Gem} Gem");
+                    // Debug.Log($"Give player {_level.Rewards.Gem} Gem");
                 }
             }
 
@@ -104,7 +108,12 @@ namespace CardWar_v2.ComponentViews
                 GameplayManager.Instance.StartNewFight();
                 HideUI();
             });
-            _nextButton.onClick.AddListener(async () => await SceneNavigator.Instance.ChangeScene(EScene.Campaign));
+            _nextButton.onClick.AddListener(async () => 
+            {
+                await SceneNavigator.Instance.ChangeScene(EScene.Campaign);
+                var campaignView = FindFirstObjectByType<CampaignView>();
+                campaignView.SetLevelDetail(PlayerSessionManager.Instance.GetNextLevel(_level));
+            });
         }
     }
 }

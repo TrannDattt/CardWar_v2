@@ -7,6 +7,7 @@ using CardWar_v2.Entities;
 using CardWar_v2.GameControl;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Events;
 
 // using CardWar.Views;
 
@@ -36,12 +37,13 @@ namespace CardWar_v2.SceneViews
         [SerializeField] private float _offsetX;
 
         private EMenuTab _activeTab;
-        // private EMenuTab _activeTab = EMenuTab.None;
+        public UnityEvent<EMenuTab> OnTabChanged = new();
         private Player CurPlayer => PlayerSessionManager.Instance.CurPlayer;
 
         public async Task ChangeTab(EMenuTab tab)
         {
             if (_activeTab == tab) return;
+            OnTabChanged?.Invoke(tab);
             // Debug.Log($"Changing to tab: {tab}");
             var activeTab = _menuTabs.Find(t => t.Tab == _activeTab);
             var newTab = _menuTabs.Find(t => t.Tab == tab);

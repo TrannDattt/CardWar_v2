@@ -147,6 +147,14 @@ namespace CardWar_v2.GameControl
             Debug.Log($"Final level: Chapter {CampaignLevels[^1].Chapter} - Room {CampaignLevels[^1].Room}");
         }
 
+        public Level GetNextLevel(Level curLevel)
+        {
+            var nextLevel = CampaignLevels.FirstOrDefault(l => l.Chapter == curLevel.Chapter && l.Room == curLevel.Room + 1);
+            if (nextLevel != null) return nextLevel;
+            nextLevel = CampaignLevels.FirstOrDefault(l => l.Chapter == curLevel.Chapter + 1 && l.Room == 1);
+            return nextLevel;
+        }
+
         protected override async void Awake()
         {
             var playerData = SessionSaveLoad.LoadFromFile<PlayerDataJson>("player");

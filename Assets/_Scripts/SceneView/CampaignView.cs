@@ -117,12 +117,13 @@ namespace CardWar_v2.SceneViews
                 else _selfTeam.Remove(i.BaseCard);
             });
             
+            SetLevelDetail(CurLevel);
             GameAudioManager.Instance.PlayBackgroundMusic(GameAudioManager.EBgm.Home);
         }
 
-        void OnEnable()
-        {
-            SetLevelDetail(CurLevel);
-        }
+        // void OnEnable()
+        // {
+        //     SetLevelDetail(CurLevel);
+        // }
     }
 }

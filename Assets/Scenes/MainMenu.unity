@@ -8693,6 +8693,7 @@ MonoBehaviour:
   - {fileID: 3726367514945454661, guid: 70aa07b52d82f2c40934091634feb3b3, type: 3}
   - {fileID: 5442479271020957586, guid: 0f1fced6ec3af0e4aa3d19d4bf69de7f, type: 3}
   - {fileID: 3447048637013168336, guid: 5922ac7a3e0fb12469726a4c2261149f, type: 3}
+  _mapWidth: 1200
 --- !u!1 &1582342522
 GameObject:
   m_ObjectHideFlags: 0
@@ -9320,8 +9321,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 0}
   m_HandleRect: {fileID: 1929211613}
   m_Direction: 2
-  m_Value: 0.9999999
-  m_Size: 0.40419576
+  m_Value: 1
+  m_Size: 0.40419582
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
