@@ -1,24 +1,19 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace CardWar_v2.ComponentViews
 {
     public class ShopShelfView : MonoBehaviour
     {
-        [SerializeField] private RectTransform _container;
-        [SerializeField] private int _size;
+        [field: SerializeField] public RectTransform ItemContainer {get; private set;}
+        [SerializeField] private int _shelfSize = 5;
 
-        public bool IsShelfFull => Items.Count == _size;
+        public bool IsFull => GetAllItems().Count >= _shelfSize;
 
-        public List<ShopItemView> Items { get; private set; } = new();
-
-        public void AddItem(ShopItemView item)
+        public List<ShopItemView> GetAllItems()
         {
-            var rt = item.GetComponent<RectTransform>();
-            rt.SetParent(_container);
-            rt.localScale = Vector3.one;
-
-            Items.Add(item);
+            return ItemContainer.GetComponentsInChildren<ShopItemView>().ToList();
         }
     }
 }

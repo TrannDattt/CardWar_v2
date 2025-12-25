@@ -28,13 +28,15 @@ namespace CardWar_v2.SceneViews
             foreach (var i in ItemList)
             {
                 if (i.StockAmount == 0) continue;
-                if (curShelf == null || curShelf.IsShelfFull) curShelf = Instantiate(_shelfViewPrefab, _container);
-                var itemView = ShopItemFactory.Instance.CreateNewIcon(i, null);
-                curShelf.AddItem(itemView);
+                if (curShelf == null || curShelf.IsFull) 
+                    curShelf = Instantiate(_shelfViewPrefab, _container);
+
+                var itemView = ShopItemFactory.Instance.CreateNewIcon(i, curShelf.ItemContainer);
                 i.OnItemBought.AddListener(() =>
                 {
                     if (i.StockAmount <= 0) ShopItemFactory.Instance.RecycleItemView(itemView);
-                    if (curShelf.GetComponentsInChildren<ShopItemView>().Length == 0) curShelf.gameObject.SetActive(false);
+                    if (curShelf != null && curShelf.GetAllItems().Count == 0) 
+                        Destroy(curShelf.gameObject);
                 });
 
                 itemView.OnItemClicked.AddListener(() => _itemPurchaseConfirmation.OpenPopup(itemView.CurItem));

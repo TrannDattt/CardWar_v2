@@ -214,5 +214,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd7c7a8f618d7474e9f04acd8800f38e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _container: {fileID: 3615402199510631212}
-  _size: 5
+  <ItemContainer>k__BackingField: {fileID: 3615402199510631212}
+  _shelfSize: 4
