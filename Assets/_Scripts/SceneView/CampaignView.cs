@@ -81,6 +81,8 @@ namespace CardWar_v2.SceneViews
             if (!level.ClearCheck) _iconFactory.CreateNewIcon(EIconType.Gem, level.Rewards.Gem, _rewardListRt);
             
             _charList.ShowCharacterIcons(true, true);
+
+            _fightBtn.onClick.RemoveAllListeners();
             _fightBtn.onClick.AddListener(() =>
             {
                 GameplayManager.Instance.StartCampaignLevel(level, _selfTeam);
