@@ -26,8 +26,11 @@ namespace CardWar_v2.ComponentViews
             // if (level == null) Debug.Log($"Level {chapter}-{_roomNumber} not found");
             var levelIndex = PlayerSessionManager.Instance.CampaignLevels.IndexOf(level);
 
-            _button.interactable = levelIndex == 0 || PlayerSessionManager.Instance.CampaignLevels[levelIndex - 1].ClearCheck;
-            _lockImage.gameObject.SetActive(!_button.interactable);
+            var enableState = levelIndex == 0 || PlayerSessionManager.Instance.CampaignLevels[levelIndex - 1].ClearCheck;
+            _button.interactable = enableState;
+            _lockImage.gameObject.SetActive(!enableState);
+            if (TryGetComponent<GameButtonView>(out var buttonView))
+                buttonView.enabled = enableState;
 
             await _starImages[0].ShowStarResult(level.ClearCheck, false);
             await _starImages[1].ShowStarResult(level.ClearCheck && level.TurnConditionCheck, false);

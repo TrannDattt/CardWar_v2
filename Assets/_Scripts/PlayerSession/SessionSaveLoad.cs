@@ -28,7 +28,7 @@ namespace CardWar_v2.Session
             string path = Path.Combine(BasePath, fileName + ".json");
             string json = JsonConvert.SerializeObject(data, Formatting.Indented);
             File.WriteAllText(path, json);
-            Debug.Log($"✅ Saved {fileName}.json to {path}");
+            Debug.Log($"Saved {fileName}.json to {path}");
         }
 
         public static T LoadFromFile<T>(string fileName) where T : new()
@@ -42,7 +42,7 @@ namespace CardWar_v2.Session
                 return JsonConvert.DeserializeObject<T>(json);
             }
 
-            Debug.LogWarning($"⚠ {fileName}.json not found, creating new one.");
+            Debug.LogWarning($"{fileName}.json not found, creating new one.");
             return new T();
         }
     }

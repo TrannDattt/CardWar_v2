@@ -39,12 +39,12 @@ namespace CardWar_v2.SceneViews
 
         private IconFactory _iconFactory => IconFactory.Instance;
 
-        private async Task ClearLevelDetail()
+        private void ClearLevelDetail()
         {
             // _enemyTeam.Clear();
             _selfTeam.Clear();
 
-            static async Task ClearIcons(RectTransform list)
+            static void ClearIcons(RectTransform list)
             {
                 foreach (RectTransform rt in list)
                 {
@@ -53,15 +53,15 @@ namespace CardWar_v2.SceneViews
                 }
             }
 
-            await ClearIcons(_enemyListRt);
-            await ClearIcons(_rewardListRt);
+            ClearIcons(_enemyListRt);
+            ClearIcons(_rewardListRt);
 
             _characters.ForEach(c => c.SetBaseCard(null, true));
         }
 
-        public async void SetLevelDetail(Level level)
+        public void SetLevelDetail(Level level)
         {
-            await ClearLevelDetail();
+            ClearLevelDetail();
 
             if (level == null) return;
 
